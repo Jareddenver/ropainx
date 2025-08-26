@@ -1824,6 +1824,22 @@ document.addEventListener('DOMContentLoaded', () => {
               document.getElementById('twitter-auth-btn').addEventListener('click', authenticateTwitter);
     checkTwitterStatus();
         });
+
+          const stickers = ["st1.png", "st2.png", "st3.png"];
+
+    // Choisir un sticker aléatoire
+    const randomSticker = stickers[Math.floor(Math.random() * stickers.length)];
+
+    // Créer l'élément image
+    const img = document.createElement("img");
+    img.src = randomSticker;
+    img.className = "sticker";
+
+    // Ajouter l'image au profil
+    const profileSection = document.querySelector(".profile-section");
+    if (profileSection) {
+        profileSection.appendChild(img);
+    }
     </script>
 </body>
 </html>
