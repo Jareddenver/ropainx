@@ -153,7 +153,7 @@
                 document.getElementById('dropdownUserName').textContent = user.displayName || 'User';
                 document.getElementById('dropdownUserHandle').textContent = `@${user.email?.split('@')[0] || 'user'}`;
             } else {
-               // window.location.href = '/auth.html';
+               window.location.href = '/auth.html';
             }
         });
     </script>
@@ -183,7 +183,7 @@
             const idToken = localStorage.getItem('idToken');
             const uid = localStorage.getItem('uid');
             if (!idToken || !uid || (window.__USER_UID__ && uid !== window.__USER_UID__)) {
-               // window.location.href = '/auth.html';
+               window.location.href = '/auth.html';
                 return false;
             }
             return true;
@@ -211,7 +211,7 @@ refreshIdToken();
                 await window.auth.signOut();
                 localStorage.removeItem('idToken');
                 localStorage.removeItem('uid');
-               // window.location.href = '/auth.html';
+               window.location.href = '/auth.html';
             } catch (error) {
                 console.error('Logout error:', error);
                 showNotification('Logout error.', 'error');
@@ -361,7 +361,7 @@ refreshIdToken();
                     const response = await fetchWithRetry(`${BASE_URL}/api/tweets-history`, { headers, signal: AbortSignal.timeout(5000) });
 
                     if (response.status === 401) {
-                       // window.location.href = '/auth.html';
+                       window.location.href = '/auth.html';
                         return null;
                     }
                     if (response.status === 304) {
@@ -716,7 +716,7 @@ refreshIdToken();
                     });
 
                     if (response.status === 401) {
-                       // window.location.href = '/auth.html';
+                       window.location.href = '/auth.html';
                         return;
                     }
 
@@ -812,7 +812,7 @@ refreshIdToken();
                     });
 
                     if (response.status === 401) {
-                       // window.location.href = '/auth.html';
+                       window.location.href = '/auth.html';
                         return;
                     }
 
@@ -916,7 +916,7 @@ refreshIdToken();
                     });
 
                     if (response.status === 401) {
-                       // window.location.href = '/auth.html';
+                       window.location.href = '/auth.html';
                         return;
                     }
 
@@ -1096,7 +1096,7 @@ async function confirmSchedule() {
 
             if (response.status === 401) {
                 console.log('🔒 [DEBUG] Token Firebase expiré, redirection auth');
-               // window.location.href = '/auth.html';
+               window.location.href = '/auth.html';
                 return;
             }
 
@@ -1541,7 +1541,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 };
                 const response = await fetchWithRetry(`${BASE_URL}/api/tweets`, { headers, signal: AbortSignal.timeout(5000) });
                 if (response.status === 401) {
-                   // window.location.href = '/auth.html';
+                   window.location.href = '/auth.html';
                     return;
                 }
                 if (response.status === 304) {
@@ -1633,7 +1633,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
 
                 if (response.status === 401) {
-                   // window.location.href = '/auth.html';
+                   window.location.href = '/auth.html';
                     return;
                 }
 
