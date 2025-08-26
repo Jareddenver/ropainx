@@ -12,7 +12,7 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>Ropainx</h1>
+            <h1>Velco</h1>
             <p>Generate tweets automatically via extension</p>
             <div class="status" id="status">Checking connection...</div>
             <div class="user-profile" id="userProfile">
@@ -351,7 +351,24 @@ refreshIdToken();
 
             const maxRetries = 3;
             let retryCount = 0;
+document.addEventListener('DOMContentLoaded', () => {
+  firebase.auth().onAuthStateChanged(async (user) => {
+    if (user) {
+      console.log("✅ Utilisateur connecté:", user.email);
 
+      // Stocker / rafraîchir le token Firebase
+      const idToken = await user.getIdToken(true);
+      localStorage.setItem('idToken', idToken);
+
+      // Charger le dashboard
+      initDashboard();
+
+    } else {
+      console.log("❌ Aucun utilisateur connecté, redirection vers login");
+      window.location.href = '/auth.html'; // 👉 crée une page simple avec boutons Google/Twitter
+    }
+  });
+});
             async function attemptFetch() {
                 try {
                     const headers = {
