@@ -13,7 +13,9 @@ const crypto = require('crypto');
 const admin = require('firebase-admin');
 require('dotenv').config();
 const serviceAccount = require('./firebase-service-account.json'); // Assuming local file for development
-
+const BASE_URL = process.env.NODE_ENV === 'production'
+  ? 'https://ropainx.onrender.com'
+  : 'http://localhost:3000';
 // Templates de tweets structurels
 const tweetTemplates = {
   'basic': {
@@ -553,7 +555,7 @@ app.get('/api/twitter-auth', async (req, res) => {
     const codeVerifier = generateCodeVerifier();
     const codeChallenge = generateCodeChallenge(codeVerifier);
 
-    const authLink = await twitterOAuthClient.generateOAuth2AuthLink('http://localhost:3000/api/twitter-callback', {
+    const authLink = await twitterOAuthClient.generateOAuth2AuthLink('${BASE_URL}/api/twitter-callback', {
       scope: ['tweet.read', 'tweet.write', 'users.read', 'offline.access'],
       code_challenge: codeChallenge,
       code_challenge_method: 'S256',
@@ -600,7 +602,7 @@ app.get('/api/twitter-callback', async (req, res) => {
     const { client, accessToken, refreshToken, expiresIn } = await twitterOAuthClient.loginWithOAuth2({
       code,
       codeVerifier: user.codeVerifier,
-      redirectUri: 'http://localhost:3000/api/twitter-callback',
+      redirectUri: '${BASE_URL}/api/twitter-callback',
     });
 
     user.twitterTokens = {
@@ -624,7 +626,7 @@ app.get('/api/twitter-callback', async (req, res) => {
     delete user.twitterAuthState;
     delete user.codeVerifier;
     console.log(`✅ Auth Twitter complétée pour ${uid}, utilisateur: ${user.twitterUser.handle}`);
-    res.redirect('http://localhost:3000/');
+    res.redirect('${BASE_URL}/');
   } catch (error) {
     console.error(`❌ Erreur callback Twitter:`, error.message, error.stack);
     res.status(500).json({ success: false, error: 'Échec authentification Twitter', details: error.message });

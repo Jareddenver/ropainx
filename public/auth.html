@@ -5,6 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Authentication - Tweet Generator</title>
   <style>
+    @font-face {
+    font-family: 'Chunkyline';
+    src: url('./Chunkyline.ttf');
+}
+
         * {
             margin: 0;
             padding: 0;
@@ -29,6 +34,7 @@
             margin-bottom: 20px;
         }
         .header h1 {
+         font-family: 'Chunkyline';
             font-size: 24px;
             font-weight: 300;
             margin-bottom: 5px;
@@ -281,7 +287,7 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>Tweet Generator</h1>
+            <h1>Ropainx</h1>
             <p>Sign in to access your personalized tweet generation</p>
             <div class="status online" id="status">Firebase Authentication Ready ✓</div>
         </div>
@@ -471,7 +477,7 @@
             if (success) {
                 showMessage('Welcome back! Redirecting to your dashboard...', 'success');
                 setTimeout(() => {
-                    window.location.href = 'http://localhost:3000/';
+                    window.location.href = 'https://ropainx.onrender.com/';
                 }, 1500);
             } else {
                 setLoading(false);
