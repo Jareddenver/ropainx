@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Authentication - Tweet Generator</title>
-    <style>
+  <style>
         * {
             margin: 0;
             padding: 0;
@@ -15,41 +15,37 @@
             color: #fff;
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             min-height: 100vh;
-            padding: 20px;
-            overflow-y: auto;
+            padding: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
         }
         .container {
-            max-width: 480px;
+            max-width: 400px;
             width: 100%;
         }
         .header {
             text-align: center;
-            margin-bottom: 40px;
-            padding-bottom: 20px;
-            border-bottom: 1px solid #333;
+            margin-bottom: 20px;
         }
         .header h1 {
-            font-size: 28px;
+            font-size: 24px;
             font-weight: 300;
-            margin-bottom: 8px;
+            margin-bottom: 5px;
             background: linear-gradient(135deg, #fff, #888);
             -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
             background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
         .header p {
             color: #888;
-            font-size: 14px;
-            margin-bottom: 15px;
+            font-size: 12px;
         }
         .status {
             text-align: center;
-            margin-top: 10px;
-            font-size: 12px;
+            font-size: 10px;
             color: #666;
+            margin-top: 5px;
         }
         .status.online {
             color: #4ade80;
@@ -60,35 +56,25 @@
         .auth-container {
             background: linear-gradient(145deg, #111, #0a0a0a);
             border: 1px solid #222;
-            border-radius: 16px;
-            padding: 40px;
+            border-radius: 12px;
+            padding: 20px;
             position: relative;
-            overflow: hidden;
-        }
-        .auth-container::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 2px;
-            background: linear-gradient(90deg, transparent, #333, transparent);
         }
         .auth-tabs {
             display: flex;
-            margin-bottom: 30px;
+            margin-bottom: 15px;
             background: #222;
-            border-radius: 12px;
-            padding: 4px;
+            border-radius: 8px;
+            padding: 3px;
         }
         .auth-tab {
             flex: 1;
             background: transparent;
             color: #888;
             border: none;
-            border-radius: 8px;
-            padding: 12px 16px;
-            font-size: 14px;
+            border-radius: 6px;
+            padding: 8px;
+            font-size: 12px;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.2s;
@@ -97,7 +83,7 @@
         .auth-tab.active {
             background: #fff;
             color: #000;
-            box-shadow: 0 2px 8px rgba(255, 255, 255, 0.1);
+            box-shadow: 0 2px 6px rgba(255, 255, 255, 0.1);
         }
         .auth-form {
             display: none;
@@ -106,30 +92,30 @@
             display: block;
         }
         .form-group {
-            margin-bottom: 20px;
+            margin-bottom: 12px;
         }
         .form-label {
             display: block;
             color: #ccc;
-            font-size: 14px;
+            font-size: 12px;
             font-weight: 500;
-            margin-bottom: 8px;
+            margin-bottom: 5px;
         }
         .form-input {
             width: 100%;
             background: #222;
             color: #fff;
             border: 1px solid #333;
-            border-radius: 8px;
-            padding: 14px 16px;
-            font-size: 14px;
+            border-radius: 6px;
+            padding: 10px;
+            font-size: 12px;
             outline: none;
             transition: all 0.2s;
         }
         .form-input:focus {
             border-color: #555;
             background: #1a1a1a;
-            box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.1);
+            box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.1);
         }
         .form-input::placeholder {
             color: #666;
@@ -139,28 +125,26 @@
         }
         .password-toggle {
             position: absolute;
-            right: 12px;
+            right: 8px;
             top: 50%;
             transform: translateY(-50%);
             background: transparent;
             border: none;
             color: #888;
             cursor: pointer;
-            font-size: 18px;
-            transition: color 0.2s;
+            font-size: 14px;
         }
         .password-toggle:hover {
             color: #fff;
         }
         .forgot-password {
             text-align: right;
-            margin-top: 8px;
+            margin-top: 5px;
         }
         .forgot-password a {
             color: #888;
             text-decoration: none;
-            font-size: 12px;
-            transition: color 0.2s;
+            font-size: 10px;
             cursor: pointer;
         }
         .forgot-password a:hover {
@@ -171,30 +155,28 @@
             background: #fff;
             color: #000;
             border: none;
-            border-radius: 12px;
-            padding: 16px;
-            font-size: 16px;
+            border-radius: 8px;
+            padding: 12px;
+            font-size: 14px;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s;
-            margin-bottom: 20px;
-            box-shadow: 0 4px 12px rgba(255, 255, 255, 0.2);
+            transition: all 0.2s;
+            margin-bottom: 12px;
+            box-shadow: 0 3px 8px rgba(255, 255, 255, 0.2);
         }
         .submit-btn:hover:not(:disabled) {
             background: #e0e0e0;
-            transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(255, 255, 255, 0.3);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 10px rgba(255, 255, 255, 0.3);
         }
         .submit-btn:disabled {
             background: #333;
             color: #666;
             cursor: not-allowed;
-            transform: none;
-            box-shadow: none;
         }
         @keyframes loadingPulse {
             0% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.7); transform: scale(1); }
-            50% { box-shadow: 0 0 0 8px rgba(255, 255, 255, 0.2); transform: scale(1.02); }
+            50% { box-shadow: 0 0 0 6px rgba(255, 255, 255, 0.2); transform: scale(1.02); }
             100% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0); transform: scale(1); }
         }
         .loading-pulse {
@@ -203,9 +185,9 @@
         .divider {
             display: flex;
             align-items: center;
-            margin: 24px 0;
+            margin: 12px 0;
             color: #666;
-            font-size: 12px;
+            font-size: 10px;
         }
         .divider::before,
         .divider::after {
@@ -215,119 +197,84 @@
             background: #333;
         }
         .divider span {
-            padding: 0 16px;
+            padding: 0 8px;
         }
-        .google-btn {
+        .google-btn, .twitter-btn {
             width: 100%;
             background: transparent;
             color: #fff;
             border: 1px solid #333;
-            border-radius: 12px;
-            padding: 16px;
-            font-size: 14px;
+            border-radius: 8px;
+            padding: 10px;
+            font-size: 12px;
             font-weight: 500;
             cursor: pointer;
-            transition: all 0.3s;
+            transition: all 0.2s;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 12px;
+            gap: 8px;
         }
-        .google-btn:hover:not(:disabled) {
+        .google-btn:hover:not(:disabled), .twitter-btn:hover:not(:disabled) {
             background: #1a1a1a;
             border-color: #555;
             transform: translateY(-1px);
         }
-        .google-btn:disabled {
+        .google-btn:disabled, .twitter-btn:disabled {
             opacity: 0.5;
             cursor: not-allowed;
-            transform: none;
+        }
+        .google-icon, .twitter-icon {
+            width: 16px;
+            height: 16px;
+            background-size: contain;
         }
         .google-icon {
-            width: 20px;
-            height: 20px;
             background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="%23EA4335" d="M5.266 9.765A7.077 7.077 0 0 1 12 4.909c1.69 0 3.218.6 4.418 1.582L19.91 3C17.782 1.145 15.055 0 12 0 7.27 0 3.198 2.698 1.24 6.65l4.026 3.115Z"/><path fill="%2334A853" d="M16.04 18.013c-1.09.703-2.474 1.078-4.04 1.078a7.077 7.077 0 0 1-6.723-4.823l-4.04 3.067A11.965 11.965 0 0 0 12 24c2.933 0 5.735-1.043 7.834-3l-3.793-2.987Z"/><path fill="%23FBBC05" d="M19.834 21c2.195-2.048 3.62-5.096 3.62-9 0-.71-.109-1.473-.272-2.182H12v4.637h6.436c-.317 1.559-1.17 2.766-2.395 3.558L19.834 21Z"/><path fill="%23EA4335" d="M5.277 14.268A7.12 7.12 0 0 1 4.909 12c0-.782.125-1.533.357-2.235L1.24 6.65A11.934 11.934 0 0 0 0 12c0 1.92.445 3.73 1.237 5.335l4.04-3.067Z"/></svg>') no-repeat center;
-            background-size: contain;
-        }
-        .twitter-btn {
-            width: 100%;
-            background: transparent;
-            color: #fff;
-            border: 1px solid #333;
-            border-radius: 12px;
-            padding: 16px;
-            font-size: 14px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-            margin-top: 12px;
-        }
-        .twitter-btn:hover:not(:disabled) {
-            background: #1a1a1a;
-            border-color: #555;
-            transform: translateY(-1px);
-        }
-        .twitter-btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none;
         }
         .twitter-icon {
-            width: 20px;
-            height: 20px;
             background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="%231DA1F2" d="M23.643 4.937c-.835.37-1.732.62-2.675.733a4.67 4.67 0 0 0 2.048-2.578 9.3 9.3 0 0 1-2.958 1.13 4.66 4.66 0 0 0-7.938 4.25 13.229 13.229 0 0 1-9.602-4.868c-.4.69-.63 1.49-.63 2.342A4.66 4.66 0 0 0 3.96 9.824a4.647 4.647 0 0 1-2.11-.583v.06a4.66 4.66 0 0 0 3.737 4.568 4.692 4.692 0 0 1-2.104.08 4.661 4.661 0 0 0 4.352 3.234 9.348 9.348 0 0 1-5.786 1.995A9.5 9.5 0 0 1 0 18.897a13.175 13.175 0 0 0 7.141 2.093c8.57 0 13.255-7.098 13.255-13.254 0-.2-.005-.402-.014-.602a9.47 9.47 0 0 0 2.323-2.41l-.002-.003z"/></svg>') no-repeat center;
-            background-size: contain;
+        }
+        .error-message, .success-message {
+            border-radius: 6px;
+            padding: 8px 12px;
+            margin-bottom: 12px;
+            font-size: 12px;
+            display: none;
         }
         .error-message {
             background: rgba(248, 113, 113, 0.1);
             border: 1px solid #f87171;
-            border-radius: 8px;
-            padding: 12px 16px;
-            margin-bottom: 20px;
             color: #f87171;
-            font-size: 14px;
-            display: none;
         }
         .success-message {
             background: rgba(74, 222, 128, 0.1);
             border: 1px solid #4ade80;
-            border-radius: 8px;
-            padding: 12px 16px;
-            margin-bottom: 20px;
             color: #4ade80;
-            font-size: 14px;
-            display: none;
         }
         .terms {
             text-align: center;
             color: #666;
-            font-size: 12px;
-            margin-top: 20px;
-            line-height: 1.5;
+            font-size: 10px;
+            margin-top: 12px;
+            line-height: 1.4;
         }
         .terms a {
             color: #888;
             text-decoration: none;
-            transition: color 0.2s;
         }
         .terms a:hover {
             color: #fff;
         }
         @media (max-width: 600px) {
-            .container {
-                max-width: 100%;
-                margin: 0;
-            }
-            .auth-container {
-                padding: 30px 20px;
-            }
-            .header h1 {
-                font-size: 24px;
-            }
+            body { padding: 5px; }
+            .container { max-width: 100%; }
+            .auth-container { padding: 15px; }
+            .header h1 { font-size: 20px; }
+            .header p { font-size: 10px; }
+            .auth-tab { font-size: 11px; padding: 6px; }
+            .form-input { padding: 8px; font-size: 11px; }
+            .submit-btn, .google-btn, .twitter-btn { padding: 8px; font-size: 12px; }
         }
     </style>
 </head>
@@ -402,9 +349,9 @@
                 <div class="google-icon"></div>
                 Continue with Google
             </button>
-            <button class="twitter-btn" onclick="initiateTwitterAuth()" id="twitterBtn">
+              <button class="twitter-btn" onclick="signInWithTwitter()" id="twitterBtn">
                 <div class="twitter-icon"></div>
-                Connect with Twitter
+                Twitter/X
             </button>
 
             <div class="terms">
@@ -415,342 +362,353 @@
 
     <!-- Firebase SDK -->
     <script type="module">
-        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
-        import { getAnalytics } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-analytics.js';
-        import {
-            getAuth,
-            signInWithEmailAndPassword,
-            createUserWithEmailAndPassword,
-            signInWithPopup,
-            GoogleAuthProvider,
-            sendPasswordResetEmail,
-            onAuthStateChanged,
-            updateProfile,
-            getIdToken
-        } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+    import { getAnalytics } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-analytics.js';
+    import {
+        getAuth,
+        signInWithEmailAndPassword,
+        createUserWithEmailAndPassword,
+        signInWithPopup,
+        GoogleAuthProvider,
+        TwitterAuthProvider,
+        sendPasswordResetEmail,
+        onAuthStateChanged,
+        updateProfile,
+        getIdToken
+    } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyCh0EeCbrm-LzHYOJAYTuQlJJzTFBs-xjo",
-            authDomain: "ropainx-b13da.firebaseapp.com",
-            projectId: "ropainx-b13da",
-            storageBucket: "ropainx-b13da.firebasestorage.app",
-            messagingSenderId: "293729340264",
-            appId: "1:293729340264:web:89bbcdc6197a05520b64dd",
-            measurementId: "G-H3T6EF9E4H"
-        };
+    const firebaseConfig = {
+        apiKey: "AIzaSyCh0EeCbrm-LzHYOJAYTuQlJJzTFBs-xjo",
+        authDomain: "ropainx-b13da.firebaseapp.com",
+        projectId: "ropainx-b13da",
+        storageBucket: "ropainx-b13da.firebasestorage.app",
+        messagingSenderId: "293729340264",
+        appId: "1:293729340264:web:89bbcdc6197a05520b64dd",
+        measurementId: "G-H3T6EF9E4H"
+    };
 
-        const app = initializeApp(firebaseConfig);
-        const analytics = getAnalytics(app);
-        const auth = getAuth(app);
-        const googleProvider = new GoogleAuthProvider();
+    const app = initializeApp(firebaseConfig);
+    const analytics = getAnalytics(app);
+    const auth = getAuth(app);
+    const googleProvider = new GoogleAuthProvider();
+    const twitterProvider = new TwitterAuthProvider();
 
-        let isLoading = false;
-        window.auth = auth;
+    let isLoading = false;
+    window.auth = auth;
 
-        function showMessage(message, type = 'error') {
-            hideMessage();
-            const messageElement = document.getElementById(type + 'Message');
-            messageElement.textContent = message;
-            messageElement.style.display = 'block';
+    function showMessage(message, type = 'error') {
+        hideMessage();
+        const messageElement = document.getElementById(type + 'Message');
+        messageElement.textContent = message;
+        messageElement.style.display = 'block';
+    }
+
+    function hideMessage() {
+        document.getElementById('errorMessage').style.display = 'none';
+        document.getElementById('successMessage').style.display = 'none';
+    }
+
+    function setLoading(loading) {
+        isLoading = loading;
+        const submitBtns = document.querySelectorAll('.submit-btn');
+        const googleBtn = document.querySelector('.google-btn');
+        const twitterBtn = document.getElementById('twitterBtn');
+
+        submitBtns.forEach(btn => {
+            btn.disabled = loading;
+            if (loading) {
+                btn.classList.add('loading-pulse');
+                btn.textContent = 'Processing...';
+            } else {
+                btn.classList.remove('loading-pulse');
+                btn.textContent = btn.id === 'signinForm' ? 'Sign In' : 'Create Account';
+            }
+        });
+
+        googleBtn.disabled = loading;
+        twitterBtn.disabled = loading;
+        if (loading) {
+            googleBtn.classList.add('loading-pulse');
+            twitterBtn.classList.add('loading-pulse');
+        } else {
+            googleBtn.classList.remove('loading-pulse');
+            twitterBtn.classList.remove('loading-pulse');
         }
+    }
 
-        function hideMessage() {
-            document.getElementById('errorMessage').style.display = 'none';
-            document.getElementById('successMessage').style.display = 'none';
-        }
+    async function notifyServerLogin(user) {
+        try {
+            const idToken = await user.getIdToken();
+            localStorage.setItem('idToken', idToken);
+            localStorage.setItem('uid', user.uid);
 
-        function setLoading(loading) {
-            isLoading = loading;
-            const submitBtns = document.querySelectorAll('.submit-btn');
-            const googleBtn = document.querySelector('.google-btn');
-            const twitterBtn = document.getElementById('twitterBtn');
-
-            submitBtns.forEach(btn => {
-                btn.disabled = loading;
-                if (loading) {
-                    btn.classList.add('loading-pulse');
-                    btn.textContent = 'Processing...';
-                } else {
-                    btn.classList.remove('loading-pulse');
-                    btn.textContent = btn.id === 'signinForm' ? 'Sign In' : 'Create Account';
+            const response = await fetch('http://localhost:3000/api/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${idToken}`
                 }
             });
 
-            googleBtn.disabled = loading;
-            twitterBtn.disabled = loading;
-            if (loading) {
-                googleBtn.classList.add('loading-pulse');
-                twitterBtn.classList.add('loading-pulse');
+            const result = await response.json();
+            if (!result.success) {
+                throw new Error(result.error || 'Failed to notify server');
+            }
+
+            return true;
+        } catch (error) {
+            console.error('Error notifying server:', error);
+            showMessage('Failed to initialize session: ' + error.message, 'error');
+            return false;
+        }
+    }
+
+    onAuthStateChanged(auth, async (user) => {
+        if (user) {
+            console.log('User is signed in:', user.email || user.providerData[0]?.email);
+            setLoading(true);
+            const success = await notifyServerLogin(user);
+            if (success) {
+                showMessage('Welcome back! Redirecting to your dashboard...', 'success');
+                setTimeout(() => {
+                    window.location.href = 'http://localhost:3000/';
+                }, 1500);
             } else {
-                googleBtn.classList.remove('loading-pulse');
-                twitterBtn.classList.remove('loading-pulse');
-            }
-        }
-
-        async function notifyServerLogin(user) {
-            try {
-                const idToken = await user.getIdToken();
-                localStorage.setItem('idToken', idToken);
-                localStorage.setItem('uid', user.uid);
-
-                const response = await fetch('http://localhost:3000/api/login', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${idToken}`
-                    }
-                });
-
-                const result = await response.json();
-                if (!result.success) {
-                    throw new Error(result.error || 'Failed to notify server');
-                }
-
-                return true;
-            } catch (error) {
-                console.error('Error notifying server:', error);
-                showMessage('Failed to initialize session: ' + error.message, 'error');
-                return false;
-            }
-        }
-
-        window.initiateTwitterAuth = async function() {
-            if (isLoading) return;
-
-            try {
-                setLoading(true);
-                const user = auth.currentUser;
-                if (!user) {
-                    showMessage('Please sign in first to connect with Twitter', 'error');
-                    return;
-                }
-
-                const idToken = await user.getIdToken();
-                const response = await fetch('http://localhost:3000/api/twitter-auth', {
-                    headers: {
-                        'Authorization': `Bearer ${idToken}`
-                    }
-                });
-
-                const result = await response.json();
-                if (result.success) {
-                    window.location.href = result.authUrl;
-                } else {
-                    throw new Error(result.error || 'Failed to initiate Twitter authentication');
-                }
-            } catch (error) {
-                console.error('Twitter auth error:', error);
-                showMessage('Failed to connect with Twitter: ' + error.message, 'error');
-            } finally {
                 setLoading(false);
             }
-        };
+        } else {
+            console.log('User is signed out');
+            localStorage.removeItem('idToken');
+            localStorage.removeItem('uid');
+        }
+    });
 
-        onAuthStateChanged(auth, async (user) => {
-            if (user) {
-                console.log('User is signed in:', user.email);
-                setLoading(true);
-                const success = await notifyServerLogin(user);
-                if (success) {
-                    showMessage('Welcome back! Redirecting to your dashboard...', 'success');
-                    setTimeout(() => {
-                        window.location.href = 'http://localhost:3000/';
-                    }, 1500);
-                } else {
-                    setLoading(false);
-                }
-            } else {
-                console.log('User is signed out');
-                localStorage.removeItem('idToken');
-                localStorage.removeItem('uid');
+    async function handleSignIn(email, password) {
+        try {
+            setLoading(true);
+            hideMessage();
+
+            const userCredential = await signInWithEmailAndPassword(auth, email, password);
+            const user = userCredential.user;
+
+            const success = await notifyServerLogin(user);
+            if (success) {
+                showMessage('Sign in successful! Welcome back.', 'success');
+                console.log('User signed in:', user.email);
             }
-        });
 
-        async function handleSignIn(email, password) {
-            try {
-                setLoading(true);
-                hideMessage();
-
-                const userCredential = await signInWithEmailAndPassword(auth, email, password);
-                const user = userCredential.user;
-
-                const success = await notifyServerLogin(user);
-                if (success) {
-                    showMessage('Sign in successful! Welcome back.', 'success');
-                    console.log('User signed in:', user.email);
-                }
-
-            } catch (error) {
-                console.error('Sign in error:', error);
-                let message = 'An error occurred during sign in';
-                switch (error.code) {
-                    case 'auth/user-not-found':
-                        message = 'No account found with this email address';
-                        break;
-                    case 'auth/wrong-password':
-                        message = 'Incorrect password. Please try again';
-                        break;
-                    case 'auth/invalid-email':
-                        message = 'Invalid email address format';
-                        break;
-                    case 'auth/user-disabled':
-                        message = 'This account has been disabled';
-                        break;
-                    case 'auth/too-many-requests':
-                        message = 'Too many failed attempts. Please try again later';
-                        break;
-                    case 'auth/invalid-credential':
-                        message = 'Invalid email or password';
-                        break;
-                }
-                showMessage(message, 'error');
-            } finally {
-                setLoading(false);
-                document.querySelector('#signinForm .submit-btn').textContent = 'Sign In';
+        } catch (error) {
+            console.error('Sign in error:', error);
+            let message = 'An error occurred during sign in';
+            switch (error.code) {
+                case 'auth/user-not-found':
+                    message = 'No account found with this email address';
+                    break;
+                case 'auth/wrong-password':
+                    message = 'Incorrect password. Please try again';
+                    break;
+                case 'auth/invalid-email':
+                    message = 'Invalid email address format';
+                    break;
+                case 'auth/user-disabled':
+                    message = 'This account has been disabled';
+                    break;
+                case 'auth/too-many-requests':
+                    message = 'Too many failed attempts. Please try again later';
+                    break;
+                case 'auth/invalid-credential':
+                    message = 'Invalid email or password';
+                    break;
             }
+            showMessage(message, 'error');
+        } finally {
+            setLoading(false);
+            document.querySelector('#signinForm .submit-btn').textContent = 'Sign In';
+        }
+    }
+
+    async function handleSignUp(name, email, password) {
+        try {
+            setLoading(true);
+            hideMessage();
+
+            const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+            const user = userCredential.user;
+
+            await updateProfile(user, { displayName: name });
+            const success = await notifyServerLogin(user);
+            if (success) {
+                showMessage('Account created successfully! Welcome to Tweet Generator!', 'success');
+                console.log('User signed up:', user.email);
+            }
+
+        } catch (error) {
+            console.error('Sign up error:', error);
+            let message = 'An error occurred during account creation';
+            switch (error.code) {
+                case 'auth/email-already-in-use':
+                    message = 'An account with this email already exists';
+                    break;
+                case 'auth/invalid-email':
+                    message = 'Invalid email address format';
+                    break;
+                case 'auth/weak-password':
+                    message = 'Password should be at least 6 characters long';
+                    break;
+                case 'auth/operation-not-allowed':
+                    message = 'Email/password accounts are not enabled';
+                    break;
+            }
+            showMessage(message, 'error');
+        } finally {
+            setLoading(false);
+            document.querySelector('#signupForm .submit-btn').textContent = 'Create Account';
+        }
+    }
+
+    window.signInWithGoogle = async function() {
+        if (isLoading) return;
+
+        try {
+            setLoading(true);
+            hideMessage();
+
+            const result = await signInWithPopup(auth, googleProvider);
+            const user = result.user;
+
+            const success = await notifyServerLogin(user);
+            if (success) {
+                showMessage('Google sign in successful! Welcome!', 'success');
+                console.log('User signed in with Google:', user.email);
+            }
+
+        } catch (error) {
+            console.error('Google sign in error:', error);
+            let message = 'An error occurred during Google sign in';
+            switch (error.code) {
+                case 'auth/popup-closed-by-user':
+                    message = 'Sign in cancelled';
+                    break;
+                case 'auth/popup-blocked':
+                    message = 'Popup blocked by browser. Please allow popups and try again';
+                    break;
+                case 'auth/account-exists-with-different-credential':
+                    message = 'An account already exists with this email';
+                    break;
+            }
+            showMessage(message, 'error');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    window.signInWithTwitter = async function() {
+        if (isLoading) return;
+
+        try {
+            setLoading(true);
+            hideMessage();
+
+            const result = await signInWithPopup(auth, twitterProvider);
+            const user = result.user;
+            const credential = TwitterAuthProvider.credentialFromResult(result);
+            console.log('🐦 [DEBUG] Twitter credential:', credential);
+
+            const success = await notifyServerLogin(user);
+            if (success) {
+                showMessage('Twitter sign in successful! Welcome!', 'success');
+                console.log('User signed in with Twitter:', user.providerData[0]?.email || 'No email provided');
+            }
+
+        } catch (error) {
+            console.error('Twitter sign in error:', error);
+            let message = 'An error occurred during Twitter sign in';
+            switch (error.code) {
+                case 'auth/popup-closed-by-user':
+                    message = 'Sign in cancelled';
+                    break;
+                case 'auth/popup-blocked':
+                    message = 'Popup blocked by browser. Please allow popups and try again';
+                    break;
+                case 'auth/account-exists-with-different-credential':
+                    message = 'An account already exists with this email';
+                    break;
+                case 'auth/cancelled-popup-request':
+                    message = 'Sign in request cancelled';
+                    break;
+            }
+            showMessage(message, 'error');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    window.showForgotPassword = async function() {
+        const email = prompt('Enter your email address to reset your password:');
+        if (!email) return;
+
+        try {
+            await sendPasswordResetEmail(auth, email);
+            showMessage('Password reset email sent! Check your inbox.', 'success');
+        } catch (error) {
+            console.error('Password reset error:', error);
+            let message = 'Error sending password reset email';
+            switch (error.code) {
+                case 'auth/user-not-found':
+                    message = 'No account found with this email address';
+                    break;
+                case 'auth/invalid-email':
+                    message = 'Invalid email address format';
+                    break;
+            }
+            showMessage(message, 'error');
+        }
+    };
+
+    document.getElementById('signinForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        if (isLoading) return;
+
+        const email = document.getElementById('signin-email').value.trim();
+        const password = document.getElementById('signin-password').value;
+
+        if (!email || !password) {
+            showMessage('Please fill in all fields', 'error');
+            return;
         }
 
-        async function handleSignUp(name, email, password) {
-            try {
-                setLoading(true);
-                hideMessage();
+        await handleSignIn(email, password);
+    });
 
-                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-                const user = userCredential.user;
+    document.getElementById('signupForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        if (isLoading) return;
 
-                await updateProfile(user, { displayName: name });
-                const success = await notifyServerLogin(user);
-                if (success) {
-                    showMessage('Account created successfully! Welcome to Tweet Generator!', 'success');
-                    console.log('User signed up:', user.email);
-                }
+        const name = document.getElementById('signup-name').value.trim();
+        const email = document.getElementById('signup-email').value.trim();
+        const password = document.getElementById('signup-password').value;
+        const confirmPassword = document.getElementById('signup-confirm').value;
 
-            } catch (error) {
-                console.error('Sign up error:', error);
-                let message = 'An error occurred during account creation';
-                switch (error.code) {
-                    case 'auth/email-already-in-use':
-                        message = 'An account with this email already exists';
-                        break;
-                    case 'auth/invalid-email':
-                        message = 'Invalid email address format';
-                        break;
-                    case 'auth/weak-password':
-                        message = 'Password should be at least 6 characters long';
-                        break;
-                    case 'auth/operation-not-allowed':
-                        message = 'Email/password accounts are not enabled';
-                        break;
-                }
-                showMessage(message, 'error');
-            } finally {
-                setLoading(false);
-                document.querySelector('#signupForm .submit-btn').textContent = 'Create Account';
-            }
+        if (!name || !email || !password || !confirmPassword) {
+            showMessage('Please fill in all fields', 'error');
+            return;
         }
 
-        window.signInWithGoogle = async function() {
-            if (isLoading) return;
+        if (password !== confirmPassword) {
+            showMessage('Passwords do not match', 'error');
+            return;
+        }
 
-            try {
-                setLoading(true);
-                hideMessage();
+        if (password.length < 6) {
+            showMessage('Password must be at least 6 characters long', 'error');
+            return;
+        }
 
-                const result = await signInWithPopup(auth, googleProvider);
-                const user = result.user;
+        await handleSignUp(name, email, password);
+    });
 
-                const success = await notifyServerLogin(user);
-                if (success) {
-                    showMessage('Google sign in successful! Welcome!', 'success');
-                    console.log('User signed in with Google:', user.email);
-                }
-
-            } catch (error) {
-                console.error('Google sign in error:', error);
-                let message = 'An error occurred during Google sign in';
-                switch (error.code) {
-                    case 'auth/popup-closed-by-user':
-                        message = 'Sign in cancelled';
-                        break;
-                    case 'auth/popup-blocked':
-                        message = 'Popup blocked by browser. Please allow popups and try again';
-                        break;
-                    case 'auth/account-exists-with-different-credential':
-                        message = 'An account already exists with this email';
-                        break;
-                }
-                showMessage(message, 'error');
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        window.showForgotPassword = async function() {
-            const email = prompt('Enter your email address to reset your password:');
-            if (!email) return;
-
-            try {
-                await sendPasswordResetEmail(auth, email);
-                showMessage('Password reset email sent! Check your inbox.', 'success');
-            } catch (error) {
-                console.error('Password reset error:', error);
-                let message = 'Error sending password reset email';
-                switch (error.code) {
-                    case 'auth/user-not-found':
-                        message = 'No account found with this email address';
-                        break;
-                    case 'auth/invalid-email':
-                        message = 'Invalid email address format';
-                        break;
-                }
-                showMessage(message, 'error');
-            }
-        };
-
-        document.getElementById('signinForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            if (isLoading) return;
-
-            const email = document.getElementById('signin-email').value.trim();
-            const password = document.getElementById('signin-password').value;
-
-            if (!email || !password) {
-                showMessage('Please fill in all fields', 'error');
-                return;
-            }
-
-            await handleSignIn(email, password);
-        });
-
-        document.getElementById('signupForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            if (isLoading) return;
-
-            const name = document.getElementById('signup-name').value.trim();
-            const email = document.getElementById('signup-email').value.trim();
-            const password = document.getElementById('signup-password').value;
-            const confirmPassword = document.getElementById('signup-confirm').value;
-
-            if (!name || !email || !password || !confirmPassword) {
-                showMessage('Please fill in all fields', 'error');
-                return;
-            }
-
-            if (password !== confirmPassword) {
-                showMessage('Passwords do not match', 'error');
-                return;
-            }
-
-            if (password.length < 6) {
-                showMessage('Password must be at least 6 characters long', 'error');
-                return;
-            }
-
-            await handleSignUp(name, email, password);
-        });
-
-        console.log('Firebase Authentication initialized successfully');
-    </script>
+    console.log('Firebase Authentication initialized successfully');
+</script>
 
     <script>
         function switchTab(tab) {
