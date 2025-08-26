@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premium Access - TwitterFlow</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background-color: #000;
+            color: #fff;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            min-height: 100vh;
+            padding: 20px 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .container {
+            max-width: 380px;
+            width: 100%;
+            margin: 0 auto;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .header h1 {
+            font-size: 24px;
+            font-weight: 300;
+            margin-bottom: 6px;
+            background: linear-gradient(135deg, #fff, #888);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .header p {
+            color: #888;
+            font-size: 14px;
+            margin-bottom: 12px;
+            line-height: 1.3;
+        }
+        .status {
+            color: #4ade80;
+            font-size: 11px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+        }
+        .status::before {
+            content: '🔒';
+        }
+        .user-info {
+            background: rgba(74, 222, 128, 0.1);
+            border: 1px solid #4ade80;
+            border-radius: 8px;
+            padding: 10px;
+            margin-bottom: 15px;
+            text-align: center;
+            display: none;
+        }
+        .user-info.show {
+            display: block;
+        }
+        .user-info .user-email {
+            color: #4ade80;
+            font-weight: 600;
+            font-size: 12px;
+        }
+        .plan-card {
+            background: linear-gradient(145deg, #111, #0a0a0a);
+            border: 2px solid #4ade80;
+            border-radius: 12px;
+            padding: 20px;
+            position: relative;
+            text-align: center;
+            box-shadow: 0 10px 20px rgba(74, 222, 128, 0.1);
+            margin-bottom: 15px;
+        }
+        .plan-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #4ade80, transparent);
+        }
+        .popular-badge {
+            position: absolute;
+            top: -1px;
+            right: 15px;
+            background: #4ade80;
+            color: #000;
+            padding: 4px 8px;
+            border-radius: 0 0 8px 8px;
+            font-size: 9px;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+        .plan-name {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #4ade80;
+        }
+        .plan-price {
+            margin-bottom: 12px;
+        }
+        .price-amount {
+            font-size: 36px;
+            font-weight: 300;
+            color: #fff;
+            line-height: 1;
+        }
+        .price-currency {
+            font-size: 20px;
+            vertical-align: top;
+            color: #888;
+        }
+        .price-period {
+            font-size: 12px;
+            color: #888;
+            margin-left: 4px;
+        }
+        .plan-description {
+            color: #ccc;
+            font-size: 12px;
+            margin-bottom: 16px;
+            line-height: 1.3;
+        }
+        .plan-features {
+            list-style: none;
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        .plan-features li {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 6px;
+            color: #ccc;
+            font-size: 12px;
+            padding: 4px 0;
+        }
+        .plan-features li::before {
+            content: '✓';
+            color: #4ade80;
+            font-weight: bold;
+            font-size: 14px;
+            width: 16px;
+            text-align: center;
+            flex-shrink: 0;
+        }
+        .subscribe-btn {
+            width: 100%;
+            background: #4ade80;
+            color: #000;
+            border: none;
+            border-radius: 8px;
+            padding: 12px 16px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 4px 12px rgba(74, 222, 128, 0.3);
+        }
+        .subscribe-btn:hover:not(:disabled) {
+            background: #22c55e;
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px rgba(74, 222, 128, 0.4);
+        }
+        .subscribe-btn:disabled {
+            background: #333;
+            color: #666;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        .subscribe-btn.loading {
+            position: relative;
+            color: transparent;
+        }
+        .subscribe-btn.loading::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 16px;
+            height: 16px;
+            margin: -8px 0 0 -8px;
+            border: 2px solid #666;
+            border-top: 2px solid #000;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .message {
+            border-radius: 6px;
+            padding: 8px 12px;
+            margin: 10px 0;
+            font-size: 12px;
+            display: none;
+            text-align: center;
+        }
+        .error-message {
+            background: rgba(248, 113, 113, 0.1);
+            border: 1px solid #f87171;
+            color: #f87171;
+        }
+        .success-message {
+            background: rgba(74, 222, 128, 0.1);
+            border: 1px solid #4ade80;
+            color: #4ade80;
+        }
+        .already-subscribed {
+            background: rgba(251, 191, 36, 0.1);
+            border: 1px solid #fbbf24;
+            color: #fbbf24;
+        }
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.9);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid #333;
+            border-top: 3px solid #4ade80;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @media (max-width: 480px) {
+            .container {
+                max-width: 320px;
+                padding: 0 5px;
+            }
+            .plan-card {
+                padding: 16px;
+            }
+            .price-amount {
+                font-size: 32px;
+            }
+            .header h1 {
+                font-size: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="loading-screen" id="loadingScreen">
+        <div class="loading-spinner"></div>
+    </div>
+
+    <div class="container">
+        <div class="header">
+            <h1>Unlock Premium</h1>
+            <p>AI-powered tweet generation</p>
+            <div class="status">Secure Payment</div>
+        </div>
+
+        <div class="user-info" id="userInfo">
+            <div class="user-email" id="userEmail"></div>
+        </div>
+
+        <div class="message error-message" id="errorMessage"></div>
+        <div class="message success-message" id="successMessage"></div>
+        <div class="message already-subscribed" id="alreadySubscribed">
+            You already have premium!
+        </div>
+
+        <div class="plan-card">
+            <div class="popular-badge">PREMIUM</div>
+
+            <h3 class="plan-name">Premium</h3>
+
+            <div class="plan-price">
+                <span class="price-amount">9</span>
+                <span class="price-currency">€</span>
+                <span class="price-period">99 /month</span>
+            </div>
+
+            <p class="plan-description">
+                Create engaging, viral-worthy tweets with AI
+            </p>
+
+            <ul class="plan-features">
+                <li>Unlimited AI tweets</li>
+                <li>Advanced customization</li>
+                <li>Multiple writing styles</li>
+                <li>Trending hashtags</li>
+                <li>Analytics tracking</li>
+                <li>Priority support</li>
+                <li>API access</li>
+            </ul>
+
+            <button class="subscribe-btn" onclick="createCheckout()" id="subscribeBtn">
+                Start Premium
+            </button>
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+
+    <script>
+        // Configuration Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyCh0EeCbrm-LzHYOJAYTuQlJJzTFBs-xjo",
+            authDomain: "ropainx-b13da.firebaseapp.com",
+            projectId: "ropainx-b13da",
+            storageBucket: "ropainx-b13da.firebasestorage.app",
+            messagingSenderId: "293729340264",
+            appId: "1:293729340264:web:89bbcdc6197a05520b64dd",
+            measurementId: "G-H3T6EF9E4H"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+
+        // Variables globales
+        let currentUser = null;
+        let userSubscriptionStatus = null;
+        let isLoading = false;
+
+        // Fonction pour afficher les messages
+        function showMessage(message, type = 'error') {
+            hideMessage();
+            const messageElement = document.getElementById(type + 'Message');
+            if (messageElement) {
+                messageElement.textContent = message;
+                messageElement.style.display = 'block';
+
+                if (type === 'success') {
+                    setTimeout(() => hideMessage(), 5000);
+                }
+            }
+        }
+
+        function hideMessage() {
+            document.getElementById('errorMessage').style.display = 'none';
+            document.getElementById('successMessage').style.display = 'none';
+            document.getElementById('alreadySubscribed').style.display = 'none';
+        }
+
+        function showLoading(loading) {
+            const loadingScreen = document.getElementById('loadingScreen');
+            const button = document.getElementById('subscribeBtn');
+
+            isLoading = loading;
+
+            if (loading) {
+                loadingScreen.style.display = 'flex';
+                button.disabled = true;
+                button.classList.add('loading');
+            } else {
+                loadingScreen.style.display = 'none';
+                button.disabled = false;
+                button.classList.remove('loading');
+            }
+        }
+
+        // Vérifier le statut d'abonnement
+        async function checkSubscriptionStatus() {
+            if (!currentUser) return;
+
+            try {
+                const token = await currentUser.getIdToken();
+                const response = await fetch('/api/subscription-status', {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    userSubscriptionStatus = data.status;
+
+                    if (data.status === 'premium') {
+                        document.getElementById('alreadySubscribed').style.display = 'block';
+                        document.getElementById('subscribeBtn').textContent = 'Already Premium';
+                        document.getElementById('subscribeBtn').disabled = true;
+                        return true;
+                    }
+                }
+            } catch (error) {
+                console.warn('Could not check subscription status:', error);
+            }
+            return false;
+        }
+
+        // Créer une session de checkout
+        async function createCheckout() {
+            if (isLoading) return;
+
+            try {
+                showLoading(true);
+                hideMessage();
+
+                if (!currentUser) {
+                    showMessage('Please log in to subscribe', 'error');
+                    return;
+                }
+
+                // Vérifier le statut d'abonnement
+                const isAlreadyPremium = await checkSubscriptionStatus();
+                if (isAlreadyPremium) {
+                    return;
+                }
+
+                const token = await currentUser.getIdToken();
+
+                const response = await fetch('/api/create-checkout', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        success_url: window.location.origin + '/success',
+                        cancel_url: window.location.href + '?canceled=true'
+                    })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.error || 'Failed to create checkout session');
+                }
+
+                if (data.success && data.checkout_url) {
+                    showMessage('Redirecting to payment...', 'success');
+                    setTimeout(() => {
+                        window.location.href = data.checkout_url;
+                    }, 1000);
+                } else {
+                    throw new Error('No checkout URL received');
+                }
+
+            } catch (error) {
+                console.error('Checkout creation error:', error);
+                showMessage(`Payment Error: ${error.message}`, 'error');
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        // Gestion de l'authentification Firebase
+        auth.onAuthStateChanged(async (user) => {
+            if (user) {
+                currentUser = user;
+                document.getElementById('userEmail').textContent = user.email;
+                document.getElementById('userInfo').classList.add('show');
+
+                // Vérifier le statut d'abonnement au chargement
+                await checkSubscriptionStatus();
+            } else {
+                showMessage('Please log in to access premium', 'error');
+                setTimeout(() => {
+                    window.location.href = '/';
+                }, 2000);
+            }
+        });
+
+        // Vérifier les paramètres URL au chargement
+        function checkUrlParams() {
+            const urlParams = new URLSearchParams(window.location.search);
+
+            if (urlParams.get('success') === 'true') {
+                showMessage('Payment successful! Welcome to Premium! 🎉', 'success');
+                window.history.replaceState({}, document.title, window.location.pathname);
+            } else if (urlParams.get('canceled') === 'true') {
+                showMessage('Payment canceled. Try again anytime.', 'error');
+                window.history.replaceState({}, document.title, window.location.pathname);
+            } else if (urlParams.get('error')) {
+                showMessage('Payment failed: ' + urlParams.get('error'), 'error');
+                window.history.replaceState({}, document.title, window.location.pathname);
+            }
+        }
+
+        // Initialisation
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('Premium payment page loaded');
+            checkUrlParams();
+        });
+    </script>
+</body>
+</html>
