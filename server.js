@@ -12,7 +12,9 @@ const { v4: uuidv4 } = require('uuid');
 const crypto = require('crypto');
 const admin = require('firebase-admin');
 require('dotenv').config();
-const serviceAccount = require('./firebase-service-account.json'); // Assuming local file for development
+const serviceAccount = process.env.FIREBASE_SERVICE_ACCOUNT
+  ? JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT)
+  : require('./firebase-service-account.json'); // Fallback pour local
 const BASE_URL = process.env.NODE_ENV === 'production'
   ? 'https://ropainx.onrender.com'
   : 'http://localhost:3000';
