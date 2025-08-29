@@ -181,7 +181,7 @@
  const isLocal = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
 
   // Définir l'URL cible en fonction
-  const baseURL = isLocal
+  const BASE_URL = isLocal
       ? "http://localhost:3000"   // ton serveur local (adapté au port que tu utilises)
       : "https://https://ropainx.onrender.com"; // ton serveur Render
 
