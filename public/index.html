@@ -141,7 +141,7 @@
         };
 
         const app = initializeApp(firebaseConfig);
-        window.auth = getAuth(app);
+        window.auth = auth;
 
         // Update user profile
         onAuthStateChanged(window.auth, (user) => {
@@ -183,7 +183,7 @@
   // Définir l'URL cible en fonction
   const BASE_URL = isLocal
       ? "http://localhost:3000"   // ton serveur local (adapté au port que tu utilises)
-      : "https://https://ropainx.onrender.com"; // ton serveur Render
+      : "https://ropainx.onrender.com"; // ton serveur Render
 
         function checkAuth() {
             const idToken = localStorage.getItem('idToken');
