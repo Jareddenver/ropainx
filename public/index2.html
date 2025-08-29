@@ -12,7 +12,7 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>Velco</h1>
+            <h1>Ropainx</h1>
             <p>Generate tweets automatically via extension</p>
             <div class="status" id="status">Checking connection...</div>
             <div class="user-profile" id="userProfile">
@@ -127,21 +127,32 @@
 
     <!-- Firebase SDK -->
     <script type="module">
-        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
-        import { getAuth, signOut, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
-
-        const firebaseConfig = {
-            apiKey: "AIzaSyCh0EeCbrm-LzHYOJAYTuQlJJzTFBs-xjo",
-            authDomain: "ropainx-b13da.firebaseapp.com",
-            projectId: "ropainx-b13da",
-            storageBucket: "ropainx-b13da.firebasestorage.app",
-            messagingSenderId: "293729340264",
-            appId: "1:293729340264:web:89bbcdc6197a05520b64dd",
-            measurementId: "G-H3T6EF9E4H"
-        };
-
+          import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js';
+  import { getAnalytics } from 'https://www.gstatic.com/firebasejs/10.13.1/firebase-analytics.js';
+  import {
+      getAuth,
+      signInWithEmailAndPassword,
+      createUserWithEmailAndPassword,
+      signInWithPopup,
+      GoogleAuthProvider,
+      TwitterAuthProvider,
+      sendPasswordResetEmail,
+      onAuthStateChanged,
+      updateProfile,
+      getIdToken
+  } from 'https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js';
+   const firebaseConfig = {
+        apiKey: "AIzaSyCh0EeCbrm-LzHYOJAYTuQlJJzTFBs-xjo",
+        authDomain: "ropainx-b13da.firebaseapp.com",
+        projectId: "ropainx-b13da",
+        storageBucket: "ropainx-b13da.firebasestorage.app",
+        messagingSenderId: "293729340264",
+        appId: "1:293729340264:web:89bbcdc6197a05520b64dd",
+        measurementId: "G-H3T6EF9E4H"
+    };
         const app = initializeApp(firebaseConfig);
-        window.auth = getAuth(app);
+      const auth = getAuth(app);
+window.auth = auth;
 
         // Update user profile
         onAuthStateChanged(window.auth, (user) => {
@@ -163,9 +174,7 @@
     <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3.11.0/dist/email.min.js"></script>
     <script>
         emailjs.init('xCP3VGGrqcLeoxGXX');
-        const BASE_URL = process.env.NODE_ENV === 'production'
-  ? 'https://ropainx.onrender.com'
-  : 'http://localhost:3000';
+        const BASE_URL = 'https://ropainx.onrender.com';
         let isLoading = false;
         let lastUpdateTime = 0;
         let selectedFilter = null;
@@ -191,16 +200,21 @@
             return true;
         }
 
-      async function refreshIdToken() {
+async function refreshIdToken() {
   try {
-    const user = auth.currentUser;
-    if (user) {
-      const idToken = await user.getIdToken(true);  // Force refresh
-      localStorage.setItem('idToken', idToken);
-      console.log('🔄 [DEBUG] Token rafraîchi');
+    const user = window.auth.currentUser;
+    if (!user) {
+      console.log('Utilisateur non connecté');
+      window.location.href = '/auth.html';
+      return;
     }
+
+    const idToken = await user.getIdToken(true);
+    localStorage.setItem('idToken', idToken);
+    console.log('Token rafraîchi');
   } catch (error) {
-    console.error('❌ [DEBUG] Erreur refresh token:', error);
+    console.error('Erreur refresh token:', error);
+    window.location.href = '/auth.html';
   }
 }
 
@@ -313,20 +327,33 @@ refreshIdToken();
     }
   }
 }
-// Use: const response = await fetchWithRetry(`${BASE_URL}/api/tweets-history`, { headers: { 'If-None-Match': lastETag } });
 
-        async function refreshIdToken() {
-  try {
-    const user = auth.currentUser;
-    if (user) {
-      const idToken = await user.getIdToken(true);  // Force refresh
-      localStorage.setItem('idToken', idToken);
-      console.log('🔄 [DEBUG] Token rafraîchi');
-    }
-  } catch (error) {
-    console.error('❌ [DEBUG] Erreur refresh token:', error);
-  }
-}
+
+      // Remplace ta fonction refreshIdToken par :
+// async function refreshIdToken() {
+//   try {
+//     // Vérifie si Firebase est initialisé
+//     if (typeof firebase === 'undefined') {
+//       console.error('Firebase pas initialisé');
+//       window.location.href = '/auth.html';
+//       return;
+//     }
+//
+//     const user = auth.currentUser;
+//     if (!user) {
+//       console.log('Utilisateur non connecté, redirection...');
+//       window.location.href = '/auth.html';
+//       return;
+//     }
+//
+//     const idToken = await user.getIdToken(true);
+//     localStorage.setItem('idToken', idToken);
+//     console.log('Token rafraîchi');
+//   } catch (error) {
+//     console.error('Erreur refresh token:', error);
+//     window.location.href = '/auth.html';
+//   }
+// }
 
 // Call on load and every 30min
 setInterval(refreshIdToken, 1800000);
@@ -371,28 +398,29 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 });
-            async function attemptFetch() {
-                try {
-                    const headers = {
-                        'Authorization': `Bearer ${localStorage.getItem('idToken')}`,
-                        ...(lastETag ? { 'If-None-Match': lastETag } : {})
-                    };
-                    const response = await fetchWithRetry(`${BASE_URL}/api/tweets-history`, { headers, signal: AbortSignal.timeout(5000) });
+           async function attemptFetch() {
+    try {
+        const token = localStorage.getItem('idToken');
+        console.log('DEBUG - Token:', token ? 'PRESENT' : 'ABSENT');
+        console.log('DEBUG - Token length:', token?.length || 0);
 
-                    if (response.status === 401) {
-                       window.location.href = '/auth.html';
-                        return null;
-                    }
-                    if (response.status === 304) {
-                        console.log('ℹ️ Data unchanged');
-                        return null;
-                    }
-                    if (!response.ok) throw new Error(`Network error: ${response.status}`);
+        const headers = {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+        };
 
-                    const data = await response.json();
-                    lastETag = response.headers.get('ETag');
-                    return data;
-                } catch (error) {
+        console.log('DEBUG - Headers being sent:', headers);
+
+        const response = await fetch(`${BASE_URL}/api/tweets-history`, {
+            method: 'GET',
+            headers: headers,
+            signal: AbortSignal.timeout(5000)
+        });
+
+        console.log('DEBUG - Response status:', response.status);
+        console.log('DEBUG - Response headers:', response.headers);
+
+        // Reste de ton code...catch (error) {
                     if (retryCount < maxRetries) {
                         retryCount++;
                         console.log(`Attempt ${retryCount}/${maxRetries} failed, retrying...`);
@@ -1556,7 +1584,7 @@ document.addEventListener('DOMContentLoaded', () => {
             try {
                 const headers = {
                     'Authorization': `Bearer ${localStorage.getItem('idToken')}`,
-                    ...(lastETag ? { 'If-None-Match': lastETag } : {})
+                   // ...(lastETag ? { 'If-None-Match': lastETag } : {})
                 };
                 const response = await fetchWithRetry(`${BASE_URL}/api/tweets`, { headers, signal: AbortSignal.timeout(5000) });
                 if (response.status === 401) {

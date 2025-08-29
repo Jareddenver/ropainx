@@ -128,16 +128,14 @@ const userData = new Map();
 const tweetIdCounters = new Map();
 
 // Chemins des fichiers pour la persistance des données utilisateur
-function getUserFilePaths(uid) {
-  return {
-    userStyleFile: path.join(__dirname, 'data', uid, 'userStyle.json'),
-    tweetsHistoryFile: path.join(__dirname, 'data', uid, 'tweetsHistory.json'),
-    scheduledTweetsFile: path.join(__dirname, 'data', uid, 'scheduledTweets.json'),
-    twitterTokensFile: path.join(__dirname, 'data', uid, 'twitterTokens.json'),
-  };
-}
 
-// Initialisation des données utilisateur
+// Remove these imports (if not used elsewhere):
+// const fs = require('fs').promises;
+// const path = require('path');
+
+// Remove getUserFilePaths function entirely.
+
+// Modified initializeUserData
 async function initializeUserData(uid) {
   if (!userData.has(uid)) {
     console.log(`🔄 Initialisation données pour UID: ${uid}`);
@@ -155,83 +153,73 @@ async function initializeUserData(uid) {
       scheduledTweets: [],
       twitterClient: null,
       twitterTokens: null,
-      twitterUser: null, // Stocke username, handle, profile_picture
+      twitterUser: null,
       dataLock: false,
       sessionStart: new Date(),
     });
     tweetIdCounters.set(uid, 1);
 
-    const { userStyleFile, tweetsHistoryFile, scheduledTweetsFile, twitterTokensFile } = getUserFilePaths(uid);
-    const userDir = path.dirname(userStyleFile);
-
+    const userRef = db.collection('users').doc(uid);
     try {
-      await fs.mkdir(userDir, { recursive: true });
-      console.log(`✅ Dossier créé: ${userDir}`);
-    } catch (error) {
-      console.error(`❌ Erreur création dossier ${userDir}:`, error.message, error.stack);
-      throw new Error(`Échec création dossier utilisateur: ${error.message}`);
-    }
+      const userDoc = await userRef.get();
+      if (userDoc.exists) {
+        const data = userDoc.data();
 
-    try {
-      const userStyleData = await fs.readFile(userStyleFile, 'utf8').catch(() => '{}');
-      userData.get(uid).userStyle = {
-        ...defaultUserStyle,
-        ...JSON.parse(userStyleData, (key, value) => {
-          if (key === 'vocabulary') return new Set(value);
-          return value;
-        }),
-      };
-      console.log(`✅ Loaded userStyle for user ${uid}`);
-    } catch (error) {
-      console.error(`❌ Erreur lecture ${userStyleFile}:`, error.message, error.stack);
-    }
+        // Load userStyle
+        userData.get(uid).userStyle = {
+          ...defaultUserStyle,
+          ...data.userStyle,
+          vocabulary: new Set(data.userStyle?.vocabulary || []),
+          lastModified: data.userStyle?.lastModified?.toDate()?.toISOString() || new Date().toISOString(),
+        };
 
-    try {
-      const tweetsHistoryData = await fs.readFile(tweetsHistoryFile, 'utf8').catch(() => '[]');
-      userData.get(uid).generatedTweetsHistory = JSON.parse(tweetsHistoryData);
-      if (userData.get(uid).generatedTweetsHistory.length > 0) {
-        const maxId = Math.max(...userData.get(uid).generatedTweetsHistory.map(t => parseInt(t.id) || 0));
-        if (maxId >= tweetIdCounters.get(uid)) tweetIdCounters.set(uid, maxId + 1);
-      }
-      console.log(`✅ Loaded tweetsHistory for user ${uid}`);
-    } catch (error) {
-      console.error(`❌ Erreur lecture ${tweetsHistoryFile}:`, error.message, error.stack);
-    }
-
-    try {
-      const scheduledTweetsData = await fs.readFile(scheduledTweetsFile, 'utf8').catch(() => '[]');
-      userData.get(uid).scheduledTweets = JSON.parse(scheduledTweetsData, (key, value) => {
-        if (key === 'datetime' || key === 'createdAt' || key === 'lastModified' || key === 'publishedAt' || key === 'failedAt') {
-          return value ? new Date(value) : null;
+        // Load generatedTweetsHistory
+        userData.get(uid).generatedTweetsHistory = (data.generatedTweetsHistory || []).map(tweet => ({
+          ...tweet,
+          timestamp: new Date(tweet.timestamp),
+          lastModified: new Date(tweet.lastModified),
+        }));
+        if (userData.get(uid).generatedTweetsHistory.length > 0) {
+          const maxId = Math.max(...userData.get(uid).generatedTweetsHistory.map(t => parseInt(t.id) || 0));
+          if (maxId >= tweetIdCounters.get(uid)) tweetIdCounters.set(uid, maxId + 1);
         }
-        return value;
-      });
-      if (userData.get(uid).scheduledTweets.length > 0) {
-        const maxId = Math.max(...userData.get(uid).scheduledTweets.map(t => t.id || 0));
-        if (maxId >= tweetIdCounters.get(uid)) tweetIdCounters.set(uid, maxId + 1);
-      }
-      console.log(`✅ Loaded scheduledTweets for user ${uid}`);
-    } catch (error) {
-      console.error(`❌ Erreur lecture ${scheduledTweetsFile}:`, error.message, error.stack);
-    }
 
-    try {
-      const twitterTokensData = await fs.readFile(twitterTokensFile, 'utf8').catch(() => null);
-      if (twitterTokensData) {
-        const tokens = JSON.parse(twitterTokensData);
-        const tokensObj = tokens.twitterTokens || tokens; // Compatibilité avec ancien format
-        userData.get(uid).twitterTokens = tokensObj;
-        userData.get(uid).twitterClient = new TwitterApi(tokensObj.access_token);
-        userData.get(uid).twitterUser = tokens.twitterUser || tokensObj.twitterUser;
-        console.log(`✅ Loaded Twitter tokens for user ${uid}`);
+        // Load scheduledTweets
+        userData.get(uid).scheduledTweets = (data.scheduledTweets || []).map(tweet => ({
+          ...tweet,
+          datetime: new Date(tweet.datetime),
+          createdAt: new Date(tweet.createdAt),
+          lastModified: new Date(tweet.lastModified),
+          publishedAt: tweet.publishedAt ? new Date(tweet.publishedAt) : null,
+          failedAt: tweet.failedAt ? new Date(tweet.failedAt) : null,
+        }));
+        if (userData.get(uid).scheduledTweets.length > 0) {
+          const maxId = Math.max(...userData.get(uid).scheduledTweets.map(t => t.id || 0));
+          if (maxId >= tweetIdCounters.get(uid)) tweetIdCounters.set(uid, maxId + 1);
+        }
+
+        // Load twitterTokens and related
+        if (data.twitterTokens) {
+          userData.get(uid).twitterTokens = data.twitterTokens;
+          userData.get(uid).twitterClient = new TwitterApi(data.twitterTokens.access_token);
+          userData.get(uid).twitterUser = data.twitterUser;
+        }
+
+        console.log(`✅ Données chargées depuis Firestore pour ${uid}`);
+      } else {
+        // Create default doc if none exists
+        await saveUserData(uid);
+        console.log(`✅ Document utilisateur créé dans Firestore pour ${uid}`);
       }
     } catch (error) {
-      console.error(`❌ Erreur lecture ${twitterTokensFile}:`, error.message, error.stack);
+      console.error(`❌ Erreur chargement données Firestore pour ${uid}:`, error.message, error.stack);
+      throw new Error(`Échec chargement données: ${error.message}`);
     }
   }
 }
 
-// Sauvegarde des données utilisateur
+// Modified saveUserData
+
 async function saveUserData(uid) {
   const user = userData.get(uid);
   if (!user || user.dataLock) {
@@ -239,31 +227,47 @@ async function saveUserData(uid) {
     return;
   }
   user.dataLock = true;
-  const { userStyleFile, tweetsHistoryFile, scheduledTweetsFile, twitterTokensFile } = getUserFilePaths(uid);
+  const userRef = db.collection('users').doc(uid);
+
+  // Fonction helper pour convertir en timestamp sûrement
+  const safeTimestamp = (dateValue) => {
+    if (!dateValue) return null;
+    const date = dateValue instanceof Date ? dateValue : new Date(dateValue);
+    return isNaN(date.getTime()) ? admin.firestore.Timestamp.now() : admin.firestore.Timestamp.fromDate(date);
+  };
+
   try {
-    await fs.mkdir(path.dirname(userStyleFile), { recursive: true });
-    await Promise.all([
-      fs.writeFile(userStyleFile, JSON.stringify(user.userStyle, (key, value) => {
-        if (value instanceof Set) return Array.from(value);
-        return value;
-      }, 2)),
-      fs.writeFile(tweetsHistoryFile, JSON.stringify(user.generatedTweetsHistory, null, 2)),
-      fs.writeFile(scheduledTweetsFile, JSON.stringify(user.scheduledTweets, null, 2)),
-      user.twitterTokens
-        ? fs.writeFile(twitterTokensFile, JSON.stringify({
-            twitterTokens: user.twitterTokens,
-            twitterUser: user.twitterUser,
-          }, null, 2))
-        : Promise.resolve(),
-    ]);
-    console.log(`✅ Données sauvegardées pour ${uid}`);
+    await userRef.set({
+      userStyle: {
+        ...user.userStyle,
+        vocabulary: Array.from(user.userStyle.vocabulary),
+        lastModified: safeTimestamp(user.userStyle.lastModified),
+      },
+      generatedTweetsHistory: user.generatedTweetsHistory.map(tweet => ({
+        ...tweet,
+        timestamp: safeTimestamp(tweet.timestamp),
+        lastModified: safeTimestamp(tweet.lastModified),
+      })),
+      scheduledTweets: user.scheduledTweets.map(tweet => ({
+        ...tweet,
+        datetime: safeTimestamp(tweet.datetime),
+        createdAt: safeTimestamp(tweet.createdAt),
+        lastModified: safeTimestamp(tweet.lastModified),
+        publishedAt: tweet.publishedAt ? safeTimestamp(tweet.publishedAt) : null,
+        failedAt: tweet.failedAt ? safeTimestamp(tweet.failedAt) : null,
+      })),
+      twitterTokens: user.twitterTokens,
+      twitterUser: user.twitterUser,
+    }, { merge: true });
+    console.log(`✅ Données sauvegardées dans Firestore pour ${uid}`);
   } catch (error) {
-    console.error(`❌ Erreur sauvegarde données pour ${uid}:`, error.message, error.stack);
+    console.error(`❌ Erreur sauvegarde données Firestore pour ${uid}:`, error.message, error.stack);
     throw new Error(`Échec sauvegarde données: ${error.message}`);
   } finally {
     user.dataLock = false;
   }
 }
+
 
 // Générer un ETag pour le cache
 function generateETag(data) {
@@ -324,16 +328,23 @@ const upload = multer({
 
 // Middleware pour vérifier le token Firebase
 async function verifyToken(req, res, next) {
+  console.log('DEBUG - All headers:', req.headers);
+  console.log('DEBUG - Authorization header:', req.headers.authorization);
+
   const authHeader = req.headers.authorization;
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    console.error('❌ Aucun ou mauvais en-tête Authorization', { path: req.path, authHeader });
+    console.error('ERREUR - Header auth manquant ou invalide:', authHeader);
     return res.status(401).json({ success: false, error: 'Aucun ou mauvais en-tête Authorization' });
   }
+  // Reste du code...
 
   const idToken = authHeader.split('Bearer ')[1];
   try {
     console.log(`🔍 Vérification token pour ${req.path}: ${idToken.substring(0, 10)}...`);
-    const decodedToken = await admin.auth().verifyIdToken(idToken, true);
+    const decodedToken = await Promise.race([
+  admin.auth().verifyIdToken(idToken, false),
+  new Promise((_, reject) => setTimeout(() => reject(new Error('Token verification timeout')), 5000))  // 5s timeout
+]);
     req.user = { uid: decodedToken.uid };
     console.log('✅ Token vérifié, UID:', decodedToken.uid);
     next();
@@ -495,11 +506,12 @@ app.use('/api/*', verifyToken);
 app.post('/api/login', async (req, res) => {
   try {
     const uid = req.user.uid;
-    console.log(`🔍 Connexion pour UID: ${uid}`);
+    console.log(`🔍 Connexion pour UID: ${uid} - Début initialisation données`);
     await initializeUserData(uid);
+    console.log(`✅ Initialisation données réussie pour ${uid}`);
     res.json({ success: true, message: 'Connexion réussie', uid });
   } catch (error) {
-    console.error(`❌ Erreur traitement connexion pour ${req.user.uid}:`, error.message, error.stack);
+    console.error(`❌ Erreur traitement connexion pour ${req.user?.uid || 'inconnu'}:`, error.message, error.stack);
     res.status(500).json({ success: false, error: 'Échec traitement connexion', details: error.message });
   }
 });
@@ -557,7 +569,7 @@ app.get('/api/twitter-auth', async (req, res) => {
     const codeVerifier = generateCodeVerifier();
     const codeChallenge = generateCodeChallenge(codeVerifier);
 
-    const authLink = await twitterOAuthClient.generateOAuth2AuthLink('${BASE_URL}/api/twitter-callback', {
+   const authLink = await twitterOAuthClient.generateOAuth2AuthLink(`${BASE_URL}/api/twitter-callback`, {
       scope: ['tweet.read', 'tweet.write', 'users.read', 'offline.access'],
       code_challenge: codeChallenge,
       code_challenge_method: 'S256',
@@ -604,7 +616,7 @@ app.get('/api/twitter-callback', async (req, res) => {
     const { client, accessToken, refreshToken, expiresIn } = await twitterOAuthClient.loginWithOAuth2({
       code,
       codeVerifier: user.codeVerifier,
-      redirectUri: '${BASE_URL}/api/twitter-callback',
+   redirectUri: `${BASE_URL}/api/twitter-callback`,
     });
 
     user.twitterTokens = {
@@ -628,7 +640,7 @@ app.get('/api/twitter-callback', async (req, res) => {
     delete user.twitterAuthState;
     delete user.codeVerifier;
     console.log(`✅ Auth Twitter complétée pour ${uid}, utilisateur: ${user.twitterUser.handle}`);
-    res.redirect('${BASE_URL}/');
+    res.redirect(`${BASE_URL}/`);
   } catch (error) {
     console.error(`❌ Erreur callback Twitter:`, error.message, error.stack);
     res.status(500).json({ success: false, error: 'Échec authentification Twitter', details: error.message });
@@ -683,6 +695,23 @@ app.post('/api/twitter-logout', async (req, res) => {
   } catch (error) {
     console.error(`❌ Erreur déconnexion Twitter pour ${uid}:`, error.message, error.stack);
     res.status(500).json({ success: false, error: 'Échec déconnexion Twitter', details: error.message });
+  }
+});
+// Add this route after the twitter-logout route
+app.get('/api/twitter-status', async (req, res) => {
+  try {
+    const uid = req.user.uid;
+    await initializeUserData(uid);
+    const user = userData.get(uid);
+
+    res.json({
+      success: true,
+      authenticated: !!user.twitterClient,
+      user: user.twitterUser || null
+    });
+  } catch (error) {
+    console.error(`Error checking Twitter status for ${req.user.uid}:`, error);
+    res.status(500).json({ success: false, error: 'Error checking Twitter status' });
   }
 });
 
@@ -1003,6 +1032,10 @@ Max 280 chars, no hashtags, no emojis, NO QUOTES .${styleContext}`,
 
     await saveUserData(uid);
     console.log(`✅ Tweets générés pour ${uid}: ${generatedTweets.length} avec templates: ${usedTemplates.join(', ')}`);
+
+if (user.generatedTweetsHistory.length > 0) {
+    user.lastETagUpdate = Date.now(); // Force un nouveau ETag
+}
     res.json({
       success: true,
       data: tweetData,
@@ -1017,7 +1050,37 @@ Max 280 chars, no hashtags, no emojis, NO QUOTES .${styleContext}`,
     });
   }
 });
+// Route pour ask-ai (général Q&A via Groq)
+app.post('/api/ask-ai', async (req, res) => {
+  try {
+    const { question } = req.body;
+    const uid = req.user.uid;
+    await initializeUserData(uid);
 
+    if (!question || question.trim() === '') {
+      return res.status(400).json({ success: false, error: 'question required' });
+    }
+
+    const prompt = `Answer this question concisely and helpfully: "${question.trim()}"`;
+
+    const response = await axiosInstance.post('https://api.groq.com/openai/v1/chat/completions', {
+      messages: [
+        { role: 'system', content: 'You are a helpful AI assistant. Answer directly and briefly.' },
+        { role: 'user', content: prompt }
+      ],
+      model: 'llama3-8b-8192',
+      temperature: 0.7,
+      max_tokens: 300
+    });
+
+    const answer = response.data.choices[0].message.content.trim();
+    res.json({ success: true, answer });
+
+  } catch (error) {
+    console.error(`❌ Error ask-ai for ${req.user.uid}:`, error.message, error.stack);
+    res.status(500).json({ success: false, error: 'Error processing question' });
+  }
+});
 // Route pour régénérer un tweet avec système de templates
 app.post('/api/regenerate-tweet', async (req, res) => {
   try {

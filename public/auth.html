@@ -365,23 +365,33 @@
             </div>
         </div>
     </div>
+    <script>
+  // Détecter si on est en local
+  const isLocal = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
 
+  // Définir l'URL cible en fonction
+  const baseURL = isLocal
+      ? "http://localhost:3000"   // ton serveur local (adapté au port que tu utilises)
+      : "https://ropainx.onrender.com"; // ton serveur Render
+
+
+</script>
     <!-- Firebase SDK -->
     <script type="module">
-    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
-    import { getAnalytics } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-analytics.js';
-    import {
-        getAuth,
-        signInWithEmailAndPassword,
-        createUserWithEmailAndPassword,
-        signInWithPopup,
-        GoogleAuthProvider,
-        TwitterAuthProvider,
-        sendPasswordResetEmail,
-        onAuthStateChanged,
-        updateProfile,
-        getIdToken
-    } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js';
+  import { getAnalytics } from 'https://www.gstatic.com/firebasejs/10.13.1/firebase-analytics.js';
+  import {
+      getAuth,
+      signInWithEmailAndPassword,
+      createUserWithEmailAndPassword,
+      signInWithPopup,
+      GoogleAuthProvider,
+      TwitterAuthProvider,
+      sendPasswordResetEmail,
+      onAuthStateChanged,
+      updateProfile,
+      getIdToken
+  } from 'https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js';
 
     const firebaseConfig = {
         apiKey: "AIzaSyCh0EeCbrm-LzHYOJAYTuQlJJzTFBs-xjo",
@@ -442,47 +452,52 @@
         }
     }
 
-    async function notifyServerLogin(user) {
-        try {
-            const idToken = await user.getIdToken();
-            localStorage.setItem('idToken', idToken);
-            localStorage.setItem('uid', user.uid);
+   async function notifyServerLogin(user) {
+    try {
+        const idToken = await user.getIdToken();
+        localStorage.setItem('idToken', idToken);
+        localStorage.setItem('uid', user.uid);
 
-            const response = await fetch('https://ropainx.onrender.com/api/login', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${idToken}`
-                }
-            });
-
-            const result = await response.json();
-            if (!result.success) {
-                throw new Error(result.error || 'Failed to notify server');
+        console.log('📤 Envoi token au serveur:', idToken.substring(0, 20) + '...');  // Log partiel du token
+        const response = await fetch(baseURL +"/api/login", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${idToken}`
             }
+        });
 
-            return true;
-        } catch (error) {
-            console.error('Error notifying server:', error);
-            showMessage('Failed to initialize session: ' + error.message, 'error');
-            return false;
+        const result = await response.json();
+        console.log('📥 Réponse serveur:', result);  // Log la réponse complète
+
+        if (!result.success) {
+            throw new Error(result.error || 'Failed to notify server');
         }
+
+        return true;
+    } catch (error) {
+        console.error('❌ Erreur notification serveur:', error.message, error.stack);
+        showMessage('Failed to initialize session: ' + error.message, 'error');
+        return false;
     }
+}
 
     onAuthStateChanged(auth, async (user) => {
-        if (user) {
-            console.log('User is signed in:', user.email || user.providerData[0]?.email);
-            setLoading(true);
-            const success = await notifyServerLogin(user);
-            if (success) {
-                showMessage('Welcome back! Redirecting to your dashboard...', 'success');
-                setTimeout(() => {
-                    window.location.href = 'https://ropainx.onrender.com/';
-                }, 1500);
-            } else {
-                setLoading(false);
-            }
+      if (user) {
+        console.log('User is signed in:', user.email || user.providerData[0]?.email);
+        setLoading(true);
+        const success = await notifyServerLogin(user);
+        if (success) {
+            console.log('✅ Notification serveur réussie, redirection en cours...');
+            showMessage('Welcome back! Redirecting to your dashboard...', 'success');
+            setTimeout(() => {
+                window.location.href = baseURL;
+            }, 1500);
         } else {
+            console.log('❌ Notification serveur échouée, pas de redirection');
+            setLoading(false);
+        }
+    } else {
             console.log('User is signed out');
             localStorage.removeItem('idToken');
             localStorage.removeItem('uid');
@@ -618,6 +633,10 @@
             const result = await signInWithPopup(auth, twitterProvider);
             const user = result.user;
             const credential = TwitterAuthProvider.credentialFromResult(result);
+console.log('🐦 [DEBUG] Twitter credential:', credential);
+if (!credential) {
+    throw new Error('No credential from Twitter result');
+}
             console.log('🐦 [DEBUG] Twitter credential:', credential);
 
             const success = await notifyServerLogin(user);

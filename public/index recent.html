@@ -127,21 +127,32 @@
 
     <!-- Firebase SDK -->
     <script type="module">
-        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
-        import { getAuth, signOut, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
-
-        const firebaseConfig = {
-            apiKey: "AIzaSyCh0EeCbrm-LzHYOJAYTuQlJJzTFBs-xjo",
-            authDomain: "ropainx-b13da.firebaseapp.com",
-            projectId: "ropainx-b13da",
-            storageBucket: "ropainx-b13da.firebasestorage.app",
-            messagingSenderId: "293729340264",
-            appId: "1:293729340264:web:89bbcdc6197a05520b64dd",
-            measurementId: "G-H3T6EF9E4H"
-        };
-
+          import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js';
+  import { getAnalytics } from 'https://www.gstatic.com/firebasejs/10.13.1/firebase-analytics.js';
+  import {
+      getAuth,
+      signInWithEmailAndPassword,
+      createUserWithEmailAndPassword,
+      signInWithPopup,
+      GoogleAuthProvider,
+      TwitterAuthProvider,
+      sendPasswordResetEmail,
+      onAuthStateChanged,
+      updateProfile,
+      getIdToken
+  } from 'https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js';
+   const firebaseConfig = {
+        apiKey: "AIzaSyCh0EeCbrm-LzHYOJAYTuQlJJzTFBs-xjo",
+        authDomain: "ropainx-b13da.firebaseapp.com",
+        projectId: "ropainx-b13da",
+        storageBucket: "ropainx-b13da.firebasestorage.app",
+        messagingSenderId: "293729340264",
+        appId: "1:293729340264:web:89bbcdc6197a05520b64dd",
+        measurementId: "G-H3T6EF9E4H"
+    };
         const app = initializeApp(firebaseConfig);
-        window.auth = getAuth(app);
+      const auth = getAuth(app);
+window.auth = auth;
 
         // Update user profile
         onAuthStateChanged(window.auth, (user) => {
@@ -163,9 +174,7 @@
     <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3.11.0/dist/email.min.js"></script>
     <script>
         emailjs.init('xCP3VGGrqcLeoxGXX');
-        const BASE_URL = process.env.NODE_ENV === 'production'
-  ? 'https://ropainx.onrender.com'
-  : 'http://localhost:3000';
+        const BASE_URL = 'http://localhost:3000';
         let isLoading = false;
         let lastUpdateTime = 0;
         let selectedFilter = null;
@@ -191,16 +200,21 @@
             return true;
         }
 
-      async function refreshIdToken() {
+async function refreshIdToken() {
   try {
-    const user = auth.currentUser;
-    if (user) {
-      const idToken = await user.getIdToken(true);  // Force refresh
-      localStorage.setItem('idToken', idToken);
-      console.log('🔄 [DEBUG] Token rafraîchi');
+    const user = window.auth.currentUser;
+    if (!user) {
+      console.log('Utilisateur non connecté');
+      window.location.href = '/auth.html';
+      return;
     }
+
+    const idToken = await user.getIdToken(true);
+    localStorage.setItem('idToken', idToken);
+    console.log('Token rafraîchi');
   } catch (error) {
-    console.error('❌ [DEBUG] Erreur refresh token:', error);
+    console.error('Erreur refresh token:', error);
+    window.location.href = '/auth.html';
   }
 }
 
@@ -315,22 +329,8 @@ refreshIdToken();
 }
 // Use: const response = await fetchWithRetry(`${BASE_URL}/api/tweets-history`, { headers: { 'If-None-Match': lastETag } });
 
-        async function refreshIdToken() {
-  try {
-    const user = auth.currentUser;
-    if (user) {
-      const idToken = await user.getIdToken(true);  // Force refresh
-      localStorage.setItem('idToken', idToken);
-      console.log('🔄 [DEBUG] Token rafraîchi');
-    }
-  } catch (error) {
-    console.error('❌ [DEBUG] Erreur refresh token:', error);
-  }
-}
 
-// Call on load and every 30min
-setInterval(refreshIdToken, 1800000);
-refreshIdToken();
+
 
         async function loadTweets(isManual = false) {
             if (!checkAuth()) return;
@@ -353,81 +353,50 @@ refreshIdToken();
 
             const maxRetries = 3;
             let retryCount = 0;
-document.addEventListener('DOMContentLoaded', () => {
-  firebase.auth().onAuthStateChanged(async (user) => {
-    if (user) {
-      console.log("✅ Utilisateur connecté:", user.email);
 
-      // Stocker / rafraîchir le token Firebase
-      const idToken = await user.getIdToken(true);
-      localStorage.setItem('idToken', idToken);
 
-      // Charger le dashboard
-      initDashboard();
+async function attemptFetch() {
+    try {
+        const token = localStorage.getItem('idToken');
+        console.log('DEBUG - Token:', token ? 'PRESENT' : 'ABSENT');
+        console.log('DEBUG - Token length:', token?.length || 0);
 
-    } else {
-      console.log("❌ Aucun utilisateur connecté, redirection vers login");
-      window.location.href = '/auth.html'; // 👉 crée une page simple avec boutons Google/Twitter
-    }
-  });
-});
-            async function attemptFetch() {
-                try {
-                    const headers = {
-                        'Authorization': `Bearer ${localStorage.getItem('idToken')}`,
-                        ...(lastETag ? { 'If-None-Match': lastETag } : {})
-                    };
-                    const response = await fetchWithRetry(`${BASE_URL}/api/tweets-history`, { headers, signal: AbortSignal.timeout(5000) });
+        const headers = {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+        };
 
-                    if (response.status === 401) {
-                       window.location.href = '/auth.html';
-                        return null;
-                    }
-                    if (response.status === 304) {
-                        console.log('ℹ️ Data unchanged');
-                        return null;
-                    }
-                    if (!response.ok) throw new Error(`Network error: ${response.status}`);
+        console.log('DEBUG - Headers being sent:', headers);
 
-                    const data = await response.json();
-                    lastETag = response.headers.get('ETag');
-                    return data;
-                } catch (error) {
-                    if (retryCount < maxRetries) {
-                        retryCount++;
-                        console.log(`Attempt ${retryCount}/${maxRetries} failed, retrying...`);
-                        await new Promise(resolve => setTimeout(resolve, 1000 * retryCount));
-                        return attemptFetch();
-                    }
-                    throw error;
-                }
-            }
+        const response = await fetch(`${BASE_URL}/api/tweets-history`, {
+            method: 'GET',
+            headers: headers,
+            signal: AbortSignal.timeout(5000)
+        });
 
-            try {
-                const data = await attemptFetch();
-                if (data && data.success && data.data && data.data.length > 0) {
-                    tweetsDataCache = data.data;
-                    await loadScheduledTweets();
-                    displayTweets(tweetsDataCache);
-                    lastUpdateTime = Date.now();
-                } else if (!data) {
-                    return;
-                } else {
-                    tweetsDataCache = [];
-                    container.innerHTML = '<div class="no-tweets">No tweets generated.<br>Use the extension on Twitter/X!</div>';
-                }
-            } catch (error) {
-                console.error('Tweet loading error:', error);
-                container.innerHTML = '<div class="no-tweets">Tweet loading error.<br>Check if the server is working.</div>';
-                showNotification('Tweet loading error.');
-            } finally {
-                isLoading = false;
-                if (isManual) {
-                    refreshBtn.disabled = false;
-                    refreshBtn.textContent = 'Refresh';
-                }
-            }
+        console.log('DEBUG - Response status:', response.status);
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
         }
+
+        const data = await response.json();
+        return data;
+
+    } catch (error) {
+        console.error('DEBUG - attemptFetch error:', error);
+
+        if (retryCount < maxRetries) {
+            retryCount++;
+            console.log(`Attempt ${retryCount}/${maxRetries} failed, retrying...`);
+            await new Promise(resolve => setTimeout(resolve, 1000 * retryCount));
+            return attemptFetch();
+        }
+
+        throw error;
+    }
+}
+
 
         function displayTweets(tweetsData) {
             const container = document.getElementById('tweets-container');
@@ -1304,20 +1273,46 @@ async function sendTwitterTokensToServer(user, credential) {
 async function authenticateTwitter() {
   try {
     console.log('🔄 Début authentification Twitter...');
-
-    // Récupérer le token Firebase
     const token = localStorage.getItem('idToken');
-    if (!token) {
-      throw new Error('Utilisateur non authentifié avec Firebase');
+    if (!token) throw new Error('Utilisateur non authentifié avec Firebase');
+
+    const response = await fetch(`${BASE_URL}/api/auth/twitter`, { // ← BASE_URL ajoutée
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      }
+    });
+
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.error || 'Erreur lors de la demande d\'authentification');
+    if (!data.success || !data.authUrl) throw new Error('URL d\'authentification non reçue');
+
+    const authUrlWithToken = `${data.authUrl}&firebase_token=${encodeURIComponent(token)}`;
+
+    const popup = window.open(
+      authUrlWithToken, // ← ouvrir la bonne URL
+      'twitter-auth',
+      'width=600,height=700,scrollbars=yes,resizable=yes'
+    );
+    if (!popup) {
+      showNotification('Popup bloquée. Autorisez les popups pour ce site.', 'error');
+      return;
     }
 
-   const response = await fetch('/api/auth/twitter', {
-  method: 'GET',
-  headers: {
-    'Authorization': `Bearer ${token}`,
-    'Content-Type': 'application/json'
+    const checkClosed = setInterval(() => {
+      if (popup.closed) {
+        clearInterval(checkClosed);
+        console.log('🔄 Popup fermée, vérification du statut...');
+        checkTwitterStatus();
+      }
+    }, 1000);
+  } catch (error) {
+    console.error('❌ Erreur authentification Twitter:', error.message);
+    showNotification(`Erreur d'authentification Twitter: ${error.message}`, 'error');
   }
-});
+}
+
 
     const data = await response.json();
 
@@ -1350,11 +1345,11 @@ async function authenticateTwitter() {
       }
     }, 1000);
 
-  } catch (error) {
-    console.error('❌ Erreur authentification Twitter:', error.message);
-    showNotification(`Erreur d'authentification Twitter: ${error.message}`, 'error');
-  }
-}
+//   } catch (error) {
+//     console.error('❌ Erreur authentification Twitter:', error.message);
+//     showNotification(`Erreur d'authentification Twitter: ${error.message}`, 'error');
+//   }
+// }
 
 // Fonction pour vérifier le statut d'authentification Twitter
 async function checkTwitterStatus() {
@@ -1381,38 +1376,7 @@ console.log('🔍 [DEBUG] Vérification statut Twitter...');
         console.error('❌ [DEBUG] Erreur vérification Twitter:', error);
         return { authenticated: false };
     }
-  // try {
-  //   const token = localStorage.getItem('idToken');
-  //   if (!token) {
-  //     console.log('❌ Pas de token Firebase');
-  //     return;
-  //   }
-  //
-  //   const response = await fetch('/api/twitter-status', {
-  //     headers: {
-  //       'Authorization': `Bearer ${token}`
-  //     }
-  //   });
-  //
-  //   const data = await response.json();
-  //   console.log('📊 Statut Twitter:', data);
-  //
-  //   if (data.authenticated && data.user) {
-  //     console.log('✅ Authentification Twitter réussie:', data.user);
-  //     // Mettre à jour l'interface utilisateur
-  //     updateTwitterUI(data.user);
-  //   } else {
-  //     console.log('❌ Pas authentifié sur Twitter');
-  //     updateTwitterUI(null);
-  //   }
-  // } catch (error) {
-  //   console.error('❌ Erreur vérification statut Twitter:', error.message);
-  // }
 }
-//new
-
-
-//new
 
 // Fonction pour mettre à jour l'interface utilisateur Twitter
 function updateTwitterUI(user) {
@@ -1454,11 +1418,9 @@ function updateTwitterUI(user) {
 async function disconnectTwitter() {
   try {
     const token = localStorage.getItem('idToken');
-    if (!token) {
-      throw new Error('Token Firebase manquant');
-    }
+    if (!token) throw new Error('Token Firebase manquant');
 
-    const response = await fetch('/api/twitter-logout', {
+    const response = await fetch(`${BASE_URL}/api/twitter-logout`, { // ← BASE_URL ajoutée
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${token}`,
@@ -1467,7 +1429,6 @@ async function disconnectTwitter() {
     });
 
     const data = await response.json();
-
     if (data.success) {
       console.log('✅ Déconnexion Twitter réussie');
       updateTwitterUI(null);
@@ -1479,79 +1440,50 @@ async function disconnectTwitter() {
     showNotification(`Erreur de déconnexion: ${error.message}`, 'error');
   }
 }
-async function checkTwitterConnectionStatus() {
-    console.log('🔍 [DEBUG] Vérification statut Twitter...');
-    try {
-        const response = await fetch(`${BASE_URL}/api/twitter-status`, {
-            headers: { 'Authorization': `Bearer ${localStorage.getItem('idToken')}` }
-        });
-        const status = await response.json();
-        console.log('📊 [DEBUG] Statut Twitter:', status);
 
-        if (status.authenticated && status.user) {
-            console.log('✅ [DEBUG] Twitter connecté:', status.user.handle);
-            // Mise à jour UI (ex: bouton -> Déconnecter)
-            const twitterBtn = document.createElement('button');
-            twitterBtn.id = 'twitter-auth-btn';
-            twitterBtn.textContent = 'Déconnexion Twitter';
-            twitterBtn.onclick = disconnectTwitter;
-            document.querySelector('.header').appendChild(twitterBtn);
-            // Charge tweets si connecté
-            loadTweets(true);
-        } else {
-            console.log('⚠️ [DEBUG] Twitter non connecté');
-            const twitterBtn = document.createElement('button');
-            twitterBtn.id = 'twitter-auth-btn';
-            twitterBtn.textContent = 'Connexion Twitter';
-            twitterBtn.onclick = authenticateTwitter;
-            document.querySelector('.header').appendChild(twitterBtn);
-            showNotification('Connectez Twitter pour scheduler des tweets.', 'warning');
-        }
-    } catch (error) {
-        console.error('❌ [DEBUG] Erreur check Twitter:', error);
-        showNotification('Erreur vérification Twitter.', 'error');
+async function checkTwitterConnectionStatus() {
+  console.log('🔍 [DEBUG] Vérification statut Twitter...');
+  try {
+    const response = await fetch(`${BASE_URL}/api/twitter-status`, {
+      headers: { 'Authorization': `Bearer ${localStorage.getItem('idToken')}` }
+    });
+    const status = await response.json();
+    console.log('📊 [DEBUG] Statut Twitter:', status);
+
+    let twitterBtn = document.getElementById('twitter-auth-btn');
+    if (!twitterBtn) {
+      twitterBtn = document.createElement('button');
+      twitterBtn.id = 'twitter-auth-btn';
+      document.querySelector('.header')?.appendChild(twitterBtn);
     }
+
+    if (status.authenticated && status.user) {
+      console.log('✅ [DEBUG] Twitter connecté:', status.user.handle);
+      twitterBtn.textContent = 'Déconnexion Twitter';
+      twitterBtn.onclick = disconnectTwitter;
+      // updateTwitterUI(status.user); // optionnel
+      // Charger tweets si connecté
+      loadTweets(true);
+    } else {
+      console.log('⚠️ [DEBUG] Twitter non connecté');
+      twitterBtn.textContent = 'Connexion Twitter';
+      twitterBtn.onclick = authenticateTwitter;
+      // updateTwitterUI(null); // optionnel
+      showNotification('Connectez Twitter pour scheduler des tweets.', 'warning');
+    }
+  } catch (error) {
+    console.error('❌ [DEBUG] Erreur check Twitter:', error);
+    showNotification('Erreur vérification Twitter.', 'error');
+  }
 }
+
 
 // Appel au load
 checkTwitterConnectionStatus();
-async function fetchWithAut(url, options = {}) {
-    try {
-        options.headers = { ...options.headers, 'Authorization': `Bearer ${localStorage.getItem('idToken')}` };
-        let response = await fetch(url, options);
-        if (response.status === 401) {
-            await refreshIdToken();
-            options.headers['Authorization'] = `Bearer ${localStorage.getItem('idToken')}`;
-            response = await fetch(url, options); // Retry once
-        }
-        return response;
-    } catch (error) {
-        throw error;
-    }
-}
+
 
 // Vérifier le statut au chargement de la page
-document.addEventListener('DOMContentLoaded', () => {
-  // Vérifier les paramètres URL pour les retours d'authentification
-  const urlParams = new URLSearchParams(window.location.search);
-  const twitterAuth = urlParams.get('twitter_auth');
 
-  if (twitterAuth === 'success') {
-    console.log('✅ Retour d\'authentification Twitter réussie');
-    setTimeout(checkTwitterStatus, 1000);
-    // Nettoyer l'URL
-    window.history.replaceState({}, document.title, window.location.pathname);
-  } else if (twitterAuth === 'error') {
-    const message = urlParams.get('message') || 'Erreur inconnue';
-    console.error('❌ Erreur d\'authentification Twitter:', message);
-    showNotification(`Erreur d'authentification Twitter: ${message}`, 'error');
-    // Nettoyer l'URL
-    window.history.replaceState({}, document.title, window.location.pathname);
-  }
-
-  // Vérifier le statut initial
-  checkTwitterStatus();
-});
         async function loadScheduledTweets() {
             try {
                 const headers = {
@@ -1773,92 +1705,91 @@ document.addEventListener('DOMContentLoaded', () => {
             updateStyleProgress();
         }
 
-        document.addEventListener('DOMContentLoaded', () => {
+  document.addEventListener('DOMContentLoaded', async () => {
+  console.log('🚀 [DEBUG] Page index.html chargée');
 
-        const urlParams = new URLSearchParams(window.location.search);
-    const twitterAuth = urlParams.get('twitter_auth');
+  // Vérifier auth Firebase
+  firebase.auth().onAuthStateChanged(async (user) => {
+    if (user) {
+      console.log("✅ Utilisateur connecté:", user.email);
 
-    if (twitterAuth === 'success') {
-        console.log('🎉 [DEBUG] Retour auth Twitter réussi !');
-        showNotification('Twitter connecté avec succès !', 'success');
-        // Nettoyer l'URL
-        window.history.replaceState({}, document.title, window.location.pathname);
-    } else if (twitterAuth === 'error') {
-        console.log('❌ [DEBUG] Erreur auth Twitter');
-        showNotification('Erreur lors de la connexion Twitter', 'error');
-        window.history.replaceState({}, document.title, window.location.pathname);
+      const idToken = await user.getIdToken(true);
+      localStorage.setItem('idToken', idToken);
+
+      initDashboard();
+    } else {
+      console.log("❌ Aucun utilisateur connecté, redirection vers login");
+      window.location.href = '/auth.html';
+      return;
     }
+  });
 
-    // FORCER le rechargement des données
-    console.log('🔄 [DEBUG] Rechargement forcé des données...');
-    /*await*/ checkTwitterConnectionStatus();
-        console.log('🚀 [DEBUG] Page index.html chargée');
+  // Vérifier les paramètres URL (retour auth Twitter)
+  const urlParams = new URLSearchParams(window.location.search);
+  const twitterAuth = urlParams.get('twitter_auth');
 
-            if (!checkAuth()) return;
+  if (twitterAuth === 'success') {
+    console.log('🎉 [DEBUG] Retour auth Twitter réussi !');
+    showNotification('Twitter connecté avec succès !', 'success');
+    setTimeout(checkTwitterStatus, 1000);
+    window.history.replaceState({}, document.title, window.location.pathname);
+  } else if (twitterAuth === 'error') {
+    const message = urlParams.get('message') || 'Erreur inconnue';
+    console.error('❌ Erreur d\'authentification Twitter:', message);
+    showNotification(`Erreur d'authentification Twitter: ${message}`, 'error');
+    window.history.replaceState({}, document.title, window.location.pathname);
+  }
 
-            setupFilters();
-            setupCustomInput();
-              // Vérifier si on revient de l'auth Twitter
-    // const urlParams = new URLSearchParams(window.location.search);
-    // const twitterAuth = urlParams.get('twitter_auth');
+  if (!checkAuth()) return;
 
-    if (twitterAuth === 'success') {
-        console.log('🎉 [DEBUG] Retour auth Twitter réussi !');
-        showNotification('Twitter connecté avec succès !', 'success');
-        // Nettoyer l'URL
-        window.history.replaceState({}, document.title, window.location.pathname);
-    } else if (twitterAuth === 'error') {
-        console.log('❌ [DEBUG] Erreur auth Twitter');
-        showNotification('Erreur lors de la connexion Twitter', 'error');
-        window.history.replaceState({}, document.title, window.location.pathname);
+  setupFilters();
+  setupCustomInput();
+
+  const moreBtn = document.getElementById('moreBtn');
+  const dropdownMenu = document.getElementById('dropdownMenu');
+  moreBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    dropdownMenu.classList.toggle('show');
+  });
+  document.addEventListener('click', (e) => {
+    if (!moreBtn.contains(e.target) && !dropdownMenu.contains(e.target)) {
+      dropdownMenu.classList.remove('show');
     }
+  });
+  document.getElementById('dropdownLogout').addEventListener('click', () => {
+    dropdownMenu.classList.remove('show');
+    handleLogout();
+  });
 
-    // Vérifier le statut Twitter
-    /*await*/ checkTwitterConnectionStatus();
+  const refreshBtn = document.getElementById('refreshBtn');
+  if (refreshBtn) {
+    refreshBtn.addEventListener('click', () => loadTweets(true));
+  }
 
-            const moreBtn = document.getElementById('moreBtn');
-            const dropdownMenu = document.getElementById('dropdownMenu');
-            moreBtn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                dropdownMenu.classList.toggle('show');
-            });
-            document.addEventListener('click', (e) => {
-                if (!moreBtn.contains(e.target) && !dropdownMenu.contains(e.target)) {
-                    dropdownMenu.classList.remove('show');
-                }
-            });
-            document.getElementById('dropdownLogout').addEventListener('click', () => {
-                dropdownMenu.classList.remove('show');
-                handleLogout();
-            });
+  const btn = document.getElementById('twitter-auth-btn');
+  if (btn) btn.addEventListener('click', authenticateTwitter);
 
-            document.getElementById('refreshBtn').addEventListener('click', () => loadTweets(true));
+  await checkServerStatus();
+  await loadTweets();
+  fetchUserStats();
+  checkTwitterStatus();
 
-            checkServerStatus().then(() => {
-                loadTweets();
-                fetchUserStats();
-            });
-            setInterval(() => loadTweets(), 60000);
-            setInterval(refreshIdToken, 1800000);
-              document.getElementById('twitter-auth-btn').addEventListener('click', authenticateTwitter);
-    checkTwitterStatus();
-        });
+  setInterval(() => loadTweets(), 60000);
+  setInterval(refreshIdToken, 1800000);
 
-          const stickers = ["st1.png", "st2.png", "st3.png"];
+  // Stickers
+  const stickers = ["st1.png", "st2.png", "st3.png"];
+  const randomSticker = stickers[Math.floor(Math.random() * stickers.length)];
+  const img = document.createElement("img");
+  img.src = randomSticker;
+  img.className = "sticker";
+  const profileSection = document.querySelector(".profile-section");
+  if (profileSection) {
+    profileSection.appendChild(img);
+  }
 
-    // Choisir un sticker aléatoire
-    const randomSticker = stickers[Math.floor(Math.random() * stickers.length)];
+}); // ✅ bien fermé
 
-    // Créer l'élément image
-    const img = document.createElement("img");
-    img.src = randomSticker;
-    img.className = "sticker";
-
-    // Ajouter l'image au profil
-    const profileSection = document.querySelector(".profile-section");
-    if (profileSection) {
-        profileSection.appendChild(img);
-    }
-    </script>
+</script>
 </body>
 </html>
