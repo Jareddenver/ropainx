@@ -1,10 +1,10 @@
 @font-face {
-    font-family: 'Chunkyline';
-    src: url('./Chunkyline.ttf');
+    font-family: 'allright';
+    src: url('./allright.ttf');
 }
 
 *{
-font-family: 'Chunkyline';
+font-family: 'allright';
 font-weight: lighter;
 margin: 0;
 padding: 0;
@@ -422,3 +422,254 @@ footer p {
     font-size: 1em;
     color: #555;
 }
+ .how-it-works-section {
+            padding: 80px 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .section-title {
+            font-size: 38px;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-bottom: 20px;
+            line-height: 1.2;
+        }
+
+        .section-subtitle {
+            font-size: 18px;
+            color: #666;
+            line-height: 1.5;
+            max-width: 600px;
+            margin: 0 auto 40px;
+        }
+
+        .cta-button {
+            background: #ff5722;
+            color: white;
+            padding: 16px 32px;
+            border: none;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .cta-button:hover {
+            background: #e64a19;
+        }
+
+        .user-types {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            margin: 40px 0 60px;
+            flex-wrap: wrap;
+        }
+
+        .user-type {
+            padding: 12px 24px;
+            border-radius: 25px;
+            font-size: 14px;
+            font-weight: 500;
+            border: 2px solid #e0e0e0;
+            background: white;
+            color: #666;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .user-type.active {
+            border-color: #ff5722;
+            color: #ff5722;
+        }
+
+        .user-type::before {
+            content: "👤";
+            font-size: 16px;
+        }
+
+        .user-type.fitness::before {
+            content: "💪";
+        }
+
+        .user-type.creator::before {
+            content: "🎬";
+        }
+
+        .user-type.marketing::before {
+            content: "📢";
+        }
+
+        .steps-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 60px;
+            margin-top: 60px;
+        }
+
+        .step {
+            text-align: center;
+        }
+
+        .step-visual {
+            margin-bottom: 40px;
+            height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .step-1 .step-visual {
+            background: linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 100%);
+            border-radius: 20px;
+            padding: 40px;
+        }
+
+        .step-2 .step-visual {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .video-card {
+            width: 80px;
+            height: 120px;
+            border-radius: 12px;
+            background-size: cover;
+            background-position: center;
+            position: relative;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .video-card-1 {
+            background: linear-gradient(45deg, #4a5568, #718096);
+        }
+
+        .video-card-2 {
+            background: linear-gradient(45deg, #3182ce, #4299e1);
+        }
+
+        .video-card-3 {
+            background: linear-gradient(45deg, #553c9a, #805ad5);
+        }
+
+        .video-stats {
+            position: absolute;
+            bottom: 4px;
+            left: 4px;
+            right: 4px;
+            background: rgba(0,0,0,0.7);
+            color: white;
+            font-size: 10px;
+            padding: 2px 4px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            gap: 2px;
+        }
+
+        .step-3 .step-visual {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .mobile-mockup {
+            width: 120px;
+            height: 200px;
+            background: linear-gradient(135deg, #ff6b35, #f7931e);
+            border-radius: 25px;
+            position: relative;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+
+        .mobile-time {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(0,0,0,0.3);
+            padding: 2px 6px;
+            border-radius: 8px;
+            font-size: 10px;
+            font-weight: bold;
+        }
+
+        .mobile-content {
+            text-align: center;
+            padding: 20px;
+        }
+
+        .mobile-title {
+            font-size: 11px;
+            font-weight: bold;
+            margin-bottom: 8px;
+            line-height: 1.2;
+        }
+
+        .download-icon {
+            width: 20px;
+            height: 20px;
+            background: rgba(255,255,255,0.3);
+            border-radius: 50%;
+            margin: 10px auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .step-number {
+            font-size: 24px;
+            font-weight: 700;
+            color: #ff5722;
+            margin-bottom: 16px;
+        }
+
+        .step-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-bottom: 16px;
+            line-height: 1.3;
+        }
+
+        .step-description {
+            font-size: 12px;
+            color: #666;
+            max-width: 300px;
+            margin: 0 auto;
+        }
+
+        @media (max-width: 768px) {
+            .section-title {
+                font-size: 36px;
+            }
+
+            .steps-container {
+                grid-template-columns: 1fr;
+                gap: 40px;
+            }
+
+            .user-types {
+                flex-direction: column;
+                align-items: center;
+            }
+        }

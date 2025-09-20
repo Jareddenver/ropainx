@@ -1,0 +1,1519 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ropainx</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;600;700&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+body{
+font-family:arial;
+overflow-x:hidden;
+
+
+}
+.reveal-section {
+    opacity: 0;
+    transform: translateY(50px);
+    transition: all 1s ease-out;
+}
+
+.reveal-section.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+h1{
+font-size:7em;
+text-align:center;
+
+margin-top:2%;
+margin-left:5%;
+line-height:110px;
+letter-spacing:-3px;
+font-weight:bolder;
+animation: slideIn 1s ease-out;}
+@keyframes slideIn {
+    from { opacity: 0; transform: translateX(60px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+p{
+text-align:center;
+font-size:0.8em;}
+
+.poo p{
+max-width:500px;
+text-align:center;
+}
+.poo{
+align-items:center;
+justify-content:center;
+display:flex;
+margin-top:2%;
+text-align:justify;
+color:grey;
+
+margin-left:5%;
+display:flex;
+gap:50px;}
+.po{
+color:#fff;
+margin-left:5%;
+margin-top:5%;
+display:flex;
+gap:50px;
+font-size:1.5em;
+padding-top:5%;}
+
+
+        .cta-button {
+            background: #ff5722;
+            color: white;
+            padding: 16px 32px;
+            border: none;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .cta-button:hover {
+            background: #e64a19;
+        }
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+.pulse {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: #00c853;
+    margin-right: 20px;
+    position: relative;
+}
+
+.pulse::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background-color: rgba(0, 200, 83, 0.5);
+    transform: translate(-50%, -50%);
+    animation: pulseAnim 1.5s infinite;
+}
+   #twitter{
+    background-color:#fff;
+    color:#000;
+    margin-left:10px;
+   }
+
+   #btn-gr{
+   margin-left:5%;
+    display:flex;
+    justify-content:center;
+    margin-top:2%;
+    animation: slideUp 0.5s ease-out;
+
+   }
+
+
+
+
+#benefits {
+    padding: 5% 8%;
+    text-align: center;
+    animation: fadeIn 2s ease-out;
+}
+
+#benefits h2 {
+    font-size: 2.5em;
+    margin-bottom: 40px;
+    color: #fff;
+    letter-spacing: -2px;
+    animation: slideUp 1s ease-out;
+}
+
+.benefit-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 25px;
+}
+
+.card {
+    background: #1a1a1a;
+    padding: 25px;
+    border-radius: 14px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.6);
+    transition: all 0.3s ease;
+    animation: slideUp 1.5s ease-out;
+}
+
+.card h3 {
+    font-size: 1.3em;
+    margin-bottom: 15px;
+    color: #fff;
+}
+
+.card p {
+    font-family: sans-serif;
+    font-size: 0.7em;
+    color: #bbb;
+    line-height: 1.6em;
+}
+
+.card:hover {
+    transform: translateY(-6px) scale(1.02);
+    box-shadow: 0 6px 16px rgba(77,166,255,0.3);
+    background: linear-gradient(45deg ,black,rgb(68, 68, 68));
+}
+.uu{
+height:40px;
+width:40px;
+border-radius:50%;
+border:6px solid  blue;}
+
+.video{
+align-items:center;
+justify-content:center;
+display:flex;
+}
+
+#ro{
+    animation: loadingPulsse 1.5s ease-in-out infinite;
+    border-color: yellow;
+}
+span{
+font-family: 'allright';
+ background: linear-gradient(45deg, red, orange, yellow);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;}
+
+    .black{
+    background-color:#000;
+    height:650px;
+    margin-top:5%;
+    margin-inline:0;
+    padding-inline:0;
+align-items:center;
+    position: relative;
+            display: flex;
+            flex-direction: row;
+            justify-content: space-evenly;
+            gap:150px;
+
+
+    }
+
+@keyframes loadingPulsse {
+    0% { box-shadow: 0 0 0 0 rgba(255, 154, 21, 0.7); transform: scale(1); }
+    50% { box-shadow: 0 0 0 8px rgba(223, 134, 18, 0.2); transform: scale(1.05); }
+    100% { box-shadow: 0 0 0 0 rgba(117, 61, 8, 0); transform: scale(1); }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    @font-face {
+    font-family: 'allright';
+    src: url('./allright.ttf');
+}
+
+*{
+
+font-weight: lighter;
+margin: 0;
+padding: 0;
+box-sizing: border-box;
+}
+span{
+    color:blue;
+}
+h4{
+    font-size: 4em;
+    letter-spacing: -6px;
+    text-align: center;
+    color:#000;
+    animation: slideUp 1.2s ease-out;
+}
+
+body{
+    animation: fadeIn 1s ease-out;
+}
+
+button{
+    margin-top:1%;
+    border-radius:8px;
+    background-color: #000;
+    border:0;
+    color: #fff;
+    padding-block: 7px;
+    padding-inline:10px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.7);
+    transition-duration: 0.2s;
+    animation: slideUp 1.2s ease-out;
+}
+
+/*#body{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-top :2%;
+}*/
+button:hover{
+    transform: scale(1.05);
+   }
+   #twitter{
+    background-color:#fff;
+    color:#000;
+    margin-left:10px;
+   }
+
+
+
+   button {
+ display:flex;  gap:6px; align-items: center;
+ cursor:pointer;
+   }
+
+
+#benefits {
+    padding: 5% 5%;
+    text-align: center;
+    animation: fadeIn 2s ease-out;
+}
+
+#benefits h2 {
+    font-size: 2.5em;
+    margin-bottom: 40px;
+    color: #fff;
+    letter-spacing: -2px;
+    animation: slideUp 1s ease-out;
+}
+
+.benefit-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 25px;
+}
+
+.card {
+    background: #1a1a1a;
+    padding: 25px;
+    border-radius: 14px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.6);
+    transition: all 0.3s ease;
+    animation: slideUp 1.5s ease-out;
+}
+
+
+
+.card p {
+    font-family: sans-serif;
+    font-size: 0.7em;
+    color: #bbb;
+    line-height: 1.6em;
+}
+
+.card:hover {
+    transform: translateY(-6px) scale(1.02);
+    box-shadow: 0 6px 16px rgba(77,166,255,0.3);
+    background: linear-gradient(45deg ,black,rgb(68, 68, 68));
+}
+#stats {
+    background: #fff;
+    padding: 60px 20px;
+    text-align: center;
+}
+
+#stats .section-title {
+    font-size: 2.2em;
+    margin-bottom: 50px;
+    color: #111;
+}
+.stat{
+
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 60px;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.stat h3 {
+font-family:"allright";
+    font-size: 5em;
+    color: #000;
+    margin-bottom: 10px;
+    border-bottom:1px solid grey;
+    padding-bottom:25px;
+    letter-spacing: -3px;
+}
+
+.stat-label {
+    font-weight: bold;
+    font-size: 1.3em;
+    margin-bottom: 8px;
+    color: #222;
+    text-align: left;
+}
+
+.stat-desc {
+    font-size: 0.9em;
+    color: #555;
+    text-align: justify;
+}
+
+.nev{
+    margin-top:12%;
+    font-size:4em;
+}
+
+#joined {
+    background: #fff;
+    padding: 20px;
+    text-align: left;
+}
+
+.avatars {
+    display: flex;
+    align-items: center;
+    gap: -10px;
+}
+
+.avatars img {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border: 2px solid #fff;
+    margin-left: -10px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+.avatars img:first-child {
+    margin-left: 0;
+}
+
+.avatars .more {
+    margin-left: 10px;
+    font-size: 0.8em;
+    color: #555;
+}
+
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+.pulse {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: #00c853;
+    margin-right: 20px;
+    position: relative;
+}
+
+.pulse::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background-color: rgba(0, 200, 83, 0.5);
+    transform: translate(-50%, -50%);
+    animation: pulseAnim 1.5s infinite;
+}
+ /* Additional CSS for new elements */
+ #header {
+    background: #fff;
+    border-bottom: 1px solid #eee;
+    padding: 5px 10px;
+    border-radius:10px;
+}
+
+#header-div {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+
+
+/* === Navbar === */
+#navbar ul {
+    list-style: none;
+    display: flex;
+    gap: 25px;
+    margin: 0;
+    padding: 0;
+}
+
+#navbar ul li a {
+    text-decoration: none;
+    color: grey;
+    font-size: 1em;
+
+    transition: color 0.3s ease;
+}
+
+#navbar ul li a:hover {
+    color:#000;
+      font-weight:bold;
+
+}
+
+video{
+background-color:#000;
+padding-inline:1%;
+border-radius:20px 20px;
+width:780px;
+height:440px;
+margin-top:5%;
+justify-content:center;
+}
+
+
+ .half-circle {
+ margin-left:10%;
+
+            width: 320px;
+            height: 320px;
+            border: 15px solid #fff;
+            border-radius: 50%;
+            animation: loadingPulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes loadingPulse {
+            0% { box-shadow: 0 0 0 0 rgba(255, 154, 21, 0.7); transform: scale(1.5); }
+            50% { box-shadow: 0 0 0 12px rgba(223, 134, 18, 0.2); transform: scale(1.55); }
+            100% { box-shadow: 0 0 0 0 rgba(117, 61, 8, 0); transform: scale(1.5); }
+        }
+
+.blackk{
+display:flex;
+justify-content:center;
+justify-content:center;
+margin-top:2%;
+
+}
+
+.blackkk{
+border-radius:10px;
+height:30px;
+width:800px;
+background-color:#000;
+ box-shadow: 0 4px 12px rgba(0,0,0,0.6);
+}
+
+
+#logo{
+font-family: 'allright';
+font-weight:bold;
+font-size:1.2em;
+display:flex;
+align-items:center;
+gap:10px;
+
+}
+
+  /* FAQ Section */
+        .faq-section {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 80px 20px;
+
+        }
+
+        .faq-title {
+            font-size: 48px;
+            font-weight: 700;
+            color: #2d3748;
+            text-align: center;
+            margin-bottom: 16px;
+        }
+
+        .faq-subtitle {
+            font-size: 18px;
+            color: #718096;
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .faq-item {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            margin-bottom: 12px;
+            overflow: hidden;
+        }
+
+        .faq-question {
+            padding: 24px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 500;
+            color: #2d3748;
+            border: none;
+            background: none;
+            width: 100%;
+            text-align: left;
+        }
+
+        .faq-question:hover {
+            background-color: #f7fafc;
+        }
+
+        .faq-arrow {
+            transition: transform 0.2s ease;
+        }
+
+        .faq-arrow.open {
+            transform: rotate(180deg);
+        }
+
+        .faq-answer {
+            padding: 0 24px 24px;
+            color: #4a5568;
+            line-height: 1.6;
+            display: none;
+        }
+
+        .faq-answer.open {
+            display: block;
+        }
+
+        /* Pricing Section */
+        .pricing-section {
+            background-color: white;
+            padding: 80px 20px;
+        }
+
+        .pricing-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .pricing-title {
+            font-size: 48px;
+            font-weight: 700;
+            color: #2d3748;
+            text-align: center;
+            margin-bottom: 16px;
+        }
+
+        .pricing-subtitle {
+            font-size: 18px;
+            color: #718096;
+            text-align: center;
+            margin-bottom: 60px;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .pricing-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .pricing-card {
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 32px;
+            text-align: center;
+            position: relative;
+        }
+
+        .pricing-card.popular {
+            border-color: #3182ce;
+            transform: scale(1.05);
+        }
+
+        .popular-badge {
+            background: #ff6b35;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .plan-name {
+            font-size: 24px;
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 8px;
+        }
+
+        .plan-description {
+            color: #718096;
+            margin-bottom: 24px;
+        }
+
+        .price {
+            font-size: 48px;
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 8px;
+        }
+
+        .price-unit {
+            font-size: 18px;
+            color: #718096;
+        }
+
+        .original-price {
+            color: #a0aec0;
+            text-decoration: line-through;
+            font-size: 16px;
+            margin-right: 8px;
+        }
+
+        .discount {
+            color: #38a169;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .adopt-btn {
+            background: #2d3748;
+            color: white;
+            padding: 16px 32px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            margin: 24px 0;
+            transition: background-color 0.2s ease;
+        }
+
+        .adopt-btn:hover {
+            background: #1a202c;
+        }
+
+        .adopt-btn.outline {
+            background: transparent;
+            color: #2d3748;
+            border: 2px solid #e2e8f0;
+        }
+
+        .adopt-btn.outline:hover {
+            background: #f7fafc;
+        }
+
+        .plan-features {
+            font-size: 14px;
+            color: #718096;
+            margin-bottom: 16px;
+        }
+
+        .seat-info {
+            color: #4a5568;
+            font-size: 14px;
+        }
+
+        /* Products Section */
+        .products-section {
+            background: #1a202c;
+            padding: 80px 20px;
+            color: white;
+        }
+
+        .products-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .products-title {
+            font-size: 32px;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 8px;
+        }
+
+        .products-subtitle {
+            color: #a0aec0;
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 40px;
+        }
+
+        .product-item {
+            text-align: center;
+        }
+
+        .product-icon {
+            width: 64px;
+            height: 64px;
+            background: #2d3748;
+            border-radius: 12px;
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .product-name {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        .product-description {
+            color: #a0aec0;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        /* Footer */
+        .footer {
+            background: #1a202c;
+            color: white;
+            padding: 60px 20px 40px;
+        }
+
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr;
+            gap: 60px;
+            margin-bottom: 60px;
+        }
+
+        .footer-brand {
+            grid-column: span 1;
+        }
+
+        .footer-logo {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+        }
+
+        .footer-logo::before {
+            content: '🔍';
+            margin-right: 8px;
+        }
+
+        .footer-tagline {
+            color: #a0aec0;
+            margin-bottom: 20px;
+        }
+
+        .footer-description {
+            color: #718096;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .footer-column h4 {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 12px;
+        }
+
+        .footer-links a {
+            color: #a0aec0;
+            text-decoration: none;
+            font-size: 14px;
+            transition: color 0.2s ease;
+        }
+
+        .footer-links a:hover {
+            color: white;
+        }
+
+        .footer-bottom {
+            border-top: 1px solid #2d3748;
+            padding-top: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .footer-copyright {
+            color: #718096;
+            font-size: 14px;
+        }
+
+        .footer-social {
+            display: flex;
+            gap: 16px;
+        }
+
+        .social-icon {
+            width: 40px;
+            height: 40px;
+            background: #2d3748;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #a0aec0;
+            text-decoration: none;
+            transition: background-color 0.2s ease;
+        }
+
+        .social-icon:hover {
+            background: #4a5568;
+            color: white;
+        }
+
+        @media (max-width: 768px) {
+            .footer-content {
+                grid-template-columns: 1fr;
+                gap: 40px;
+            }
+
+            .footer-bottom {
+                flex-direction: column;
+                gap: 20px;
+                text-align: center;
+            }
+
+            .pricing-cards {
+                grid-template-columns: 1fr;
+            }
+
+            .pricing-card.popular {
+                transform: none;
+            }
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   .steps-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 60px;
+        }
+
+        .step {
+            text-align: center;
+        }
+
+        .step-visual {
+            margin-bottom: 40px;
+            height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .step-1 .step-visual {
+            background: linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 100%);
+            border-radius: 20px;
+            padding: 40px;
+        }
+
+        .step-2 .step-visual {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .video-card {
+            width: 80px;
+            height: 120px;
+            border-radius: 12px;
+            background-size: cover;
+            background-position: center;
+            position: relative;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .video-card-1 {
+            background: linear-gradient(45deg, #4a5568, #718096);
+        }
+
+        .video-card-2 {
+            background: linear-gradient(45deg, #3182ce, #4299e1);
+        }
+
+        .video-card-3 {
+            background: linear-gradient(45deg, #553c9a, #805ad5);
+        }
+
+        .video-stats {
+            position: absolute;
+            bottom: 4px;
+            left: 4px;
+            right: 4px;
+            background: rgba(0,0,0,0.7);
+            color: white;
+            font-size: 10px;
+            padding: 2px 4px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            gap: 2px;
+        }
+
+        .step-3 .step-visual {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .mobile-mockup {
+            width: 120px;
+            height: 200px;
+            background: linear-gradient(135deg, #ff6b35, #f7931e);
+            border-radius: 25px;
+            position: relative;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+
+        .mobile-time {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(0,0,0,0.3);
+            padding: 2px 6px;
+            border-radius: 8px;
+            font-size: 10px;
+            font-weight: bold;
+        }
+
+        .mobile-content {
+            text-align: center;
+            padding: 20px;
+        }
+
+        .mobile-title {
+            font-size: 11px;
+            font-weight: bold;
+            margin-bottom: 8px;
+            line-height: 1.2;
+        }
+
+        .download-icon {
+            width: 20px;
+            height: 20px;
+            background: rgba(255,255,255,0.3);
+            border-radius: 50%;
+            margin: 10px auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .step-number {
+            font-size: 24px;
+            font-weight: 700;
+            color: #ff5722;
+            margin-bottom: 16px;
+        }
+
+        .step-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 16px;
+            line-height: 1.3;
+        }
+
+        .step-description {
+            font-size: 12px;
+            color: #666;
+            max-width: 300px;
+            margin: 0 auto;
+        }
+
+
+
+
+</style>
+
+</head>
+<body>
+<div class="blackk"><div class="blackkk">
+<header id="header">
+        <div id="header-div">
+            <div id="logo"> <svg width="1.5em" height="1.5em" viewBox="0 0 24 24">
+                    <circle cx="12" cy="12" r="10" fill="none" stroke="#1E90FF" stroke-width="4"/>
+                </svg>Ropainx</div>
+            <nav id="navbar">
+                <ul>
+                    <li><a href="#home">Accueil</a></li>
+                    <li><a href="#features">Features</a></li>
+                    <li><a href="#pricing">Pricing</a></li>
+                    <li><a href="#help">Help</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header></div></div>
+<h1>Endless content with <br>
+<span>Ropainx</span></h1>
+
+<div class="poo"> <p>yfgergf rhjbreg yrgbherg ergbrgergier ryig  dhbfhj wjefvgewvf jgefvewguvf fgewvfuvewf ewgufvewtuvf ewfewufuewf ewvfew feuwfvyevfew fyuevfuye fwfewf fwfwegwg efugwrufygb yrgygyrigiywgw giywrbiywbywrygbrg rgyryigbrygb rbgyrbgyrb rbgirgb </p></div>
+
+ <div id="btn-gr">
+            <button id="ro">
+                <svg width="1.1em" height="1.1em" viewBox="0 0 24 24">
+                    <circle cx="12" cy="12" r="10" fill="none" stroke="#1E90FF" stroke-width="4"/>
+                </svg>
+                Get endlesss tweets
+            </button>
+            <button id="twitter" onclick="window.open('https://x.com/Nightbrand08', '_blank')">
+                <svg width="1.1em" height="1.1em" viewBox="0 0 24 24" fill="#000">
+                    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                </svg>
+                Connect with me
+            </button>
+        </div>
+      <div class="video">   <video controls> <source src="0907.mp4" type="video/mp4"></video></div>
+
+
+<div class="poo"> <p>yfgergf rhjbreg yrgbherg ergbrgergier ryig dsfhdsbf dhfgdsgjfjds jvfgds fjdsfjf  dfggwefw gewfgwefewgfvftueff
+yfgergf rhjbreg yrgbherg ergbrgergier rrg  dsfhdsbf dhfgdsgjfjds jvfgds fjdsfjf  dfggwefw gewfgwefewgfvftueff
+yfgergf rhjbreg yrgbherg ergbrgergier rrg dsfhdsbf dhfgdsgjfjds jvfgds fjdsfjf  dfggwefw gewfgwefewgfvftueff </p></div>
+ <section id="stats" class="reveal-section">
+        <h2 class="section-title">We're just getting started:</h2>
+        <div class="stats-grid">
+            <div class="stat">
+                <h3 data-target="400" data-suffix="+">0+</h3>
+                <p class="stat-label">Tweets generated</p>
+                <p class="stat-desc">From witty one-liners to full engagement threads, Ro keeps your feed alive.</p>
+            </div>
+            <div class="stat">
+                <h3 data-target="75" data-suffix="M+">0M+</h3>
+                <p class="stat-label">Impressions</p>
+                <p class="stat-desc">Creators using Ro have already reached millions with effortless tweets.</p>
+            </div>
+            <div class="stat">
+                <h3 data-target="3" data-suffix="">0</h3>
+                <p class="stat-label">Active creators</p>
+                <p class="stat-desc">Dozens of creators are already turning comments into growth with Ro.</p>
+            </div>
+            <div class="stat">
+                <h3 data-target="4.2" data-suffix="">0</h3>
+                <p class="stat-label">Hours saved weekly</p>
+                <p class="stat-desc">Stop wasting time switching tabs or copy/pasting – Ro automates it all.</p>
+            </div>
+        </div>
+
+
+        <h3 class="nev"> NEVER RUN OUT OF CONTENT
+           AND BY <span>NEVER</span> WE MEANT <span>NEVER</span>
+        </h3>
+    </section>
+     <div class="black">
+     <div class="half-circle"></div>
+      <div class="steps-container">
+            <div class="step step-1">
+                <div class="step-number">1.</div>
+                <h3 class="step-title">Get the extension and connect</h3>
+                <p class="step-description">
+                    Tell us who you are (coach, agency, e-com, creator) and what you want to achieve. Instantly calibrate the AI to your market.
+                </p>
+            </div>
+
+            <div class="step step-2">
+
+                <div class="step-number">2.</div>
+                <h3 class="step-title">Go on ropainx.com and connect</h3>
+                <p class="step-description">
+                    Every day, Submagic Viral Finder analyses thousands of viral short-form videos in your niche and detects what's actually exploding right now.
+                </p>
+            </div>
+
+            <div class="step step-3">
+
+                <div class="step-number">3.</div>
+                <h3 class="step-title">Get back to your normal flow</h3>
+                <p class="step-description">
+                    Receive a personalised list of high-potential video concepts, ready to shoot — so you can post first, grow faster, and never run out of winning ideas.
+                </p>
+            </div>
+        </div>
+
+
+     </div>
+
+
+ <section id="benefits" class="reveal-section">
+        <div class="benefit-cards">
+            <div class="card">
+                <h3>Zero Friction</h3>
+                <p>Tweeting becomes effortless. You already comment, you already click – Ro just turns this natural flow into content without any extra step.</p>
+            </div>
+            <div class="card">
+                <h3> Instant Variety</h3>
+                <p>One click = 9 different tweet variations. Each comes with a unique tone and style so you never run out of engaging content.</p>
+            </div>
+            <div class="card">
+                <h3> Amplified Comments</h3>
+                <p>Every comment you post can instantly transform into fresh tweets. Engagement turns into growth automatically.</p>
+            </div>
+            <div class="card">
+                <h3>Built for Creators</h3>
+                <p>No useless copy/paste. No switching tabs. Ropainx integrates directly with your daily habits for a smooth workflow.</p>
+            </div>
+        </div>
+    </section>
+    <div class="poo"> <p>yfgergf rhjbreg yrgbherg ergbrgergier ryig dsfhdsbf dhfgdsgjfjds jvfgds fjdsfjf  dfggwefw gewfgwefewgfvftueff
+yfgergf rhjbreg yrgbherg ergbrgergier rrg  dsfhdsbf dhfgdsgjfjds jvfgds fjdsfjf  dfggwefw gewfgwefewgfvftueff
+yfgergf rhjbreg yrgbherg ergbrgergier rrg dsfhdsbf dhfgdsgjfjds jvfgds fjdsfjf  dfggwefw gewfgwefewgfvftueff </p></div>
+
+
+
+    <!-- FAQ Section -->
+    <section class="faq-section">
+        <h2 class="faq-title">Questions? We have answers.</h2>
+        <p class="faq-subtitle">Still curious? Here are some of our frequently asked questions.</p>
+
+        <div class="faq-item">
+            <button class="faq-question" onclick="toggleFaq(this)">
+                Do I get support & help as a customer?
+                <span class="faq-arrow">▼</span>
+            </button>
+            <div class="faq-answer">
+                Absolutely! You can join our Discord community for real-time help, or open a support ticket directly from the platform for personalized assistance.
+            </div>
+        </div>
+
+        <div class="faq-item">
+            <button class="faq-question" onclick="toggleFaq(this)">
+                Can I cancel at anytime?
+                <span class="faq-arrow">▼</span>
+            </button>
+            <div class="faq-answer">
+                Yes, you can cancel your subscription at any time. There are no long-term contracts or cancellation fees.
+            </div>
+        </div>
+
+        <div class="faq-item">
+            <button class="faq-question" onclick="toggleFaq(this)">
+                Are there any usage limitations?
+                <span class="faq-arrow">▼</span>
+            </button>
+            <div class="faq-answer">
+                Each plan comes with specific usage limits based on your needs. You can always upgrade to a higher plan if you need more capacity.
+            </div>
+        </div>
+
+        <div class="faq-item">
+            <button class="faq-question" onclick="toggleFaq(this)">
+                Do you offer annual discounts?
+                <span class="faq-arrow">▼</span>
+            </button>
+            <div class="faq-answer">
+                Yes! We offer significant discounts for annual subscriptions. The discounts shown in our pricing are already applied to annual plans.
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section class="pricing-section">
+        <div class="pricing-container">
+            <h2 class="pricing-title">Flexible, risk-free pricing</h2>
+            <p class="pricing-subtitle">Find all profitable brands and conduct product & keyword research across the entire market. Decode competitors' creative and funnel strategies, save everything into shareable swipe files.</p>
+
+            <div class="pricing-cards">
+                <div class="pricing-card">
+                    <h3 class="plan-name">Starter</h3>
+                    <p class="plan-description">For early-stage brands & creatives</p>
+                    <div class="price">$63<span class="price-unit">/mo</span></div>
+                    <div><span class="original-price">$79</span><span class="discount">20% OFF</span></div>
+                    <button class="adopt-btn outline">Adopt workflow</button>
+                    <p class="plan-features">Offer applied in the pricing.</p>
+                    <p class="seat-info">1 seat included</p>
+                </div>
+
+                <div class="pricing-card popular">
+                    <div class="popular-badge">POPULAR</div>
+                    <h3 class="plan-name">Outscaler</h3>
+                    <p class="plan-description">For scaling brands & creative teams</p>
+                    <div class="price">$79<span class="price-unit">/mo</span></div>
+                    <div><span class="original-price">$99</span><span class="discount">20% OFF</span></div>
+                    <button class="adopt-btn">Adopt workflow</button>
+                    <p class="plan-features">Offer applied in the pricing.</p>
+                    <p class="seat-info">2 seats included</p>
+                </div>
+
+                <div class="pricing-card">
+                    <h3 class="plan-name">Agency</h3>
+                    <p class="plan-description">For teams & agencies</p>
+                    <div class="price">$149<span class="price-unit">/mo</span></div>
+                    <div><span class="original-price">$199</span><span class="discount">25% OFF</span></div>
+                    <button class="adopt-btn outline">Adopt workflow</button>
+                    <p class="plan-features">Offer applied in the pricing.</p>
+                    <p class="seat-info">5 seats included</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Products Section -->
+    <section class="products-section">
+        <div class="products-container">
+            <h2 class="products-title">Our Products</h2>
+            <p class="products-subtitle">Complete toolkit for ecommerce success</p>
+
+
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <div class="footer-logo">BrandSearch</div>
+                    <div class="footer-tagline">Make your ecommerce journey more profitable</div>
+                    <div class="footer-description">
+                        BrandSearch is run by Made In Heaven - company based in Lausanne, Switzerland, focused on Market Research software for brand builders, dropshippers and marketers.
+                    </div>
+                </div>
+
+                <div class="footer-column">
+                    <h4>Products</h4>
+                    <ul class="footer-links">
+                        <li><a href="#">Brand Library</a></li>
+                        <li><a href="#">Discovery</a></li>
+                        <li><a href="#">Spectre</a></li>
+                        <li><a href="#">Swipe Files</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-column">
+                    <h4>Platform</h4>
+                    <ul class="footer-links">
+                        <li><a href="#">Pricing</a></li>
+                        <li><a href="#">Chrome Extension</a></li>
+                        <li><a href="#">Alternatives</a></li>
+                        <li><a href="#">Affiliate Program</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-column">
+                    <h4>Support</h4>
+                    <ul class="footer-links">
+                        <li><a href="#">Contact & Help</a></li>
+                        <li><a href="#">Discord Community</a></li>
+                        <li><a href="#">ROAS Calculator</a></li>
+                        <li><a href="#">Revenue Calculator</a></li>
+                        <li><a href="#">Terms & Privacy</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <div class="footer-copyright">
+                    © 2025 BrandSearch, Inc. All rights reserved. Not affiliated with Facebook, Meta, Instagram, or Shopify.
+                </div>
+                <div class="footer-social">
+                    <a href="#" class="social-icon">💬</a>
+                    <a href="#" class="social-icon">📧</a>
+                    <a href="#" class="social-icon">🐦</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        function toggleFaq(button) {
+            const answer = button.nextElementSibling;
+            const arrow = button.querySelector('.faq-arrow');
+
+            // Close all other FAQ items
+            document.querySelectorAll('.faq-answer').forEach(item => {
+                if (item !== answer) {
+                    item.classList.remove('open');
+                    item.previousElementSibling.querySelector('.faq-arrow').classList.remove('open');
+                }
+            });
+
+            // Toggle current FAQ item
+            answer.classList.toggle('open');
+            arrow.classList.toggle('open');
+        }
+    </script>
+
+
+
+      <script>
+
+// === Animate stats numbers ===
+function animateStats() {
+    const stats = document.querySelectorAll('.stat h3');
+    stats.forEach(stat => {
+        const target = parseFloat(stat.getAttribute('data-target'));
+        const suffix = stat.getAttribute('data-suffix') || '+';
+        let count = 0;
+        const increment = target / 100;
+        const updateCount = () => {
+            count += increment;
+            if (count < target) {
+                stat.innerText = (Math.round(count * 10) / 10) + suffix;
+                requestAnimationFrame(updateCount);
+            } else {
+                stat.innerText = target + suffix;
+            }
+        };
+        updateCount();
+    });
+}
+
+// === Typing effect for last NEVER ===
+function typeEffect(words, element, speed = 150, pause = 1200) {
+    let i = 0, j = 0, deleting = false;
+
+    function loop() {
+        const word = words[i];
+        if (!deleting) {
+            element.textContent = word.substring(0, j+1);
+            j++;
+            if (j === word.length) {
+                deleting = true;
+                setTimeout(loop, pause);
+                return;
+            }
+        } else {
+            element.textContent = word.substring(0, j-1);
+            j--;
+            if (j === 0) {
+                deleting = false;
+                i = (i+1) % words.length;
+            }
+        }
+        setTimeout(loop, deleting ? speed/2 : speed);
+    }
+    loop();
+}
+
+window.addEventListener('load', () => {
+    animateStats();
+    const words = ["NEVER", "JAMAIS", "決して", "NUNCA", "MAI", "NIE"];
+    const element = document.querySelector('.nev span:last-of-type');
+    typeEffect(words, element);
+});
+
+
+
+        // Reveal sections on scroll
+        function revealSections() {
+            const sections = document.querySelectorAll('.reveal-section');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                    }
+                });
+            }, { threshold: 0.1 });
+
+            sections.forEach(section => {
+                observer.observe(section);
+            });
+        }
+
+        // Initialize animations
+        window.addEventListener('load', () => {
+            animateStats();
+            revealSections();
+        });
+    </script>
+
+</body>
+</html>

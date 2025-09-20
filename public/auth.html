@@ -1,742 +1,1000 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Authentication - Tweet Generator</title>
-  <style>
+    <title>RopainX - Connexion</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
     @font-face {
-    font-family: 'Chunkyline';
-    src: url('./Chunkyline.ttf');
-}
-
+        font-family: 'Chunkyline';
+        src: url('./Chunkyline.ttf');
+    }
+    @font-face {
+        font-family: 'allright';
+        src: url('./allright.ttf');
+    }
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
+
         body {
-            background-color: #000;
-            color: #fff;
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             min-height: 100vh;
-            padding: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
         }
+
         .container {
-            max-width: 400px;
-            width: 100%;
+            display: flex;
+            background: #F2F2F2;
+            overflow: hidden;
+            width: 100vw;
+            height: 100vh;
         }
-        .header {
-            text-align: center;
-            margin-bottom: 20px;
+
+        .left-panel {
+            flex: 0.50;
+            padding: 25px 20px;
+            display: flex;
+            flex-direction: column;
+            background: #fff;
         }
-        .header h1 {
-         font-family: 'Chunkyline';
-            font-size: 24px;
-            font-weight: 300;
-            margin-bottom: 5px;
-            background: linear-gradient(135deg, #fff, #888);
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        .logo-container p {
+            font-size: 0.7em;
+            background: linear-gradient(45deg, red, orange);
             -webkit-background-clip: text;
-            background-clip: text;
             -webkit-text-fill-color: transparent;
         }
-        .header p {
-            color: #888;
-            font-size: 12px;
+
+        .logo {
+            width: 32px;
+            height: 32px;
+            background: transparent;
+            border-radius: 50%;
+            border: 4px solid #4285f4;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 14px;
+            font-weight: bold;
+            margin-right: 10px;
         }
-        .status {
-            text-align: center;
+
+        .brand-name {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+            font-family: 'allright';
+            letter-spacing: -1px;
+        }
+        .brand-details{
+            display: flex;
+            align-items: left;
+            justify-content: center;
+            flex-direction: column;
+        }
+
+        .welcome-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 6px;
+            letter-spacing: -1px;
+        }
+
+        .welcome-subtitle {
+            color: grey;
             font-size: 10px;
-            color: #666;
-            margin-top: 5px;
+            line-height: 1.1;
+            margin-bottom: 25px;
         }
-        .status.online {
-            color: #4ade80;
-        }
-        .status.offline {
-            color: #f87171;
-        }
-        .auth-container {
-            background: linear-gradient(145deg, #111, #0a0a0a);
-            border: 1px solid #222;
-            border-radius: 12px;
-            padding: 20px;
-            position: relative;
-        }
+
         .auth-tabs {
             display: flex;
             margin-bottom: 15px;
-            background: #222;
+            background: #f8f9fa;
             border-radius: 8px;
             padding: 3px;
         }
+
         .auth-tab {
             flex: 1;
+            padding: 6px;
             background: transparent;
-            color: #888;
             border: none;
             border-radius: 6px;
-            padding: 8px;
-            font-size: 12px;
+            font-size: 11px;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.2s;
-            text-align: center;
+            transition: all 0.3s ease;
+            color: #666;
         }
+
         .auth-tab.active {
-            background: #fff;
-            color: #000;
-            box-shadow: 0 2px 6px rgba(255, 255, 255, 0.1);
+            background: white;
+            color: #333;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
+
         .auth-form {
             display: none;
         }
+
         .auth-form.active {
             display: block;
         }
+
         .form-group {
-            margin-bottom: 12px;
+            margin-bottom: 8px;
         }
+
         .form-label {
             display: block;
-            color: #ccc;
-            font-size: 12px;
-            font-weight: 500;
-            margin-bottom: 5px;
+            font-size: 10px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 4px;
         }
-        .form-input {
-            width: 100%;
-            background: #222;
-            color: #fff;
-            border: 1px solid #333;
-            border-radius: 6px;
-            padding: 10px;
-            font-size: 12px;
-            outline: none;
-            transition: all 0.2s;
-        }
-        .form-input:focus {
-            border-color: #555;
-            background: #1a1a1a;
-            box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.1);
-        }
-        .form-input::placeholder {
-            color: #666;
-        }
+
         .password-container {
             position: relative;
         }
+
+        .form-input {
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            padding: 6px 12px;
+            border: 0;
+            border-radius: 8px;
+            font-size: 11px;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #4285f4;
+            box-shadow: 0 0 0 2px rgba(66, 133, 244, 0.1);
+        }
+
         .password-toggle {
             position: absolute;
             right: 8px;
             top: 50%;
             transform: translateY(-50%);
-            background: transparent;
+            background: none;
             border: none;
-            color: #888;
             cursor: pointer;
-            font-size: 14px;
+            font-size: 12px;
         }
-        .password-toggle:hover {
-            color: #fff;
-        }
-        .forgot-password {
-            text-align: right;
-            margin-top: 5px;
-        }
-        .forgot-password a {
-            color: #888;
-            text-decoration: none;
-            font-size: 10px;
-            cursor: pointer;
-        }
-        .forgot-password a:hover {
-            color: #fff;
-        }
+
         .submit-btn {
             width: 100%;
-            background: #fff;
-            color: #000;
+            padding: 8px;
+            background: #000;
+            color: white;
             border: none;
             border-radius: 8px;
-            padding: 12px;
-            font-size: 14px;
+            font-size: 12px;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all 0.3s ease;
             margin-bottom: 12px;
-            box-shadow: 0 3px 8px rgba(255, 255, 255, 0.2);
         }
-        .submit-btn:hover:not(:disabled) {
-            background: #e0e0e0;
+
+        .submit-btn:hover {
+            background: #555;
             transform: translateY(-1px);
-            box-shadow: 0 4px 10px rgba(255, 255, 255, 0.3);
         }
+
         .submit-btn:disabled {
-            background: #333;
-            color: #666;
+            background: #ccc;
             cursor: not-allowed;
+            transform: none;
         }
-        @keyframes loadingPulse {
-            0% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.7); transform: scale(1); }
-            50% { box-shadow: 0 0 0 6px rgba(255, 255, 255, 0.2); transform: scale(1.02); }
-            100% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0); transform: scale(1); }
-        }
+
         .loading-pulse {
-            animation: loadingPulse 1.5s ease-in-out infinite;
+            animation: pulse 1.5s ease-in-out infinite;
         }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
         .divider {
-            display: flex;
-            align-items: center;
-            margin: 12px 0;
+            text-align: center;
+            margin: 8px 0;
             color: #666;
-            font-size: 10px;
+            position: relative;
+            z-index: 12;
         }
-        .divider::before,
-        .divider::after {
+
+        .divider::before {
             content: '';
-            flex: 1;
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
             height: 1px;
-            background: #333;
+            background: #e1e5e9;
         }
+
         .divider span {
-            padding: 0 8px;
+            background: #fff;
+            padding: 0 15px;
+            z-index: 12;
         }
-        .google-btn, .twitter-btn {
+
+        .social-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .btn-social {
             width: 100%;
-            background: transparent;
-            color: #fff;
-            border: 1px solid #333;
+            padding: 6px 12px;
+            border: 2px solid #e1e5e9;
+            background: white;
             border-radius: 8px;
-            padding: 10px;
-            font-size: 12px;
+            font-size: 10px;
             font-weight: 500;
             cursor: pointer;
-            transition: all 0.2s;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 8px;
+            transition: all 0.3s ease;
+            color: #333;
         }
-        .google-btn:hover:not(:disabled), .twitter-btn:hover:not(:disabled) {
-            background: #1a1a1a;
-            border-color: #555;
+
+        .btn-social:hover {
+            border-color: #ccc;
             transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         }
-        .google-btn:disabled, .twitter-btn:disabled {
-            opacity: 0.5;
+
+        .btn-social:disabled {
+            background: #f5f5f5;
             cursor: not-allowed;
+            transform: none;
         }
-        .google-icon, .twitter-icon {
+
+        .btn-google:hover:not(:disabled) {
+            border-color: #4285f4;
+        }
+
+        .btn-twitter:hover:not(:disabled) {
+            border-color: #1da1f2;
+        }
+
+        .google-icon {
             width: 16px;
             height: 16px;
-            background-size: contain;
         }
-        .google-icon {
-            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="%23EA4335" d="M5.266 9.765A7.077 7.077 0 0 1 12 4.909c1.69 0 3.218.6 4.418 1.582L19.91 3C17.782 1.145 15.055 0 12 0 7.27 0 3.198 2.698 1.24 6.65l4.026 3.115Z"/><path fill="%2334A853" d="M16.04 18.013c-1.09.703-2.474 1.078-4.04 1.078a7.077 7.077 0 0 1-6.723-4.823l-4.04 3.067A11.965 11.965 0 0 0 12 24c2.933 0 5.735-1.043 7.834-3l-3.793-2.987Z"/><path fill="%23FBBC05" d="M19.834 21c2.195-2.048 3.62-5.096 3.62-9 0-.71-.109-1.473-.272-2.182H12v4.637h6.436c-.317 1.559-1.17 2.766-2.395 3.558L19.834 21Z"/><path fill="%23EA4335" d="M5.277 14.268A7.12 7.12 0 0 1 4.909 12c0-.782.125-1.533.357-2.235L1.24 6.65A11.934 11.934 0 0 0 0 12c0 1.92.445 3.73 1.237 5.335l4.04-3.067Z"/></svg>') no-repeat center;
-        }
-        .twitter-icon {
-            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="%231DA1F2" d="M23.643 4.937c-.835.37-1.732.62-2.675.733a4.67 4.67 0 0 0 2.048-2.578 9.3 9.3 0 0 1-2.958 1.13 4.66 4.66 0 0 0-7.938 4.25 13.229 13.229 0 0 1-9.602-4.868c-.4.69-.63 1.49-.63 2.342A4.66 4.66 0 0 0 3.96 9.824a4.647 4.647 0 0 1-2.11-.583v.06a4.66 4.66 0 0 0 3.737 4.568 4.692 4.692 0 0 1-2.104.08 4.661 4.661 0 0 0 4.352 3.234 9.348 9.348 0 0 1-5.786 1.995A9.5 9.5 0 0 1 0 18.897a13.175 13.175 0 0 0 7.141 2.093c8.57 0 13.255-7.098 13.255-13.254 0-.2-.005-.402-.014-.602a9.47 9.47 0 0 0 2.323-2.41l-.002-.003z"/></svg>') no-repeat center;
-        }
-        .error-message, .success-message {
-            border-radius: 6px;
-            padding: 8px 12px;
-            margin-bottom: 12px;
-            font-size: 12px;
-            display: none;
-        }
-        .error-message {
-            background: rgba(248, 113, 113, 0.1);
-            border: 1px solid #f87171;
-            color: #f87171;
-        }
-        .success-message {
-            background: rgba(74, 222, 128, 0.1);
-            border: 1px solid #4ade80;
-            color: #4ade80;
-        }
-        .terms {
+
+        .forgot-password {
             text-align: center;
-            color: #666;
-            font-size: 10px;
-            margin-top: 12px;
-            line-height: 1.4;
+            margin-top: 8px;
         }
-        .terms a {
-            color: #888;
+
+        .forgot-password a {
+            color: #4285f4;
             text-decoration: none;
+            font-size: 10px;
+            cursor: pointer;
         }
-        .terms a:hover {
-            color: #fff;
+
+        .forgot-password a:hover {
+            text-decoration: underline;
         }
-        @media (max-width: 600px) {
-            body { padding: 5px; }
-            .container { max-width: 100%; }
-            .auth-container { padding: 15px; }
-            .header h1 { font-size: 20px; }
-            .header p { font-size: 10px; }
-            .auth-tab { font-size: 11px; padding: 6px; }
-            .form-input { padding: 8px; font-size: 11px; }
-            .submit-btn, .google-btn, .twitter-btn { padding: 8px; font-size: 12px; }
+
+        .signup-link {
+            text-align: center;
+            margin-top: 6px;
+            color: #666;
+            font-size: 9px;
+        }
+
+        .signup-link a {
+            color: #4285f4;
+            text-decoration: none;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .signup-link a:hover {
+            text-decoration: underline;
+        }
+
+        .right-panel {
+            flex: 1;
+            background: #000;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 40px 30px;
+            color: white;
+        }
+
+        .half-circle {
+            width: 250px;
+            height: 250px;
+            border: 10px solid #fff;
+            border-radius: 50%;
+            animation: loadingPulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes loadingPulse {
+            0% { box-shadow: 0 0 0 0 rgba(255, 154, 21, 0.7); transform: scale(1.5); }
+            50% { box-shadow: 0 0 0 12px rgba(223, 134, 18, 0.2); transform: scale(1.55); }
+            100% { box-shadow: 0 0 0 0 rgba(117, 61, 8, 0); transform: scale(1.5); }
+        }
+
+        .message {
+            display: none;
+            padding: 8px;
+            border-radius: 6px;
+            margin-bottom: 10px;
+            font-size: 10px;
+            font-weight: 500;
+        }
+
+        .error-message {
+            background: #fee;
+            color: #c53030;
+            border: 1px solid #fed7d7;
+        }
+
+        .success-message {
+            background: #f0fff4;
+            color: #38a169;
+            border: 1px solid #c6f6d5;
+        }
+    .btn-anim {
+    /*display: none;*/ /* ou visibility: hidden; */
+}
+        /* Popup Styles */
+        .popup-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            backdrop-filter: blur(4px);
+        }
+
+        .popup {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            width: 90%;
+            max-width: 350px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+        }
+
+        .popup-close {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            color: #666;
+        }
+        .ro {
+            font-family: "allright";
+        }
+
+        .popup-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 8px;
+            text-align: center;
+        }
+
+        .popup-subtitle {
+            color: #666;
+            font-size: 12px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        /*animation goofy*/
+        .container.fullscreen-anim .left-panel {
+   flex:0;
+   opacity:0;
+   min-width:0;
+   width:0;
+   padding:0;
+   overflow:hidden;
+   transition:all 1s ease-in-out;
+}
+ .container.fullscreen-anim .right-panel {
+   flex:1;
+   transition:all 1s ease-in-out;
+}
+
+.half-circle.spin {
+    animation: spinAndGrow 2.5s ease-in-out forwards, loadingPulse 1.5s ease-in-out infinite;
+}
+
+.half-circle.grow {
+    animation: growToFullscreen 2.5s ease-out forwards;
+}
+
+@keyframes spinAndGrow {
+    0% {
+        transform: scale(1.5) rotate(0deg);
+    }
+    100% {
+        transform: scale(2) rotate(720deg);
+    }
+}
+
+@keyframes growToFullscreen {
+    0% {
+        transform: scale(2);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(20);
+        opacity: 0.9;
+    }
+}
+
+.black-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: #000;
+    z-index: 10000;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+
+.black-screen.active {
+    opacity: 1;
+    pointer-events: all;
+}
+
+
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+                margin: 10px;
+            }
+
+            .left-panel, .right-panel {
+                padding: 30px 20px;
+            }
+
+            .welcome-title {
+                font-size: 18px;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="header">
-            <h1>Ropainx</h1>
-            <p>Sign in to access your personalized tweet generation</p>
-            <div class="status online" id="status">Firebase Authentication Ready ✓</div>
-        </div>
-
-        <div class="auth-container">
-            <div class="auth-tabs">
-                <button class="auth-tab active" onclick="switchTab('signin')">Sign In</button>
-                <button class="auth-tab" onclick="switchTab('signup')">Sign Up</button>
+        <div class="left-panel">
+            <div class="logo-container">
+                <div class="logo">R</div>
+                <div class="brand-details">
+                    <span class="brand-name">RopainX</span>
+                    <p>Never run out of content</p>
+                </div>
             </div>
 
-            <div class="error-message" id="errorMessage"></div>
-            <div class="success-message" id="successMessage"></div>
+            <h1 class="welcome-title">Bienvenue sur <span class="ro">RopainX</span></h1>
+            <p class="welcome-subtitle">
+                Transformez vos idées en tweets personnalisés avec la puissance de l'IA.
+                Connectez-vous pour générer, explorer et peaufiner vos messages sans effort.
+            </p>
 
-            <!-- Sign In Form -->
-            <form class="auth-form active" id="signinForm">
+            <!-- Messages d'erreur et de succès -->
+            <div id="errorMessage" class="message error-message"></div>
+            <div id="successMessage" class="message success-message"></div>
+
+            <!-- Onglets -->
+            <div class="auth-tabs">
+                <button class="auth-tab active" onclick="switchTab('signin')">Connexion</button>
+                <button class="auth-tab" onclick="switchTab('signup')">Inscription</button>
+            </div>
+
+            <!-- Formulaire de connexion -->
+            <form id="signinForm" class="auth-form active">
                 <div class="form-group">
-                    <label class="form-label">Email Address</label>
-                    <input type="email" class="form-input" id="signin-email" placeholder="Enter your email" required>
+                    <label class="form-label">Email</label>
+                    <input type="email" id="signin-email" class="form-input" placeholder="email@gmail.com" required>
                 </div>
+
                 <div class="form-group">
-                    <label class="form-label">Password</label>
+                    <label class="form-label">Mot de passe</label>
                     <div class="password-container">
-                        <input type="password" class="form-input" id="signin-password" placeholder="Enter your password" required>
+                        <input type="password" id="signin-password" class="form-input" placeholder="••••••••" required>
                         <button type="button" class="password-toggle" onclick="togglePassword(this)">👁️</button>
                     </div>
-                    <div class="forgot-password">
-                        <a href="#" onclick="showForgotPassword()">Forgot your password?</a>
-                    </div>
                 </div>
-                <button type="submit" class="submit-btn">Sign In</button>
+
+                <button type="submit" class="submit-btn">Se connecter</button>
+
+                <div class="forgot-password">
+                    <a onclick="showForgotPassword()">Mot de passe oublié ?</a>
+                </div>
             </form>
 
-            <!-- Sign Up Form -->
-            <form class="auth-form" id="signupForm">
+            <!-- Formulaire d'inscription -->
+            <form id="signupForm" class="auth-form">
                 <div class="form-group">
-                    <label class="form-label">Full Name</label>
-                    <input type="text" class="form-input" id="signup-name" placeholder="Enter your full name" required>
+                    <label class="form-label">Nom complet</label>
+                    <input type="text" id="signup-name" class="form-input" placeholder="Votre nom" required>
                 </div>
+
                 <div class="form-group">
-                    <label class="form-label">Email Address</label>
-                    <input type="email" class="form-input" id="signup-email" placeholder="Enter your email" required>
+                    <label class="form-label">Email</label>
+                    <input type="email" id="signup-email" class="form-input" placeholder="email@gmail.com" required>
                 </div>
+
                 <div class="form-group">
-                    <label class="form-label">Password</label>
+                    <label class="form-label">Mot de passe</label>
                     <div class="password-container">
-                        <input type="password" class="form-input" id="signup-password" placeholder="Create a password (min. 6 characters)" required minlength="6">
+                        <input type="password" id="signup-password" class="form-input" placeholder="••••••••" required>
                         <button type="button" class="password-toggle" onclick="togglePassword(this)">👁️</button>
                     </div>
                 </div>
+
                 <div class="form-group">
-                    <label class="form-label">Confirm Password</label>
+                    <label class="form-label">Confirmer le mot de passe</label>
                     <div class="password-container">
-                        <input type="password" class="form-input" id="signup-confirm" placeholder="Confirm your password" required>
+                        <input type="password" id="signup-confirm" class="form-input" placeholder="••••••••" required>
                         <button type="button" class="password-toggle" onclick="togglePassword(this)">👁️</button>
                     </div>
                 </div>
-                <button type="submit" class="submit-btn">Create Account</button>
+
+                <button type="submit" class="submit-btn">Créer un compte</button>
             </form>
 
             <div class="divider">
-                <span>or continue with</span>
+                <span>ou</span>
             </div>
 
-            <button class="google-btn" onclick="signInWithGoogle()">
-                <div class="google-icon"></div>
-                Continue with Google
-            </button>
-              <button class="twitter-btn" onclick="signInWithTwitter()" id="twitterBtn">
-                <div class="twitter-icon"></div>
-                Twitter/X
-            </button>
+            <div class="social-buttons">
+                <button class="btn-social btn-google google-btn" onclick="signInWithGoogle()">
+                    <svg class="google-icon" viewBox="0 0 24 24">
+                        <path fill="#4285f4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                        <path fill="#34a853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                        <path fill="#fbbc05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                        <path fill="#ea4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                    </svg>
+                    Se connecter avec Google
+                </button>
 
-            <div class="terms">
-                By continuing, you agree to our <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>
+                <button class="btn-social btn-twitter" id="twitterBtn">
+                   <svg width="1.2em" height="1.2em" viewBox="0 0 24 24" fill="#000">
+                    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                </svg>
+                    Se connecter avec Twitter
+                </button>
+
+                <!--<button class="btn-anim" id="animBtn">
+
+                   animmm
+                </button>-->
             </div>
         </div>
+
+        <div class="right-panel">
+            <div class="half-circle"></div>
+        </div>
     </div>
-    <script>
-  // Détecter si on est en local
-  const isLocal = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
 
-  // Définir l'URL cible en fonction
-  const baseURL = isLocal
-      ? "http://localhost:3000"   // ton serveur local (adapté au port que tu utilises)
-      : "https://ropainx.onrender.com"; // ton serveur Render
-
-
-</script>
     <!-- Firebase SDK -->
     <script type="module">
-    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js';
-  import { getAnalytics } from 'https://www.gstatic.com/firebasejs/10.13.1/firebase-analytics.js';
-  import {
-      getAuth,
-      signInWithEmailAndPassword,
-      createUserWithEmailAndPassword,
-      signInWithPopup,
-      GoogleAuthProvider,
-      TwitterAuthProvider,
-      sendPasswordResetEmail,
-      onAuthStateChanged,
-      updateProfile,
-      getIdToken
-  } from 'https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js';
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getAnalytics } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-analytics.js';
+        import {
+            getAuth,
+            signInWithEmailAndPassword,
+            createUserWithEmailAndPassword,
+            signInWithPopup,
+            GoogleAuthProvider,
+            TwitterAuthProvider,
+            sendPasswordResetEmail,
+            onAuthStateChanged,
+            updateProfile,
+            getIdToken
+        } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
 
-    const firebaseConfig = {
-        apiKey: "AIzaSyCh0EeCbrm-LzHYOJAYTuQlJJzTFBs-xjo",
-        authDomain: "ropainx-b13da.firebaseapp.com",
-        projectId: "ropainx-b13da",
-        storageBucket: "ropainx-b13da.firebasestorage.app",
-        messagingSenderId: "293729340264",
-        appId: "1:293729340264:web:89bbcdc6197a05520b64dd",
-        measurementId: "G-H3T6EF9E4H"
-    };
+        // Configuration Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyCh0EeCbrm-LzHYOJAYTuQlJJzTFBs-xjo",
+            authDomain: "ropainx-b13da.firebaseapp.com",
+            projectId: "ropainx-b13da",
+            storageBucket: "ropainx-b13da.firebasestorage.app",
+            messagingSenderId: "293729340264",
+            appId: "1:293729340264:web:89bbcdc6197a05520b64dd",
+            measurementId: "G-H3T6EF9E4H"
+        };
 
-    const app = initializeApp(firebaseConfig);
-    const analytics = getAnalytics(app);
-    const auth = getAuth(app);
-    const googleProvider = new GoogleAuthProvider();
-    const twitterProvider = new TwitterAuthProvider();
+        const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
+        const auth = getAuth(app);
+        const googleProvider = new GoogleAuthProvider();
+        const twitterProvider = new TwitterAuthProvider();
 
-    let isLoading = false;
-    window.auth = auth;
+        let isLoading = false;
+        let redirectInProgress = false; // Prévenir les redirections multiples
+        window.auth = auth;
 
-    function showMessage(message, type = 'error') {
-        hideMessage();
-        const messageElement = document.getElementById(type + 'Message');
-        messageElement.textContent = message;
-        messageElement.style.display = 'block';
-    }
+        // Définir baseURL (à adapter selon votre environnement)
+     const isLocal = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
+const baseURL = isLocal ? "http://localhost:3000" : "https://ropainx.onrender.com";
 
-    function hideMessage() {
-        document.getElementById('errorMessage').style.display = 'none';
-        document.getElementById('successMessage').style.display = 'none';
-    }
+        function showMessage(message, type = 'error') {
+            hideMessage();
+            const messageElement = document.getElementById(type + 'Message');
+            messageElement.textContent = message;
+            messageElement.style.display = 'block';
+        }
 
-    function setLoading(loading) {
-        isLoading = loading;
-        const submitBtns = document.querySelectorAll('.submit-btn');
-        const googleBtn = document.querySelector('.google-btn');
-        const twitterBtn = document.getElementById('twitterBtn');
+        function hideMessage() {
+            document.getElementById('errorMessage').style.display = 'none';
+            document.getElementById('successMessage').style.display = 'none';
+        }
 
-        submitBtns.forEach(btn => {
-            btn.disabled = loading;
-            if (loading) {
-                btn.classList.add('loading-pulse');
-                btn.textContent = 'Processing...';
-            } else {
-                btn.classList.remove('loading-pulse');
-                btn.textContent = btn.id === 'signinForm' ? 'Sign In' : 'Create Account';
+        function setLoading(loading) {
+            isLoading = loading;
+            const submitBtns = document.querySelectorAll('.submit-btn');
+            const googleBtn = document.querySelector('.google-btn');
+            const twitterBtn = document.getElementById('twitterBtn');
+
+            submitBtns.forEach(btn => {
+                btn.disabled = loading;
+                if (loading) {
+                    btn.classList.add('loading-pulse');
+                    btn.textContent = 'Connexion...';
+                } else {
+                    btn.classList.remove('loading-pulse');
+                    const form = btn.closest('form');
+                    btn.textContent = form.id === 'signinForm' ? 'Se connecter' : 'Créer un compte';
+                }
+            });
+
+            if (googleBtn) {
+                googleBtn.disabled = loading;
+                if (loading) {
+                    googleBtn.classList.add('loading-pulse');
+                } else {
+                    googleBtn.classList.remove('loading-pulse');
+                }
             }
-        });
 
-        googleBtn.disabled = loading;
-        twitterBtn.disabled = loading;
-        if (loading) {
-            googleBtn.classList.add('loading-pulse');
-            twitterBtn.classList.add('loading-pulse');
-        } else {
-            googleBtn.classList.remove('loading-pulse');
-            twitterBtn.classList.remove('loading-pulse');
-        }
-    }
-
-   async function notifyServerLogin(user) {
-    try {
-        const idToken = await user.getIdToken();
-        localStorage.setItem('idToken', idToken);
-        localStorage.setItem('uid', user.uid);
-
-        console.log('📤 Envoi token au serveur:', idToken.substring(0, 20) + '...');  // Log partiel du token
-        const response = await fetch(baseURL +"/api/login", {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${idToken}`
+            if (twitterBtn) {
+                twitterBtn.disabled = loading;
+                if (loading) {
+                    twitterBtn.classList.add('loading-pulse');
+                } else {
+                    twitterBtn.classList.remove('loading-pulse');
+                }
             }
-        });
-
-        const result = await response.json();
-        console.log('📥 Réponse serveur:', result);  // Log la réponse complète
-
-        if (!result.success) {
-            throw new Error(result.error || 'Failed to notify server');
         }
 
-        return true;
-    } catch (error) {
-        console.error('❌ Erreur notification serveur:', error.message, error.stack);
-        showMessage('Failed to initialize session: ' + error.message, 'error');
-        return false;
+       async function notifyServerLogin(user) {
+        try {
+            const idToken = await user.getIdToken();
+            localStorage.setItem('idToken', idToken);
+            localStorage.setItem('uid', user.uid);
+
+           const response = await fetch(baseURL +"/api/login", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${idToken}`
+                }
+            });
+
+            const result = await response.json();
+            if (!result.success) {
+                throw new Error(result.error || 'Failed to notify server');
+            }
+
+            return true;
+        } catch (error) {
+            console.error('Error notifying server:', error);
+            showMessage('Failed to initialize session: ' + error.message, 'error');
+            return false;
+        }
     }
-}
 
-    onAuthStateChanged(auth, async (user) => {
-      if (user) {
-        console.log('User is signed in:', user.email || user.providerData[0]?.email);
-        setLoading(true);
-        const success = await notifyServerLogin(user);
-        if (success) {
-            console.log('✅ Notification serveur réussie, redirection en cours...');
-            showMessage('Welcome back! Redirecting to your dashboard...', 'success');
-            setTimeout(() => {
-                window.location.href = baseURL;
-            }, 1500);
-        } else {
-            console.log('❌ Notification serveur échouée, pas de redirection');
-            setLoading(false);
-        }
+        // Gestionnaire d'état d'authentification optimisé
+ onAuthStateChanged(auth, async (user) => {
+  if (user && !redirectInProgress) {
+    console.log('✅ Utilisateur connecté:', user.email || user.providerData[0]?.email);
+
+    // Vérifier si on est déjà sur index.html pour éviter la boucle
+    const isOnIndex = window.location.pathname === '/' || window.location.pathname === '/index.html';
+    if (isOnIndex) {
+      console.log('ℹ️ Déjà sur index.html, pas de redirection nécessaire.');
+      redirectInProgress = false;
+      setLoading(false);
+      return;
+    }
+
+    redirectInProgress = true;
+    setLoading(true);
+
+    const success = await notifyServerLogin(user);
+    if (success) {
+      showMessage('Connexion réussie !', 'success');
+
+      // Déclencher l'animation
+      if (window.triggerSuccessAnimation) {
+        window.triggerSuccessAnimation();
+      } else {
+        // Fallback si l'animation n'est pas disponible
+        setTimeout(() => {
+          window.location.replace(baseURL);
+        }, 1200);
+      }
     } else {
-            console.log('User is signed out');
-            localStorage.removeItem('idToken');
-            localStorage.removeItem('uid');
-        }
-    });
-
-    async function handleSignIn(email, password) {
-        try {
-            setLoading(true);
-            hideMessage();
-
-            const userCredential = await signInWithEmailAndPassword(auth, email, password);
-            const user = userCredential.user;
-
-            const success = await notifyServerLogin(user);
-            if (success) {
-                showMessage('Sign in successful! Welcome back.', 'success');
-                console.log('User signed in:', user.email);
-            }
-
-        } catch (error) {
-            console.error('Sign in error:', error);
-            let message = 'An error occurred during sign in';
-            switch (error.code) {
-                case 'auth/user-not-found':
-                    message = 'No account found with this email address';
-                    break;
-                case 'auth/wrong-password':
-                    message = 'Incorrect password. Please try again';
-                    break;
-                case 'auth/invalid-email':
-                    message = 'Invalid email address format';
-                    break;
-                case 'auth/user-disabled':
-                    message = 'This account has been disabled';
-                    break;
-                case 'auth/too-many-requests':
-                    message = 'Too many failed attempts. Please try again later';
-                    break;
-                case 'auth/invalid-credential':
-                    message = 'Invalid email or password';
-                    break;
-            }
-            showMessage(message, 'error');
-        } finally {
-            setLoading(false);
-            document.querySelector('#signinForm .submit-btn').textContent = 'Sign In';
-        }
+      redirectInProgress = false;
+      setLoading(false);
     }
+  } else {
+    console.log('ℹ️ Aucun utilisateur connecté.');
+    redirectInProgress = false;
+  }
+});
 
-    async function handleSignUp(name, email, password) {
-        try {
-            setLoading(true);
-            hideMessage();
 
-            const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-            const user = userCredential.user;
+        async function handleSignIn(email, password) {
+            try {
+                setLoading(true);
+                hideMessage();
 
-            await updateProfile(user, { displayName: name });
-            const success = await notifyServerLogin(user);
-            if (success) {
-                showMessage('Account created successfully! Welcome to Tweet Generator!', 'success');
-                console.log('User signed up:', user.email);
+                console.log('🔐 Tentative de connexion pour:', email);
+                const userCredential = await signInWithEmailAndPassword(auth, email, password);
+                // La redirection sera gérée par onAuthStateChanged
+
+            } catch (error) {
+                console.error('❌ Erreur connexion:', error);
+                let message = 'Erreur de connexion';
+
+                switch (error.code) {
+                    case 'auth/user-not-found':
+                        message = 'Aucun compte trouvé avec cette adresse email';
+                        break;
+                    case 'auth/wrong-password':
+                        message = 'Mot de passe incorrect';
+                        break;
+                    case 'auth/invalid-email':
+                        message = 'Format email invalide';
+                        break;
+                    case 'auth/user-disabled':
+                        message = 'Compte désactivé';
+                        break;
+                    case 'auth/too-many-requests':
+                        message = 'Trop de tentatives. Réessayez plus tard';
+                        break;
+                    case 'auth/invalid-credential':
+                        message = 'Email ou mot de passe invalide';
+                        break;
+                    default:
+                        message = 'Erreur de connexion: ' + error.message;
+                }
+                showMessage(message, 'error');
+                setLoading(false);
+            }
+        }
+
+        async function handleSignUp(name, email, password) {
+            try {
+                setLoading(true);
+                hideMessage();
+
+                console.log('📝 Tentative d\'inscription pour:', email);
+                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                const user = userCredential.user;
+
+                // Mise à jour du profil avec le nom
+                await updateProfile(user, { displayName: name });
+
+                // La redirection sera gérée par onAuthStateChanged
+
+            } catch (error) {
+                console.error('❌ Erreur inscription:', error);
+                let message = 'Erreur lors de la création du compte';
+
+                switch (error.code) {
+                    case 'auth/email-already-in-use':
+                        message = 'Un compte existe déjà avec cet email';
+                        break;
+                    case 'auth/invalid-email':
+                        message = 'Format email invalide';
+                        break;
+                    case 'auth/weak-password':
+                        message = 'Mot de passe trop faible (min. 6 caractères)';
+                        break;
+                    case 'auth/operation-not-allowed':
+                        message = 'Inscription non autorisée';
+                        break;
+                    default:
+                        message = 'Erreur d\'inscription: ' + error.message;
+                }
+                showMessage(message, 'error');
+                setLoading(false);
+            }
+        }
+
+        window.signInWithGoogle = async function() {
+            try {
+                setLoading(true);
+                hideMessage();
+
+                console.log('🔑 Tentative connexion Google');
+                const result = await signInWithPopup(auth, googleProvider);
+                // La redirection sera gérée par onAuthStateChanged
+
+            } catch (error) {
+                console.error('❌ Erreur Google:', error);
+                let message = 'Erreur connexion Google';
+
+                switch (error.code) {
+                    case 'auth/popup-closed-by-user':
+                        message = 'Connexion annulée';
+                        break;
+                    case 'auth/popup-blocked':
+                        message = 'Popup bloquée. Autorisez les popups et réessayez';
+                        break;
+                    case 'auth/account-exists-with-different-credential':
+                        message = 'Un compte existe déjà avec cet email';
+                        break;
+                    case 'auth/cancelled-popup-request':
+                        message = 'Demande annulée';
+                        break;
+                    default:
+                        message = 'Erreur Google: ' + error.message;
+                }
+                showMessage(message, 'error');
+                setLoading(false);
+            }
+        };
+
+        window.signInWithTwitter = async function() {
+            try {
+                setLoading(true);
+                hideMessage();
+
+                console.log('🔑 Tentative connexion Twitter');
+                const result = await signInWithPopup(auth, twitterProvider);
+                // La redirection sera gérée par onAuthStateChanged
+
+            } catch (error) {
+                console.error('❌ Erreur Twitter:', error);
+                let message = 'Erreur connexion Twitter';
+
+                switch (error.code) {
+                    case 'auth/popup-closed-by-user':
+                        message = 'Connexion annulée';
+                        break;
+                    case 'auth/popup-blocked':
+                        message = 'Popup bloquée. Autorisez les popups et réessayez';
+                        break;
+                    case 'auth/account-exists-with-different-credential':
+                        message = 'Un compte existe déjà avec cet email';
+                        break;
+                    case 'auth/cancelled-popup-request':
+                        message = 'Demande annulée';
+                        break;
+                    default:
+                        message = 'Erreur Twitter: ' + error.message;
+                }
+                showMessage(message, 'error');
+                setLoading(false);
+            }
+        };
+
+        window.showForgotPassword = async function() {
+            const email = prompt('Entrez votre email pour réinitialiser le mot de passe:');
+            if (!email) return;
+
+            try {
+                await sendPasswordResetEmail(auth, email);
+                showMessage('Email de réinitialisation envoyé ! Vérifiez votre boîte.', 'success');
+            } catch (error) {
+                console.error('❌ Erreur reset password:', error);
+                let message = 'Erreur envoi email de réinitialisation';
+                switch (error.code) {
+                    case 'auth/user-not-found':
+                        message = 'Aucun compte trouvé avec cet email';
+                        break;
+                    case 'auth/invalid-email':
+                        message = 'Format email invalide';
+                        break;
+                    default:
+                        message = 'Erreur: ' + error.message;
+                }
+                showMessage(message, 'error');
+            }
+        };
+
+        // Event listeners pour les formulaires
+        document.getElementById('signinForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const email = document.getElementById('signin-email').value.trim();
+            const password = document.getElementById('signin-password').value;
+
+            if (!email || !password) {
+                showMessage('Veuillez remplir tous les champs', 'error');
+                return;
             }
 
-        } catch (error) {
-            console.error('Sign up error:', error);
-            let message = 'An error occurred during account creation';
-            switch (error.code) {
-                case 'auth/email-already-in-use':
-                    message = 'An account with this email already exists';
-                    break;
-                case 'auth/invalid-email':
-                    message = 'Invalid email address format';
-                    break;
-                case 'auth/weak-password':
-                    message = 'Password should be at least 6 characters long';
-                    break;
-                case 'auth/operation-not-allowed':
-                    message = 'Email/password accounts are not enabled';
-                    break;
-            }
-            showMessage(message, 'error');
-        } finally {
-            setLoading(false);
-            document.querySelector('#signupForm .submit-btn').textContent = 'Create Account';
-        }
-    }
+            await handleSignIn(email, password);
+        });
 
-    window.signInWithGoogle = async function() {
-        if (isLoading) return;
+        document.getElementById('signupForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
 
-        try {
-            setLoading(true);
-            hideMessage();
+            const name = document.getElementById('signup-name').value.trim();
+            const email = document.getElementById('signup-email').value.trim();
+            const password = document.getElementById('signup-password').value;
+            const confirmPassword = document.getElementById('signup-confirm').value;
 
-            const result = await signInWithPopup(auth, googleProvider);
-            const user = result.user;
-
-            const success = await notifyServerLogin(user);
-            if (success) {
-                showMessage('Google sign in successful! Welcome!', 'success');
-                console.log('User signed in with Google:', user.email);
+            if (!name || !email || !password || !confirmPassword) {
+                showMessage('Veuillez remplir tous les champs', 'error');
+                return;
             }
 
-        } catch (error) {
-            console.error('Google sign in error:', error);
-            let message = 'An error occurred during Google sign in';
-            switch (error.code) {
-                case 'auth/popup-closed-by-user':
-                    message = 'Sign in cancelled';
-                    break;
-                case 'auth/popup-blocked':
-                    message = 'Popup blocked by browser. Please allow popups and try again';
-                    break;
-                case 'auth/account-exists-with-different-credential':
-                    message = 'An account already exists with this email';
-                    break;
-            }
-            showMessage(message, 'error');
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    window.signInWithTwitter = async function() {
-        if (isLoading) return;
-
-        try {
-            setLoading(true);
-            hideMessage();
-
-            const result = await signInWithPopup(auth, twitterProvider);
-            const user = result.user;
-            const credential = TwitterAuthProvider.credentialFromResult(result);
-console.log('🐦 [DEBUG] Twitter credential:', credential);
-if (!credential) {
-    throw new Error('No credential from Twitter result');
-}
-            console.log('🐦 [DEBUG] Twitter credential:', credential);
-
-            const success = await notifyServerLogin(user);
-            if (success) {
-                showMessage('Twitter sign in successful! Welcome!', 'success');
-                console.log('User signed in with Twitter:', user.providerData[0]?.email || 'No email provided');
+            if (password !== confirmPassword) {
+                showMessage('Les mots de passe ne correspondent pas', 'error');
+                return;
             }
 
-        } catch (error) {
-            console.error('Twitter sign in error:', error);
-            let message = 'An error occurred during Twitter sign in';
-            switch (error.code) {
-                case 'auth/popup-closed-by-user':
-                    message = 'Sign in cancelled';
-                    break;
-                case 'auth/popup-blocked':
-                    message = 'Popup blocked by browser. Please allow popups and try again';
-                    break;
-                case 'auth/account-exists-with-different-credential':
-                    message = 'An account already exists with this email';
-                    break;
-                case 'auth/cancelled-popup-request':
-                    message = 'Sign in request cancelled';
-                    break;
+            if (password.length < 6) {
+                showMessage('Le mot de passe doit contenir au moins 6 caractères', 'error');
+                return;
             }
-            showMessage(message, 'error');
-        } finally {
-            setLoading(false);
-        }
-    };
 
-    window.showForgotPassword = async function() {
-        const email = prompt('Enter your email address to reset your password:');
-        if (!email) return;
+            await handleSignUp(name, email, password);
+        });
 
-        try {
-            await sendPasswordResetEmail(auth, email);
-            showMessage('Password reset email sent! Check your inbox.', 'success');
-        } catch (error) {
-            console.error('Password reset error:', error);
-            let message = 'Error sending password reset email';
-            switch (error.code) {
-                case 'auth/user-not-found':
-                    message = 'No account found with this email address';
-                    break;
-                case 'auth/invalid-email':
-                    message = 'Invalid email address format';
-                    break;
-            }
-            showMessage(message, 'error');
-        }
-    };
+        // Event listener pour Twitter
+        document.getElementById("twitterBtn").addEventListener("click", signInWithTwitter);
 
-    document.getElementById('signinForm').addEventListener('submit', async (e) => {
-        e.preventDefault();
-        if (isLoading) return;
+        console.log('🔥 Firebase Authentication initialisé avec succès');
 
-        const email = document.getElementById('signin-email').value.trim();
-        const password = document.getElementById('signin-password').value;
-
-        if (!email || !password) {
-            showMessage('Please fill in all fields', 'error');
-            return;
-        }
-
-        await handleSignIn(email, password);
-    });
-
-    document.getElementById('signupForm').addEventListener('submit', async (e) => {
-        e.preventDefault();
-        if (isLoading) return;
-
-        const name = document.getElementById('signup-name').value.trim();
-        const email = document.getElementById('signup-email').value.trim();
-        const password = document.getElementById('signup-password').value;
-        const confirmPassword = document.getElementById('signup-confirm').value;
-
-        if (!name || !email || !password || !confirmPassword) {
-            showMessage('Please fill in all fields', 'error');
-            return;
-        }
-
-        if (password !== confirmPassword) {
-            showMessage('Passwords do not match', 'error');
-            return;
-        }
-
-        if (password.length < 6) {
-            showMessage('Password must be at least 6 characters long', 'error');
-            return;
-        }
-
-        await handleSignUp(name, email, password);
-    });
-
-    console.log('Firebase Authentication initialized successfully');
-</script>
-
-    <script>
         function switchTab(tab) {
+            // Éviter les changements d'onglet pendant le loading
+            if (window.isLoading) return;
+
             document.querySelectorAll('.auth-tab').forEach(btn => btn.classList.remove('active'));
             event.target.classList.add('active');
 
@@ -756,6 +1014,68 @@ if (!credential) {
                 button.textContent = '👁️';
             }
         }
+
+        // Vérifier si l'utilisateur est déjà connecté au chargement de la page
+        window.addEventListener('load', () => {
+            const userToken = sessionStorage.getItem('userToken');
+            const userInfo = sessionStorage.getItem('userInfo');
+
+            if (userToken && userInfo) {
+                console.log('🔄 Session existante détectée, vérification...');
+                // Laisser Firebase gérer la vérification via onAuthStateChanged
+            }
+        });
+
+          const anim = document.getElementById('animBtn');
+          anim.addEventListener('click', () => {});
+    </script>
+    <script>
+        // Animation du bouton animBtn
+        document.addEventListener('DOMContentLoaded', function() {
+            const animBtn = document.getElementById('animBtn');
+            const rightPanel = document.querySelector('.right-panel');
+            const halfCircle = document.querySelector('.half-circle');
+            const container = document.querySelector('.container');
+            const isLocal = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
+const baseURL = isLocal ? "http://localhost:3000" : "https://ropainx.onrender.com";
+
+            // Créer l'écran noir
+            const blackScreen = document.createElement('div');
+            blackScreen.className = 'black-screen';
+            document.body.appendChild(blackScreen);
+
+            // Fonction pour déclencher l'animation
+          function triggerSuccessAnimation() {
+    // Étape 1: Le côté droit prend tout l'écran
+    container.classList.add('fullscreen-anim');
+
+    setTimeout(() => {
+        // Étape 2: La bulle tourne pendant 1.2s
+        halfCircle.classList.add('spin');
+
+        setTimeout(() => {
+            // Étape 3: La bulle grandit totalement
+            halfCircle.classList.remove('spin');
+            halfCircle.classList.add('grow');
+
+            setTimeout(() => {
+                // Étape 4: Écran noir pendant 1s
+                blackScreen.classList.add('active');
+
+                setTimeout(() => {
+                    // Étape 5: Redirection directe vers baseURL
+                    window.location.replace(baseURL);
+                }, 1000);
+            }, 1500);
+        }, 3200);
+    }, 100);
+}
+            // Rendre la fonction accessible globalement
+            window.triggerSuccessAnimation = triggerSuccessAnimation;
+
+            // Garder le bouton animBtn pour test
+            animBtn.addEventListener('click', triggerSuccessAnimation);
+        });
     </script>
 </body>
 </html>

@@ -11,10 +11,241 @@ const multer = require('multer');
 const { v4: uuidv4 } = require('uuid');
 const crypto = require('crypto');
 const admin = require('firebase-admin');
-require('dotenv').config();
+
 const serviceAccount = process.env.FIREBASE_SERVICE_ACCOUNT
   ? JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT)
   : require('./firebase-service-account.json'); // Fallback pour local
+try {
+  admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount),
+    databaseURL: `https://${serviceAccount.project_id}.firebaseio.com`
+  });
+  console.log('✅ Firebase Admin initialisé');
+} catch (error) {
+  console.error('❌ Erreur initialisation Firebase Admin:', error.message, error.stack);
+  process.exit(1);
+}
+
+
+require('dotenv').config();
+const db = admin.firestore(); // Define db after initialization
+
+
+
+//Admin add1
+
+
+// Ajouts pour intégration admin (Twitter hardcodé + données Firebase admin)
+const ADMIN_SECRET = process.env.ADMIN_SECRET; // Ajoute dans .env: ADMIN_SECRET=ton_secret_super_securise
+if (!ADMIN_SECRET) {
+  console.error('❌ ADMIN_SECRET manquant dans .env');
+  process.exit(1);
+}
+
+// Env vars pour Twitter admin hardcodé (ajoute dans .env: ADMIN_TWITTER_APP_KEY=xxx, etc.)
+if (!process.env.ADMIN_TWITTER_APP_KEY || !process.env.ADMIN_TWITTER_APP_SECRET || !process.env.ADMIN_TWITTER_ACCESS_TOKEN || !process.env.ADMIN_TWITTER_ACCESS_SECRET) {
+  console.error('❌ Variables d\'environnement Twitter Admin manquantes. Vérifiez votre fichier .env.');
+  process.exit(1);
+}
+
+// Client Twitter admin hardcodé
+const adminTwitterClient = new TwitterApi({
+  appKey: process.env.ADMIN_TWITTER_APP_KEY,
+  appSecret: process.env.ADMIN_TWITTER_APP_SECRET,
+  accessToken: process.env.ADMIN_TWITTER_ACCESS_TOKEN,
+  accessSecret: process.env.ADMIN_TWITTER_ACCESS_SECRET,
+});
+
+// Test connexion admin au startup (ajoute dans startServer plus bas)
+
+async function testAdminTwitterConnection() {
+  try {
+    const me = await adminTwitterClient.v2.me();
+    console.log('✅ Connexion Twitter Admin réussie:', me.data.username);
+    return me.data.id;
+  } catch (error) {
+    console.error('❌ Échec de la connexion Twitter Admin:', error.message);
+    process.exit(1);
+  }
+}
+
+// Données admin globales (similaire à userData, mais pour admin unique)
+let adminData = {
+  userStyle: {
+    writings: [],
+    patterns: [],
+    vocabulary: new Set(),
+    tone: 'neutral',
+    styleProgress: 0,
+    lastModified: new Date().toISOString()
+  },
+  generatedTweetsHistory: [],
+  scheduledTweets: [],
+  dataLock: false,
+  tweetIdCounter: 1,
+  twitterUserId: null
+};
+
+// Ref Firebase pour admin (collection 'admin', doc 'data')
+const adminRef = db.collection('admin').doc('data');
+
+// Fonctions load/save admin (similaire à initializeUserData/saveUserData, mais pour admin)
+async function loadAdminData() {
+  try {
+    const doc = await adminRef.get();
+    if (doc.exists) {
+      const data = doc.data();
+      // Load userStyle
+      adminData.userStyle = {
+        ...adminData.userStyle,
+        ...data.userStyle,
+        vocabulary: new Set(data.userStyle?.vocabulary || []),
+        lastModified: data.userStyle?.lastModified?.toDate()?.toISOString() || new Date().toISOString(),
+      };
+      // Load history
+      adminData.generatedTweetsHistory = (data.generatedTweetsHistory || []).map(tweet => ({
+        ...tweet,
+        timestamp: new Date(tweet.timestamp),
+        lastModified: new Date(tweet.lastModified),
+      }));
+      // Load scheduled
+      adminData.scheduledTweets = (data.scheduledTweets || []).map(tweet => ({
+        ...tweet,
+        datetime: new Date(tweet.datetime),
+        createdAt: new Date(tweet.createdAt),
+        lastModified: new Date(tweet.lastModified),
+        publishedAt: tweet.publishedAt ? new Date(tweet.publishedAt) : null,
+      }));
+      const maxId = Math.max(...adminData.scheduledTweets.map(t => t.id || 0), 1);
+      adminData.tweetIdCounter = maxId + 1;
+      console.log('✅ Données admin chargées depuis Firestore');
+    } else {
+      await saveAdminData();
+      console.log('✅ Données admin créées dans Firestore');
+    }
+  } catch (error) {
+    console.error('❌ Erreur load admin data:', error.message);
+    throw error;
+  }
+}
+
+async function saveAdminData() {
+  if (adminData.dataLock) {
+    console.log('🔒 Sauvegarde admin ignorée (verrou)');
+    return;
+  }
+  adminData.dataLock = true;
+  try {
+    await adminRef.set({
+      userStyle: {
+        ...adminData.userStyle,
+        vocabulary: Array.from(adminData.userStyle.vocabulary),
+        lastModified: admin.firestore.Timestamp.fromDate(new Date(adminData.userStyle.lastModified)),
+      },
+      generatedTweetsHistory: adminData.generatedTweetsHistory.map(tweet => ({
+        ...tweet,
+        timestamp: admin.firestore.Timestamp.fromDate(new Date(tweet.timestamp)),
+        lastModified: admin.firestore.Timestamp.fromDate(new Date(tweet.lastModified)),
+      })),
+      scheduledTweets: adminData.scheduledTweets.map(tweet => ({
+        ...tweet,
+        datetime: admin.firestore.Timestamp.fromDate(tweet.datetime),
+        createdAt: admin.firestore.Timestamp.fromDate(tweet.createdAt),
+        lastModified: admin.firestore.Timestamp.fromDate(tweet.lastModified),
+        publishedAt: tweet.publishedAt ? admin.firestore.Timestamp.fromDate(tweet.publishedAt) : null,
+      })),
+    }, { merge: true });
+    console.log('✅ Données admin sauvegardées dans Firestore');
+  } catch (error) {
+    console.error('❌ Erreur save admin data:', error.message);
+  } finally {
+    adminData.dataLock = false;
+  }
+}
+
+// Fonction publish pour admin (similaire à publishTweetToTwitter, mais avec adminClient)
+async function publishAdminTweetToTwitter(tweet, content) {
+  try {
+    console.log('🚀 Publication admin tweet:', tweet.id);
+    let mediaIds = [];
+    if (tweet.media && tweet.media.length > 0) {
+      for (const media of tweet.media) {
+        const filePath = path.join(__dirname, 'Uploads', 'admin', media.filename); // Dossier 'admin' pour uploads
+        if (await fs.access(filePath).then(() => true).catch(() => false)) {
+          const mediaId = await adminTwitterClient.v1.uploadMedia(filePath, { mimeType: media.mimetype });
+          mediaIds.push(mediaId);
+        }
+      }
+    }
+    const options = { text: content };
+    if (mediaIds.length > 0) options.media = { media_ids: mediaIds };
+    const result = await adminTwitterClient.v2.tweet(options);
+    // Cleanup media
+    if (tweet.media && tweet.media.length > 0) {
+      for (const media of tweet.media) {
+        const filePath = path.join(__dirname, 'Uploads', 'admin', media.filename);
+        await fs.unlink(filePath).catch(console.error);
+      }
+    }
+    return result;
+  } catch (error) {
+    console.error('❌ Erreur publication admin Twitter:', error.message);
+    throw error;
+  }
+}
+
+// Scheduler checker pour admin (similaire à startScheduleChecker, mais pour admin)
+function startAdminScheduleChecker() {
+  console.log('⏰ Démarrage vérificateur admin tweets...');
+  setInterval(async () => {
+    const now = new Date();
+    const tweetsToPublish = adminData.scheduledTweets.filter(t => t.status === 'scheduled' && t.datetime <= now);
+    if (tweetsToPublish.length === 0) return;
+    for (const tweet of tweetsToPublish) {
+      try {
+        await publishAdminTweetToTwitter(tweet, tweet.content);
+        tweet.status = 'published';
+        tweet.publishedAt = new Date();
+        tweet.twitterId = 'admin-' + Date.now(); // Pas de real ID, mais OK
+        tweet.lastModified = new Date();
+        console.log(`✅ Admin tweet publié: ${tweet.id}`);
+      } catch (error) {
+        tweet.status = 'failed';
+        tweet.error = error.message;
+        tweet.lastModified = new Date();
+      }
+    }
+    await saveAdminData();
+  }, 30000); // 30s
+}
+
+// Middleware protection admin (simple header secret)
+const adminAuth = async (req, res, next) => {
+    try {
+        const authHeader = req.headers.authorization;
+        const adminKey = req.headers['x-admin-key'];
+        if (!authHeader || !authHeader.startsWith('Bearer ') || adminKey !== process.env.ADMIN_SECRET) {
+            console.log('❌ [DEBUG] Invalid admin key or token:', { authHeader: !!authHeader, adminKey });
+            return res.status(401).json({ error: 'Unauthorized' });
+        }
+        const idToken = authHeader.split('Bearer ')[1];
+        const decodedToken = await admin.auth().verifyIdToken(idToken);
+        console.log('✅ [DEBUG] Token verified:', { uid: decodedToken.uid });
+        if (decodedToken.uid !== '5DOofrwItGflRGtUtbebf21sR2D3') {
+            console.log('❌ [DEBUG] UID mismatch:', decodedToken.uid);
+            return res.status(401).json({ error: 'Unauthorized: Not admin' });
+        }
+        req.user = decodedToken;
+        next();
+    } catch (error) {
+        console.error('❌ [DEBUG] Token verification error:', error.message);
+        return res.status(401).json({ error: 'Unauthorized' });
+    }
+};
+
+//admin add1 end
+
+
 const BASE_URL = process.env.NODE_ENV === 'production'
   ? 'https://ropainx.onrender.com'
   : 'http://localhost:3000';
@@ -55,20 +286,28 @@ const templateModeMapping = {
   'style-personnel': ['basic', 'oneliner', 'bullet_points']
 };
 
+
+const metrics = {
+  totalTweetGenerations: 0,
+  generationsByMode: {},  // ex: { 'tweet-viral': 5, 'angle-contrarian': 3 }
+  averageGenerationTimeMs: 0,
+  totalErrors: 0,
+  quickCommentsGenerated: 0,
+  quickCommentsByType: {},  // ex: { 'joke': 2, 'contrarian': 1, 'agree': 4 }
+  lastUpdate: new Date()
+};
+// Initialisation de l'application Express
+const app = express();
+const PORT = process.env.PORT || 3000;
 // Fonction pour sélectionner un template
 function selectTemplate(mode) {
   const availableTemplates = templateModeMapping[mode] || Object.keys(tweetTemplates);
   const randomIndex = Math.floor(Math.random() * availableTemplates.length);
   return availableTemplates[randomIndex];
 }
-
-// Initialisation de l'application Express
-const app = express();
-const PORT = process.env.PORT || 3000;
-
 // Configuration des middlewares
 app.use(cors({
-  origin: ['http://localhost:3000', 'http://127.0.0.1:3000', 'http://127.0.0.1:8080', 'https://x.com','https://ropainx.onrender.com'],
+  origin: /*'http://localhost:3000', 'http://127.0.0.1:3000', 'http://127.0.0.1:8080', 'https://x.com','https://ropainx.onrender.com',*/"*",
   methods: ['GET', 'POST', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'If-None-Match', 'Authorization', 'X-User-ID', 'Accept', 'Origin', 'X-Requested-With'],
   credentials: true,
@@ -80,17 +319,7 @@ app.use('/Uploads', express.static(path.join(__dirname, 'Uploads')));
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Initialisation Firebase Admin
-try {
-  admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount),
-    databaseURL: `https://${serviceAccount.project_id}.firebaseio.com`
-  });
-  console.log('✅ Firebase Admin initialisé');
-} catch (error) {
-  console.error('❌ Erreur initialisation Firebase Admin:', error.message, error.stack);
-  process.exit(1);
-}
-const db = admin.firestore(); // Define db after initialization
+
 
 // Configuration axios-retry
 if (axiosRetry) {
@@ -107,6 +336,7 @@ if (axiosRetry) {
 
 // Clés API
 const GROQ_API_KEY = process.env.GROQ_API_KEY;
+console.log("🔑 [DEBUG] GROQ_API_KEY:", process.env.GROQ_API_KEY ? "Présent" : "Manquant");
 
 // Instance Axios pour l'API Groq
 const axiosInstance = axios.create({
@@ -128,12 +358,6 @@ const userData = new Map();
 const tweetIdCounters = new Map();
 
 // Chemins des fichiers pour la persistance des données utilisateur
-
-// Remove these imports (if not used elsewhere):
-// const fs = require('fs').promises;
-// const path = require('path');
-
-// Remove getUserFilePaths function entirely.
 
 // Modified initializeUserData
 async function initializeUserData(uid) {
@@ -304,7 +528,12 @@ function generateCodeChallenge(verifier) {
 // Configuration de Multer pour l'upload de fichiers
 const storage = multer.diskStorage({
   destination: async (req, file, cb) => {
-    const uploadPath = path.join(__dirname, 'Uploads', req.user ? req.user.uid : 'anonymous');
+    let uploadPath;
+    if (req.headers['x-admin-key'] === ADMIN_SECRET) {
+      uploadPath = path.join(__dirname, 'Uploads', 'admin');
+    } else {
+      uploadPath = path.join(__dirname, 'Uploads', req.user ? req.user.uid : 'anonymous');
+    }
     await fs.mkdir(uploadPath, { recursive: true });
     cb(null, uploadPath);
   },
@@ -328,37 +557,35 @@ const upload = multer({
 
 // Middleware pour vérifier le token Firebase
 async function verifyToken(req, res, next) {
-  console.log('DEBUG - All headers:', req.headers);
-  console.log('DEBUG - Authorization header:', req.headers.authorization);
+    console.log('DEBUG - All headers:', req.headers);
+    console.log('DEBUG - Authorization header:', req.headers.authorization);
 
-  const authHeader = req.headers.authorization;
-  if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    console.error('ERREUR - Header auth manquant ou invalide:', authHeader);
-    return res.status(401).json({ success: false, error: 'Aucun ou mauvais en-tête Authorization' });
-  }
-  // Reste du code...
-
-  const idToken = authHeader.split('Bearer ')[1];
-  try {
-    console.log(`🔍 Vérification token pour ${req.path}: ${idToken.substring(0, 10)}...`);
-    const decodedToken = await Promise.race([
-  admin.auth().verifyIdToken(idToken, false),
-  new Promise((_, reject) => setTimeout(() => reject(new Error('Token verification timeout')), 5000))  // 5s timeout
-]);
-    req.user = { uid: decodedToken.uid };
-    console.log('✅ Token vérifié, UID:', decodedToken.uid);
-    next();
-  } catch (error) {
-    console.error('❌ Erreur vérification token:', error.message, { path: req.path, stack: error.stack });
-    if (error.code === 'auth/id-token-expired') {
-      return res.status(401).json({ success: false, error: 'Token expiré', details: 'Veuillez vous reconnecter' });
-    } else if (error.code === 'auth/id-token-revoked') {
-      return res.status(401).json({ success: false, error: 'Token révoqué', details: 'Veuillez vous reconnecter' });
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+        console.error('ERREUR - Header auth manquant ou invalide:', authHeader);
+        return res.status(401).json({ success: false, error: 'Aucun ou mauvais en-tête Authorization' });
     }
-    return res.status(401).json({ success: false, error: 'Token invalide', details: error.message });
-  }
-}
 
+    const idToken = authHeader.split('Bearer ')[1];
+    try {
+        console.log(`🔍 Vérification token pour ${req.path}: ${idToken.substring(0, 10)}...`);
+        const decodedToken = await Promise.race([
+            admin.auth().verifyIdToken(idToken, false),
+            new Promise((_, reject) => setTimeout(() => reject(new Error('Token verification timeout')), 5000)) // 5s timeout
+        ]);
+        req.user = { uid: decodedToken.uid };
+        console.log('✅ Token vérifié, UID:', decodedToken.uid);
+        next();
+    } catch (error) {
+        console.error('❌ Erreur vérification token:', error.message, { path: req.path, stack: error.stack });
+        if (error.code === 'auth/id-token-expired') {
+            return res.status(401).json({ success: false, error: 'Token expiré', details: 'Veuillez vous reconnecter' });
+        } else if (error.code === 'auth/id-token-revoked') {
+            return res.status(401).json({ success: false, error: 'Token révoqué', details: 'Veuillez vous reconnecter' });
+        }
+        return res.status(401).json({ success: false, error: 'Token invalide', details: error.message });
+    }
+}
 // Public routes (before verifyToken middleware)
 
 // Route pour l'interface de connexion via extension (public)
@@ -811,9 +1038,12 @@ app.post('/api/learn-style', async (req, res) => {
     });
   }
 });
+//alleger start
 
 // Route pour générer des tweets avec système de templates
 app.post('/api/generate-tweets', async (req, res) => {
+  const startTime = Date.now(); // ✅ AJOUT: Définir startTime au début
+
   try {
     const { userComment, originalTweet, context, modeFilter } = req.body;
     const uid = req.user.uid;
@@ -844,6 +1074,7 @@ app.post('/api/generate-tweets', async (req, res) => {
       'style-personnel',
     ];
 
+    // ... (garde tous tes modePrompts comme ils sont) ...
     const modePrompts = {
       'tweet-viral': (template) => `Write a viral-style tweet using this EXACT structure and RESPOND WITH THE TWEET ONLY without any note or remark , ONLY THE TWEEET , NO HASTAGS OR QUOTES OR ANYTHING,  RAW TEXT: "${tweetTemplates[template].structure}"
 Inspiration: "${userComment}"
@@ -975,6 +1206,8 @@ Max 280 chars, no hashtags, no emojis, NO QUOTES .${styleContext}`,
 
     const promises = prompts.map(async (prompt, index) => {
       try {
+        console.log(`[SERVER DEBUG] Génération mode ${filteredModes[index]}`);
+
         const response = await axiosInstance.post('https://api.groq.com/openai/v1/chat/completions', {
           messages: [
             {
@@ -984,7 +1217,7 @@ Max 280 chars, no hashtags, no emojis, NO QUOTES .${styleContext}`,
             },
             { role: 'user', content: prompt },
           ],
-          model: 'llama3-8b-8192',
+         model: 'llama-3.1-8b-instant',
           temperature: 0.7,
           max_tokens: 100,
         });
@@ -996,7 +1229,7 @@ Max 280 chars, no hashtags, no emojis, NO QUOTES .${styleContext}`,
         }
         return { success: true, tweet, mode: filteredModes[index], template: selectedTemplates[index] };
       } catch (error) {
-        console.error(`❌ Erreur mode ${filteredModes[index]}:`, error.message, error.stack);
+        console.error(`❌ Erreur mode ${filteredModes[index]}:`, error.message);
         return {
           success: false,
           tweet: `Erreur: Échec génération pour ${filteredModes[index]}`,
@@ -1012,6 +1245,17 @@ Max 280 chars, no hashtags, no emojis, NO QUOTES .${styleContext}`,
     const usedModes = results.map(r => r.mode);
     const usedTemplates = results.map(r => r.template);
 
+    // ✅ CORRECTION: Rétablir les métriques avec startTime défini
+    const endTime = Date.now();
+    const duration = endTime - startTime;
+
+    metrics.totalTweetGenerations += filteredModes.length;
+    filteredModes.forEach(mode => {
+      metrics.generationsByMode[mode] = (metrics.generationsByMode[mode] || 0) + 1;
+    });
+    metrics.averageGenerationTimeMs = (metrics.averageGenerationTimeMs * (metrics.totalTweetGenerations - filteredModes.length) + duration) / metrics.totalTweetGenerations;
+    metrics.lastUpdate = new Date();
+
     const tweetData = {
       id: uuidv4(),
       timestamp: new Date(),
@@ -1021,7 +1265,7 @@ Max 280 chars, no hashtags, no emojis, NO QUOTES .${styleContext}`,
       context: context || null,
       generatedTweets,
       modesUsed: usedModes,
-      templatesUsed: usedTemplates, // NOUVEAU
+      templatesUsed: usedTemplates,
       used: false,
     };
 
@@ -1033,20 +1277,157 @@ Max 280 chars, no hashtags, no emojis, NO QUOTES .${styleContext}`,
     await saveUserData(uid);
     console.log(`✅ Tweets générés pour ${uid}: ${generatedTweets.length} avec templates: ${usedTemplates.join(', ')}`);
 
-if (user.generatedTweetsHistory.length > 0) {
-    user.lastETagUpdate = Date.now(); // Force un nouveau ETag
-}
+    if (user.generatedTweetsHistory.length > 0) {
+        user.lastETagUpdate = Date.now();
+    }
+
     res.json({
       success: true,
       data: tweetData,
       lastModified: tweetData.lastModified,
     });
   } catch (error) {
-    console.error(`❌ Erreur génération tweets pour ${req.user.uid}:`, error.message, error.stack);
+    console.error(`❌ Erreur génération tweets pour ${req.user?.uid || 'unknown'}:`, error.message);
     res.status(500).json({
       success: false,
       error: 'Erreur génération tweets',
-      details: process.env.NODE_ENV === 'development' ? error.message : 'Erreur serveur interne',
+      details: error.message,
+    });
+  }
+});
+app.get('/api/metrics', (req, res) => {
+  if (!req.user || req.user.uid !== 'ton_uid_admin') {  // Sécurise si besoin
+    return res.status(403).json({ error: 'Accès interdit' });
+  }
+  res.json({ success: true, metrics });
+});
+app.post('/api/generate-quick-comment', async (req, res) => {
+  try {
+    console.log('[SERVER DEBUG] Quick comment request:', req.body);
+    const { type, wordsToInclude, originalTweet, uid } = req.body;
+
+    if (!type) {
+      console.log('[SERVER DEBUG] Erreur: type manquant');
+      return res.status(400).json({ success: false, error: 'type requis' });
+    }
+
+    // Utiliser l'UID authentifié
+    const authenticatedUid = req.user ? req.user.uid : uid;
+    await initializeUserData(authenticatedUid);
+    const user = userData.get(authenticatedUid);
+
+    // Formater le tweet original avec retours à la ligne
+    const formatOriginalTweet = (tweet) => {
+      if (!tweet || tweet.length < 50) return tweet;
+
+      // Diviser en phrases et ajouter des retours à la ligne
+      return tweet
+        .replace(/([.!?])\s+/g, '$1\n') // Retour après ponctuation
+        .replace(/(.{60,}?)\s+/g, '$1\n') // Retour tous les ~60 chars
+        .trim();
+    };
+
+    const formattedTweet = formatOriginalTweet(originalTweet);
+
+    // Style utilisateur mais contextuellement approprié
+    const userStyleHint = user && user.userStyle ?
+      `Write in a ${user.userStyle.tone} tone, but prioritize relevance to the tweet content.` :
+      'Write naturally and contextually.';
+
+    // Prompts en anglais pour de meilleurs résultats
+    let basePrompt = '';
+    switch(type.toLowerCase()) {
+      case 'agree':
+        basePrompt = `Generate a Twitter reply that agrees with this tweet:\n\n"${formattedTweet}"\n\nShow genuine agreement and add valuable perspective.`;
+        break;
+
+      case 'disagree':
+        basePrompt = `Generate a respectful Twitter reply that politely disagrees with this tweet:\n\n"${formattedTweet}"\n\nPresent a different viewpoint constructively.`;
+        break;
+
+      case 'joke':
+      case 'funny':
+        basePrompt = `Generate a witty, humorous Twitter reply to this tweet:\n\n"${formattedTweet}"\n\nMake it clever and contextually funny.`;
+        break;
+
+      case 'suspicious':
+        basePrompt = `Generate a skeptical Twitter reply questioning this tweet:\n\n"${formattedTweet}"\n\nExpress healthy doubt with curiosity.`;
+        break;
+
+      case 'question':
+        basePrompt = `Generate a thoughtful question as a Twitter reply to this tweet:\n\n"${formattedTweet}"\n\nAsk something that encourages discussion.`;
+        break;
+
+      default:
+        basePrompt = `Generate a Twitter reply with a "${type}" style responding to this tweet:\n\n"${formattedTweet}"\n\nStay contextually relevant.`;
+    }
+
+    // Ajouter les mots SEULEMENT s'ils sont pertinents au contexte
+    const wordsConstraint = wordsToInclude && wordsToInclude.length > 0
+      ? ` If naturally fitting, try to incorporate these words: "${wordsToInclude.join(', ')}". Only use them if they make sense in context.`
+      : '';
+
+    const fullPrompt = `${basePrompt}${wordsConstraint}
+
+${userStyleHint}
+
+RULES:
+- Maximum 280 characters
+- Reply ONLY with the comment text
+- No quotes, no hashtags unless contextually essential
+- Make it feel natural and human
+- Prioritize relevance to the original tweet over everything else`;
+
+    console.log('[SERVER DEBUG] Prompt généré:', fullPrompt);
+
+    const groqPayload = {
+      messages: [
+        {
+          role: 'system',
+          content: 'You are a social media expert who generates contextually relevant, engaging Twitter replies. Focus on the tweet content above all else.'
+        },
+        { role: 'user', content: fullPrompt }
+      ],
+      model: 'llama-3.1-8b-instant',
+      temperature: 0.8, // Un peu plus créatif
+      max_tokens: 100
+    };
+
+    console.log('[SERVER DEBUG] Payload Groq:', JSON.stringify(groqPayload, null, 2));
+
+    const response = await axiosInstance.post('https://api.groq.com/openai/v1/chat/completions', groqPayload);
+    let comment = response.data.choices[0].message.content.trim();
+
+    // Nettoyer les guillemets et formatage parasites
+    comment = comment.replace(/^["']|["']$/g, '').replace(/\n+/g, ' ').trim();
+
+    if (comment.length > 280) {
+      console.warn(`[SERVER DEBUG] Commentaire trop long: ${comment.length} chars, troncature`);
+      comment = comment.substring(0, 277) + '...';
+    }
+
+    console.log('[SERVER DEBUG] Commentaire généré:', comment);
+
+    // Tracker métriques
+    metrics.quickCommentsGenerated += 1;
+    metrics.quickCommentsByType[type] = (metrics.quickCommentsByType[type] || 0) + 1;
+    metrics.lastUpdate = new Date();
+
+    res.json({ success: true, comment });
+
+  } catch (error) {
+    metrics.totalErrors += 1;
+    console.error(`[SERVER DEBUG] Erreur quick comment:`, error.message);
+
+    if (error.response) {
+      console.error('[SERVER DEBUG] Erreur Groq - Status:', error.response.status);
+      console.error('[SERVER DEBUG] Erreur Groq - Data:', JSON.stringify(error.response.data, null, 2));
+    }
+
+    res.status(500).json({
+      success: false,
+      error: 'Erreur génération commentaire',
+      details: error.response?.data?.error?.message || error.message
     });
   }
 });
@@ -1068,9 +1449,9 @@ app.post('/api/ask-ai', async (req, res) => {
         { role: 'system', content: 'You are a helpful AI assistant. Answer directly and briefly.' },
         { role: 'user', content: prompt }
       ],
-      model: 'llama3-8b-8192',
-      temperature: 0.7,
-      max_tokens: 300
+      model: 'llama-3.1-8b-instant',
+          temperature: 0.7,
+          max_tokens: 100,
     });
 
     const answer = response.data.choices[0].message.content.trim();
@@ -1230,9 +1611,9 @@ Max 280 chars, no hashtags, no emojis, NO QUOTES .${styleContext}`,
         },
         { role: 'user', content: prompt },
       ],
-      model: 'llama3-8b-8192',
-      temperature: 0.7,
-      max_tokens: 100,
+      model: 'llama-3.1-8b-instant',
+          temperature: 0.7,
+          max_tokens: 100,
     });
 
     const newTweet = response.data.choices[0].message.content.trim();
@@ -1292,9 +1673,9 @@ app.post('/api/learn-content', async (req, res) => {
         { role: 'system', content: 'Social media expert. Concise explanation, examples in French, respect char limit.' },
         { role: 'user', content: prompt },
       ],
-      model: 'llama3-8b-8192',
-      temperature: 0.7,
-      max_tokens: 200,
+       model: 'llama-3.1-8b-instant',
+          temperature: 0.7,
+          max_tokens: 100,
     });
 
     const content = response.data.choices[0].message.content.trim();
@@ -1309,6 +1690,8 @@ app.post('/api/learn-content', async (req, res) => {
     });
   }
 });
+
+//alleger edn
 
 // Route pour récupérer l'historique des tweets
 app.get('/api/tweets-history', async (req, res) => {
@@ -2134,13 +2517,694 @@ app.use((error, req, res, next) => {
   });
 });
 
+
+//admin route
+
+
+// Dans server.js
+const { getFirestore, collection, query, where, getDocs } = require('firebase/firestore');
+
+app.get('/api/admin/tweets-history-by-uid', verifyToken, async (req, res) => {
+    try {
+        const uid = req.query.uid;
+        if (!uid) {
+            return res.status(400).json({ success: false, error: 'UID requis' });
+        }
+        if (req.user.uid !== uid) {
+            return res.status(403).json({ success: false, error: 'Accès non autorisé' });
+        }
+
+        const db = getFirestore();
+        const tweetsRef = collection(db, 'tweets');
+        const q = query(tweetsRef, where('userId', '==', uid));
+        const querySnapshot = await getDocs(q);
+        const tweets = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+        res.set('ETag', generateETag(tweets)); // Fonction pour générer ETag
+        res.json({ success: true, data: tweets });
+    } catch (error) {
+        console.error('Erreur récupération tweets:', error);
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
+// Middleware admin sur ces routes
+app.use('/api/admin/*', adminAuth);
+
+// Route pour fetch communautés admin (placeholder comme avant)
+app.get('/api/admin/user-communities', async (req, res) => {
+  try {
+    let communities = [];
+    // Placeholder, comme dans le premier code
+    res.json({ success: true, data: communities });
+  } catch (error) {
+    res.status(500).json({ success: false, error: 'Erreur communautés' });
+  }
+});
+
+// Route update communauté admin
+app.post('/api/admin/update-tweet-community', async (req, res) => {
+  try {
+    const { tweetId, tweetIndex, communityId } = req.body;
+    const scheduledTweet = adminData.scheduledTweets.find(t => t.tweetId === tweetId && t.tweetIndex === parseInt(tweetIndex));
+    if (!scheduledTweet) return res.status(404).json({ success: false, error: 'Tweet non trouvé' });
+    scheduledTweet.communityId = communityId || null;
+    scheduledTweet.lastModified = new Date().toISOString();
+    await saveAdminData();
+    res.json({ success: true, message: 'Communauté mise à jour' });
+  } catch (error) {
+    res.status(500).json({ success: false, error: 'Erreur update communauté' });
+  }
+});
+
+// Route learn-style admin
+app.post('/api/admin/learn-style', async (req, res) => {
+  try {
+    const { styleText } = req.body;
+    if (!styleText.trim()) return res.status(400).json({ success: false, error: 'styleText requis' });
+    const trimmedText = styleText.trim();
+    adminData.userStyle.writings.push({ text: trimmedText, timestamp: new Date() });
+    const words = trimmedText.toLowerCase().match(/\b\w+\b/g) || [];
+    words.forEach(word => adminData.userStyle.vocabulary.add(word));
+    adminData.userStyle.tone = detectTone(trimmedText); // Réutilise fonction existante
+    adminData.userStyle.styleProgress += 1;
+    adminData.userStyle.lastModified = new Date().toISOString();
+    if (adminData.userStyle.writings.length > 50) adminData.userStyle.writings = adminData.userStyle.writings.slice(-50);
+    await saveAdminData();
+    res.json({
+      success: true,
+      message: 'Style appris',
+      data: { styleProgress: adminData.userStyle.styleProgress, lastModified: adminData.userStyle.lastModified }
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, error: 'Erreur learn-style' });
+  }
+});
+
+// Route generate-tweets admin (copie du premier, avec Groq, modes, intégrant style admin)
+app.post('/api/admin/generate-tweets', async (req, res) => {
+  try {
+    const { userComment, originalTweet, context, modeFilter } = req.body;
+    if (!userComment.trim()) return res.status(400).json({ success: false, error: 'userComment requis' });
+
+    const styleContext = adminData.userStyle.writings.length > 0 ?
+      `\n\nUser style (tone: ${adminData.userStyle.tone}, words: ${Array.from(adminData.userStyle.vocabulary).slice(-5).join(', ')}):\n${adminData.userStyle.writings.slice(-3).map(w => `- "${w.text}"`).join('\n')}` : '';
+
+    const modes = ['tweet-viral', 'critique-constructive', 'thread-twitter', 'reformulation-simple', 'angle-contrarian', 'storytelling', 'question-provocante', 'metaphore-creative', 'style-personnel'];
+    const filteredModes = modeFilter ? [modeFilter] : modes;
+
+    // Prompts (copie du premier)
+    const modePrompts = {
+      'tweet-viral': `Generate a viral tweet based on: "${userComment}". Secondary context: "${originalTweet || ''}". Max 280 chars, no hashtags/emojis.${styleContext}`,
+      'critique-constructive': `Generate a constructive critique tweet based on: "${userComment}". Context: "${originalTweet || ''}". Max 280 chars, no hashtags/emojis.${styleContext}`,
+      'thread-twitter': `Generate the first tweet of a thread based on: "${userComment}". Context: "${originalTweet || ''}". Max 280 chars, no hashtags/emojis.${styleContext}`,
+      'reformulation-simple': `Generate a simple reformulation tweet based on: "${userComment}". Context: "${originalTweet || ''}". Max 280 chars, no hashtags/emojis.${styleContext}`,
+      'angle-contrarian': `Generate a contrarian angle tweet based on: "${userComment}". Context: "${originalTweet || ''}". Max 280 chars, no hashtags/emojis.${styleContext}`,
+      'storytelling': `Generate a storytelling tweet based on: "${userComment}". Context: "${originalTweet || ''}". Max 280 chars, no hashtags/emojis.${styleContext}`,
+      'question-provocante': `Generate a provocative question tweet based on: "${userComment}". Context: "${originalTweet || ''}". Max 280 chars, no hashtags/emojis.${styleContext}`,
+      'metaphore-creative': `Generate a creative metaphor tweet for: "${userComment}". Context: "${originalTweet || ''}". Max 280 chars, no hashtags/emojis.${styleContext}`,
+      'style-personnel': `Generate a personal style tweet based on: "${userComment}". Style (tone: ${adminData.userStyle.tone}, words: ${Array.from(adminData.userStyle.vocabulary).slice(-5).join(', ')}). Context: "${originalTweet || ''}". Max 280 chars, no hashtags/emojis.${styleContext}`
+    };
+
+    const prompts = filteredModes.map(mode => modePrompts[mode]);
+    adminData.userStyle.writings.push({ text: userComment.trim(), timestamp: new Date() });
+    adminData.userStyle.tone = detectTone(userComment.trim());
+    adminData.userStyle.styleProgress += 1;
+    adminData.userStyle.lastModified = new Date().toISOString();
+    if (adminData.userStyle.writings.length > 50) adminData.userStyle.writings = adminData.userStyle.writings.slice(-50);
+
+    const promises = prompts.map(async (prompt, index) => {
+      try {
+        const response = await axiosInstance.post('https://api.groq.com/openai/v1/chat/completions', {
+          messages: [{ role: 'system', content: 'Tweet expert. Generate original tweets... Respond only with the tweet.' }, { role: 'user', content: prompt }],
+          model: 'llama3-8b-8192',
+          temperature: 0.7,
+          max_tokens: 100
+        });
+        return response.data.choices[0].message.content.trim();
+      } catch (error) {
+        return `Error: Generation failed for ${filteredModes[index]}`;
+      }
+    });
+
+    const generatedTweets = await Promise.all(promises);
+    const tweetData = {
+      id: Date.now().toString(),
+      timestamp: new Date().toISOString(),
+      lastModified: new Date().toISOString(),
+      originalTweet: originalTweet || null,
+      userComment: userComment.trim(),
+      context: context || null,
+      generatedTweets,
+      modesUsed: filteredModes,
+      used: false
+    };
+    adminData.generatedTweetsHistory.push(tweetData);
+    if (adminData.generatedTweetsHistory.length > 100) adminData.generatedTweetsHistory = adminData.generatedTweetsHistory.slice(-100);
+    await saveAdminData();
+    res.json({ success: true, data: tweetData, lastModified: tweetData.lastModified });
+  } catch (error) {
+    res.status(500).json({ success: false, error: 'Erreur génération' });
+  }
+});
+
+// Route regenerate-tweet admin (similaire, copie/adaptée)
+app.post('/api/admin/regenerate-tweet', async (req, res) => {
+  try {
+    const { tweetId, tweetIndex, mode } = req.body;
+    if (!tweetId || tweetIndex === undefined || !mode) return res.status(400).json({ success: false, error: 'Params requis' });
+    const tweetGroup = adminData.generatedTweetsHistory.find(t => t.id === tweetId);
+    if (!tweetGroup || tweetIndex < 0 || tweetIndex >= tweetGroup.generatedTweets.length) return res.status(400).json({ success: false, error: 'Tweet invalide' });
+
+   styleContext = user.userStyle.writings.length > 0
+      ? `\n\nUser style (tone: ${user.userStyle.tone}, words: ${Array.from(user.userStyle.vocabulary)
+          .slice(-5)
+          .join(', ')}):\n${user.userStyle.writings.slice(-3).map(w => `- "${w.text}"`).join('\n')}`
+      : '';
+
+    const modePrompts = {
+      'tweet-viral': (template) => `Generate a viral-style tweet using this EXACT structure and RESPOND WITH THE TWEET ONLY without any note or remark , ONLY THE TWEEET , NO HASTAGS OR QUOTES OR ANYTHING,  RAW TEXT: "${tweetTemplates[template].structure}"
+Content based on: "${tweetGroup.userComment}"
+Context: "${tweetGroup.originalTweet || ''}"
+Example: "${tweetTemplates[template].example}"
+Rules:
+- Start with a bold, surprising, or provocative hook
+- Sentences max 12 words
+- Short paragraphs (1–2 sentences per line)
+- Use simple language, no jargon
+- Twist the angle if possible (mango → avocado)
+- Encourage engagement implicitly or explicitly
+Max 280 chars, no hashtags, no emojis, NO QUOTES .${styleContext}`,
+
+      'critique-constructive': (template) => `Generate a constructive critique tweet using this EXACT structure and RESPOND WITH THE TWEET ONLY without any note or remark , ONLY THE TWEEET , NO HASTAGS OR QUOTES OR ANYTHING,  RAW TEXT: "${tweetTemplates[template].structure}"
+Content based on: "${tweetGroup.userComment}"
+Context: "${tweetGroup.originalTweet || ''}"
+Example: "${tweetTemplates[template].example}"
+Rules:
+- Clear and respectful tone, no harshness
+- Suggest an improvement, not just criticism
+- Sentences max 12 words, short paragraphs
+- Can end with a soft question to invite replies
+Max 280 chars, no hashtags, no emojis, NO QUOTES .${styleContext}`,
+
+      'thread-twitter': (template) => `Generate the FIRST tweet of a thread using this EXACT structure and RESPOND WITH THE TWEET ONLY without any note or remark , ONLY THE TWEEET , NO HASTAGS OR QUOTES OR ANYTHING,  RAW TEXT: "${tweetTemplates[template].structure}"
+Content based on: "${tweetGroup.userComment}"
+Context: "${tweetGroup.originalTweet || ''}"
+Example: "${tweetTemplates[template].example}"
+Rules:
+- Hook must create curiosity or be contrarian
+- Sentences max 12 words
+- Short paragraphs, easy to scan
+- Use more than 200 chars
+- Make readers want to click "Show this thread"
+Max 280 chars, no hashtags, no emojis, NO QUOTES .${styleContext}`,
+
+      'reformulation-simple': (template) => `Generate a simple reformulation using this EXACT structure and RESPOND WITH THE TWEET ONLY without any note or remark , ONLY THE TWEEET , NO HASTAGS OR QUOTES OR ANYTHING,  RAW TEXT: "${tweetTemplates[template].structure}"
+Content based on: "${tweetGroup.userComment}"
+Context: "${tweetGroup.originalTweet || ''}"
+Example: "${tweetTemplates[template].example}"
+Rules:
+- Keep close to the idea but make it lighter
+- Sentences max 12 words
+- Use simple words, no metaphors
+- Must feel clear and easy to read
+Max 280 chars, no hashtags, no emojis, NO QUOTES .${styleContext}`,
+
+      'angle-contrarian': (template) => `Generate a contrarian tweet using this EXACT structure and RESPOND WITH THE TWEET ONLY without any note or remark , ONLY THE TWEEET , NO HASTAGS OR QUOTES OR ANYTHING,  RAW TEXT: "${tweetTemplates[template].structure}"
+Content based on: "${tweetGroup.userComment}"
+Context: "${tweetGroup.originalTweet || ''}"
+Example: "${tweetTemplates[template].example}"
+Rules:
+- Start with "Hot take" or bold contrarian hook
+- Sentences max 12 words
+- Short paragraphs, direct and readable
+- Twist perspective, avoid obvious angles
+- End with a thought-provoking question if possible
+Max 280 chars, no hashtags, no emojis, NO QUOTES .${styleContext}`,
+
+      'storytelling': (template) => `Generate a storytelling tweet using this EXACT structure and RESPOND WITH THE TWEET ONLY without any note or remark , ONLY THE TWEEET , NO HASTAGS OR QUOTES OR ANYTHING,  RAW TEXT: "${tweetTemplates[template].structure}"
+Content based on: "${tweetGroup.userComment}"
+Context: "${tweetGroup.originalTweet || ''}"
+Example: "${tweetTemplates[template].example}"
+Rules:
+- Tell a relatable story in paragraphs and make it long (betweeen 190 and 280 chars)
+- Sentences max 12 words
+- Start with curiosity, finish with a lesson
+- Must feel human and relatable
+Max 280 chars, no hashtags, no emojis, NO QUOTES .${styleContext}`,
+
+      'question-provocante': (template) => `Generate a provocative question tweet using this EXACT structure and RESPOND WITH THE TWEET ONLY without any note or remark , ONLY THE TWEEET , NO HASTAGS OR QUOTES OR ANYTHING,  RAW TEXT: "${tweetTemplates[template].structure}"
+Content based on: "${tweetGroup.userComment}"
+Context: "${tweetGroup.originalTweet || ''}"
+Example: "${tweetTemplates[template].example}"
+Rules:
+- Question must be bold, clear, thought-provoking
+- Sentences max 12 words
+- Push readers to reflect or react
+- Short, direct, easy to scan
+Max 280 chars, no hashtags, no emojis, NO QUOTES .${styleContext}`,
+
+      'metaphore-creative': (template) => `Generate a creative metaphor tweet using this EXACT structure and RESPOND WITH THE TWEET ONLY without any note or remark , ONLY THE TWEEET , NO HASTAGS OR QUOTES OR ANYTHING,  RAW TEXT: "${tweetTemplates[template].structure}"
+Content based on: "${tweetGroup.userComment}"
+Context: "${tweetGroup.originalTweet || ''}"
+Example: "${tweetTemplates[template].example}"
+Rules:
+- Use a metaphor with a fresh angle (mango → avocado)
+- Sentences max 12 words
+- Keep it playful, not cliché
+- Encourage engagement if natural
+Max 280 chars, no hashtags, no emojis, NO QUOTES .${styleContext}`,
+
+      'style-personnel': (template) => `Generate a personal-style tweet using this EXACT structure and RESPOND WITH THE TWEET ONLY without any note or remark , ONLY THE TWEEET , NO HASTAGS OR QUOTES OR ANYTHING,  RAW TEXT: "${tweetTemplates[template].structure}"
+Content based on: "${tweetGroup.userComment}"
+Style (tone: ${user.userStyle.tone}, words: ${Array.from(user.userStyle.vocabulary).slice(-5).join(', ')})
+Context: "${tweetGroup.originalTweet || ''}"
+Example: "${tweetTemplates[template].example}"
+Rules:
+- Match the user's tone and vocabulary
+- Sentences max 12 words, short paragraphs
+- Must feel authentic, like a friend tweeting
+- End with a soft question if natural
+Max 280 chars, no hashtags, no emojis, NO QUOTES .${styleContext}`,
+    };
+
+    if (!modePrompts[mode]) {
+      return res.status(400).json({ success: false, error: 'Mode invalide' });
+    }
+
+    const selectedTemplate = selectTemplate(mode);
+    const prompt = modePrompts[mode](selectedTemplate);
+
+    const response = await axiosInstance.post('https://api.groq.com/openai/v1/chat/completions', {
+      messages: [
+        {
+          role: 'system',
+          content:
+            'Tweet expert. Generate original tweets based on user comment using EXACT structure provided. Secondary context: original tweet. Max 280 chars, no hashtags/emojis. Respond only with the tweet',
+        },
+        { role: 'user', content: prompt },
+      ],
+      model: 'llama-3.1-8b-instant',
+          temperature: 0.7,
+          max_tokens: 100,
+    });
+    const newTweet = response.data.choices[0].message.content.trim();
+    tweetGroup.generatedTweets[tweetIndex] = newTweet;
+    tweetGroup.modesUsed[tweetIndex] = mode;
+    tweetGroup.lastModified = new Date().toISOString();
+    await saveAdminData();
+    res.json({ success: true, data: { tweet: newTweet, mode, lastModified: tweetGroup.lastModified } });
+  } catch (error) {
+    res.status(500).json({ success: false, error: 'Erreur régénération' });
+  }
+});
+
+// Route learn-content admin (ragebait/viral)
+app.post('/api/admin/learn-content', async (req, res) => {
+  try {
+    const { type } = req.body;
+    if (!['ragebait', 'viral'].includes(type)) return res.status(400).json({ success: false, error: 'Type invalide' });
+    const prompt = type === 'ragebait' ? 'Explain ragebait... In French, max 500 chars.' : 'Explain viral... In French, max 500 chars.';
+    const response = await axiosInstance.post('https://api.groq.com/openai/v1/chat/completions', {
+      messages: [{ role: 'system', content: 'Social media expert. Concise, in French.' }, { role: 'user', content: prompt }],
+      model: 'llama3-8b-8192',
+      temperature: 0.7,
+      max_tokens: 200
+    });
+    const content = response.data.choices[0].message.content.trim();
+    res.json({ success: true, data: content });
+  } catch (error) {
+    res.status(500).json({ success: false, error: 'Erreur learn-content' });
+  }
+});
+
+// Route tweets-history admin
+app.get('/api/admin/tweets-history', (req, res) => {
+  try {
+    const data = adminData.generatedTweetsHistory.slice(-30).reverse().map(group => ({ ...group, generatedTweets: group.generatedTweets || [], modesUsed: group.modesUsed || [] }));
+    const etag = generateETag(data); // Réutilise fonction existante
+    if (req.get('If-None-Match') === etag) return res.status(304).send();
+    res.set('ETag', etag);
+    res.json({ success: true, data, lastModified: data[0]?.lastModified || new Date().toISOString() });
+  } catch (error) {
+    res.status(500).json({ success: false, error: 'Erreur history' });
+  }
+});
+
+// Route tweet-used admin
+app.post('/api/admin/tweet-used', async (req, res) => {
+  try {
+    const { tweetId } = req.body;
+    const tweetGroup = adminData.generatedTweetsHistory.find(t => t.id === tweetId);
+    if (!tweetGroup) return res.status(404).json({ success: false, error: 'Tweet non trouvé' });
+    tweetGroup.used = true;
+    tweetGroup.used_at = new Date().toISOString();
+    tweetGroup.lastModified = new Date().toISOString();
+    await saveAdminData();
+    res.json({ success: true, message: 'Marqué utilisé' });
+  } catch (error) {
+    res.status(500).json({ success: false, error: 'Erreur used' });
+  }
+});
+
+// Route delete-tweet admin
+app.post('/api/admin/delete-tweet', async (req, res) => {
+  try {
+    const { tweetId, tweetIndex } = req.body;
+    const tweetGroup = adminData.generatedTweetsHistory.find(t => t.id === tweetId);
+    if (!tweetGroup || tweetIndex < 0 || tweetIndex >= tweetGroup.generatedTweets.length) return res.status(400).json({ success: false, error: 'Invalide' });
+    // Cleanup scheduled si existe
+    const scheduledIdx = adminData.scheduledTweets.findIndex(t => t.tweetId === tweetId && t.tweetIndex === tweetIndex);
+    if (scheduledIdx !== -1) {
+      const tweet = adminData.scheduledTweets[scheduledIdx];
+      if (tweet.media) {
+        for (const media of tweet.media) {
+          const filePath = path.join(__dirname, 'Uploads', 'admin', media.filename);
+          await fs.unlink(filePath).catch(() => {});
+        }
+      }
+      adminData.scheduledTweets.splice(scheduledIdx, 1);
+    }
+    tweetGroup.generatedTweets.splice(tweetIndex, 1);
+    tweetGroup.modesUsed.splice(tweetIndex, 1);
+    tweetGroup.lastModified = new Date().toISOString();
+    if (tweetGroup.generatedTweets.length === 0) adminData.generatedTweetsHistory = adminData.generatedTweetsHistory.filter(t => t.id !== tweetId);
+    await saveAdminData();
+    res.json({ success: true, message: 'Supprimé', data: { remainingCount: tweetGroup.generatedTweets.length } });
+  } catch (error) {
+    res.status(500).json({ success: false, error: 'Erreur delete' });
+  }
+});
+
+// Route edit-tweet admin
+app.post('/api/admin/edit-tweet', async (req, res) => {
+  try {
+    const { tweetId, tweetIndex, newText } = req.body;
+    const trimmedText = newText.trim();
+    if (!trimmedText || trimmedText.length > 280) return res.status(400).json({ success: false, error: 'Texte invalide' });
+    const tweetGroup = adminData.generatedTweetsHistory.find(t => t.id === tweetId);
+    if (!tweetGroup || tweetIndex < 0 || tweetIndex >= tweetGroup.generatedTweets.length) return res.status(400).json({ success: false, error: 'Invalide' });
+    adminData.userStyle.writings.push({ text: trimmedText, timestamp: new Date() });
+    const words = trimmedText.toLowerCase().match(/\b\w+\b/g) || [];
+    words.forEach(word => adminData.userStyle.vocabulary.add(word));
+    adminData.userStyle.tone = detectTone(trimmedText);
+    adminData.userStyle.styleProgress += 1;
+    adminData.userStyle.lastModified = new Date().toISOString();
+    if (adminData.userStyle.writings.length > 50) adminData.userStyle.writings = adminData.userStyle.writings.slice(-50);
+    tweetGroup.generatedTweets[tweetIndex] = trimmedText;
+    tweetGroup.lastModified = new Date().toISOString();
+    const scheduledTweet = adminData.scheduledTweets.find(t => t.tweetId === tweetId && t.tweetIndex === tweetIndex);
+    if (scheduledTweet) {
+      scheduledTweet.content = trimmedText;
+      scheduledTweet.lastModified = new Date().toISOString();
+    }
+    await saveAdminData();
+    res.json({ success: true, message: 'Modifié', data: { tweet: trimmedText, styleProgress: adminData.userStyle.styleProgress } });
+  } catch (error) {
+    res.status(500).json({ success: false, error: 'Erreur edit' });
+  }
+});
+
+// Route schedule-tweet admin (avec upload)
+app.post('/api/admin/schedule-tweet', upload.array('media', 4), async (req, res) => {
+try {
+    const { content, datetime, tweetId, tweetIndex, communityId } = req.body;
+
+    // AJOUTEZ CES LOGS ICI :
+    console.log('🔍 [SERVER DEBUG] Données reçues:', { content, datetime, tweetId, tweetIndex });
+    console.log('🔍 [SERVER DEBUG] generatedTweetsHistory IDs:',
+      adminData.generatedTweetsHistory.map(t => ({ id: t.id, tweetsLength: t.generatedTweets?.length }))
+    );
+    if (!content || !datetime || !tweetId || tweetIndex === undefined) return res.status(400).json({ success: false, error: 'Params requis' });
+    const trimmedContent = content.trim();
+    if (trimmedContent.length > 280) return res.status(400).json({ success: false, error: 'Trop long' });
+    const scheduleDate = new Date(datetime);
+    if (isNaN(scheduleDate.getTime()) || scheduleDate <= new Date()) return res.status(400).json({ success: false, error: 'Date invalide' });
+   // const tweetGroup = adminData.generatedTweetsHistory.find(t => t.id === tweetId);
+    //if (!tweetGroup || tweetIndex < 0 || tweetIndex >= tweetGroup.generatedTweets.length) return res.status(400).json({ success: false, error: 'Groupe invalide' });
+    const media = req.files ? req.files.map(file => ({
+      id: Date.now() + Math.random(),
+      filename: file.filename,
+      originalName: file.originalname,
+      path: file.path,
+      url: `http://localhost:${PORT}/Uploads/admin/${file.filename}`,
+      mimetype: file.mimetype,
+      type: file.mimetype.startsWith('image/') ? 'image' : 'video'
+    })) : [];
+    const tweet = {
+      id: adminData.tweetIdCounter++,
+      content: trimmedContent,
+      datetime: scheduleDate.toISOString(),
+      createdAt: new Date().toISOString(),
+      lastModified: new Date().toISOString(),
+      media,
+      status: 'scheduled',
+      tweetId,
+      tweetIndex: parseInt(tweetIndex),
+      communityId: communityId || null
+    };
+    // Remove old si existe
+    const existingIdx = adminData.scheduledTweets.findIndex(t => t.tweetId === tweetId && t.tweetIndex === tweetIndex);
+    if (existingIdx !== -1) {
+      const oldTweet = adminData.scheduledTweets[existingIdx];
+      adminData.scheduledTweets.splice(existingIdx, 1);
+      if (oldTweet.media) {
+        for (const m of oldTweet.media) {
+          const fp = path.join(__dirname, 'Uploads', 'admin', m.filename);
+          await fs.unlink(fp).catch(() => {});
+        }
+      }
+    }
+    adminData.scheduledTweets.push(tweet);
+    await saveAdminData();
+    res.json({ success: true, tweet: { ...tweet, media: media.map(m => ({ id: m.id, filename: m.filename, url: m.url, mimetype: m.mimetype, type: m.type })) } });
+  } catch (error) {
+    res.status(500).json({ success: false, error: 'Erreur schedule' });
+  }
+});
+// Fonction pour publier un tweet avec médias
+async function publishTweetToTwitter(tweet) {
+  try {
+    console.log(`📤 Publication du tweet: "${tweet.content.substring(0, 50)}..."`);
+
+    let mediaIds = [];
+
+    // Upload des médias s'il y en a
+    if (tweet.media && tweet.media.length > 0) {
+      console.log(`📎 Upload de ${tweet.media.length} médias...`);
+
+      for (const media of tweet.media) {
+        try {
+          const mediaPath = path.join(__dirname, 'Uploads', 'admin', media.filename);
+          const mediaData = await fs.readFile(mediaPath);
+
+          console.log(`📸 Upload média: ${media.filename}`);
+          const mediaUpload = await adminTwitterClient.v1.uploadMedia(mediaData, {
+            mimeType: media.mimetype
+          });
+
+          mediaIds.push(mediaUpload);
+          console.log(`✅ Média uploadé: ${mediaUpload}`);
+
+        } catch (mediaError) {
+          console.error(`❌ Erreur upload média ${media.filename}:`, mediaError.message);
+          throw new Error(`Erreur upload média: ${media.filename}`);
+        }
+      }
+    }
+
+    // Création du tweet
+    const tweetData = {
+      text: tweet.content
+    };
+
+    // Ajout des médias si il y en a
+    if (mediaIds.length > 0) {
+      tweetData.media = { media_ids: mediaIds };
+    }
+
+    // Publication
+    const result = await adminTwitterClient.v2.tweet(tweetData);
+    console.log(`✅ Tweet publié avec succès: ${result.data.id}`);
+
+    return result.data;
+
+  } catch (error) {
+    console.error('❌ Erreur publication Twitter:', error.message);
+    throw new Error(`Publication Twitter échouée: ${error.message}`);
+  }
+}
+// Fonction de vérification et publication des tweets programmés
+async function checkAndPublishScheduledTweets() {
+  try {
+    const now = new Date();
+    console.log(`⏰ Vérification tweets programmés à ${now.toLocaleString()}`);
+
+    if (!adminData.scheduledTweets || adminData.scheduledTweets.length === 0) {
+      console.log('ℹ️ Aucun tweet programmé');
+      return;
+    }
+
+    const tweetsToPublish = adminData.scheduledTweets.filter(
+      tweet => tweet.status === 'scheduled' && new Date(tweet.datetime) <= now
+    );
+
+    console.log(`📊 ${tweetsToPublish.length} tweets à publier sur ${adminData.scheduledTweets.length} total`);
+
+    for (const tweet of tweetsToPublish) {
+      console.log(`🚀 Début publication: "${tweet.content.substring(0, 50)}..."`);
+
+      try {
+        // Marquer comme "en cours de publication"
+        tweet.status = 'publishing';
+        await saveAdminData();
+
+        // Publier sur Twitter
+        const result = await publishTweetToTwitter(tweet);
+
+        // Marquer comme publié
+        tweet.status = 'published';
+        tweet.publishedAt = now.toISOString();
+        tweet.twitterId = result.id;
+        tweet.twitterUrl = `https://twitter.com/user/status/${result.id}`;
+
+        console.log(`✅ Tweet ${tweet.id} publié avec succès: ${result.id}`);
+
+      } catch (error) {
+        console.error(`❌ Erreur publication tweet ${tweet.id}:`, error.message);
+        tweet.status = 'failed';
+        tweet.error = error.message;
+        tweet.failedAt = now.toISOString();
+      }
+    }
+
+    // Sauvegarder les changements si des tweets ont été traités
+    if (tweetsToPublish.length > 0) {
+      await saveAdminData();
+      console.log(`💾 Statuts mis à jour pour ${tweetsToPublish.length} tweets`);
+    }
+
+  } catch (error) {
+    console.error('❌ Erreur globale vérification tweets:', error.message);
+  }
+}
+// Route de debug pour voir l'état des tweets
+app.get('/api/admin/debug-tweets', async (req, res) => {
+  try {
+    const now = new Date();
+    const tweetsInfo = (adminData.scheduledTweets || []).map(tweet => ({
+      id: tweet.id,
+      content: tweet.content.substring(0, 50) + '...',
+      status: tweet.status,
+      scheduledFor: tweet.datetime,
+      shouldBePublished: new Date(tweet.datetime) <= now,
+      timeUntilPublish: new Date(tweet.datetime) - now,
+      hasMedia: tweet.media ? tweet.media.length : 0,
+      twitterId: tweet.twitterId || null,
+      error: tweet.error || null
+    }));
+
+    res.json({
+      success: true,
+      currentTime: now.toISOString(),
+      totalTweets: adminData.scheduledTweets ? adminData.scheduledTweets.length : 0,
+      scheduled: tweetsInfo.filter(t => t.status === 'scheduled').length,
+      published: tweetsInfo.filter(t => t.status === 'published').length,
+      failed: tweetsInfo.filter(t => t.status === 'failed').length,
+      tweets: tweetsInfo
+    });
+  } catch (error) {
+    console.error('❌ Erreur debug tweets:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// Route get tweets admin
+app.get('/api/admin/tweets', async (req, res) => {
+  try {
+    const data = adminData.scheduledTweets.map(tweet => ({
+      ...tweet,
+      media: (tweet.media || []).map(m => ({ ...m, url: m.url || `http://localhost:${PORT}/Uploads/admin/${m.filename}` }))
+    }));
+    const etag = generateETag(data);
+    if (req.get('If-None-Match') === etag) return res.status(304).send();
+    res.set('ETag', etag);
+    res.json(data);
+  } catch (error) {
+    res.status(500).json({ success: false, error: 'Erreur tweets' });
+  }
+});
+
+// Route delete tweet admin
+app.delete('/api/admin/tweets/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const idx = adminData.scheduledTweets.findIndex(t => t.id === parseInt(id));
+    if (idx === -1) return res.status(404).json({ success: false, error: 'Non trouvé' });
+    const tweet = adminData.scheduledTweets[idx];
+    if (tweet.media) {
+      for (const m of tweet.media) {
+        const fp = path.join(__dirname, 'Uploads', 'admin', m.filename);
+        await fs.unlink(fp).catch(() => {});
+      }
+    }
+    adminData.scheduledTweets.splice(idx, 1);
+    await saveAdminData();
+    res.json({ success: true, message: 'Supprimé' });
+  } catch (error) {
+    res.status(500).json({ success: false, error: 'Erreur delete' });
+  }
+});
+
+// Route publish tweet admin
+app.post('/api/admin/tweets/:id/publish', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { content } = req.body;
+    const tweet = adminData.scheduledTweets.find(t => t.id === parseInt(id));
+    if (!tweet || tweet.status !== 'scheduled') return res.status(400).json({ success: false, error: 'Invalide' });
+    const result = await publishAdminTweetToTwitter(tweet, content || tweet.content);
+    tweet.status = 'published';
+    tweet.publishedAt = new Date().toISOString();
+    tweet.twitterId = result.data.id;
+    tweet.lastModified = new Date().toISOString();
+    await saveAdminData();
+    res.json({ success: true, message: 'Publié', result: result.data });
+  } catch (error) {
+    tweet.status = 'failed';
+    tweet.error = error.message;
+    tweet.lastModified = new Date().toISOString();
+    await saveAdminData();
+    res.status(500).json({ success: false, error: 'Erreur publish' });
+  }
+});
+//admin route edn
 // Démarrer le serveur
 async function startServer() {
+  // Init admin
+await testAdminTwitterConnection();
+await loadAdminData();
+startAdminScheduleChecker();
+console.log('✅ Système admin intégré (Twitter hardcodé + Firebase)');
   try {
     console.log('🔄 Initialisation du serveur avec système de templates...');
     console.log(`📋 Templates disponibles: ${Object.keys(tweetTemplates).join(', ')}`);
     startScheduleChecker();
     app.listen(PORT, '0.0.0.0', () => {
+      console.log(`   - GET  /admin (page admin)`);
+console.log(`   - GET  /api/admin/user-communities`);
+console.log(`   - POST /api/admin/update-tweet-community`);
+console.log(`   - POST /api/admin/learn-style`);
+console.log(`   - POST /api/admin/generate-tweets`);
+console.log(`   - POST /api/admin/regenerate-tweet`);
+console.log(`   - POST /api/admin/learn-content`);
+console.log(`   - GET  /api/admin/tweets-history`);
+console.log(`   - POST /api/admin/tweet-used`);
+console.log(`   - POST /api/admin/delete-tweet`);
+console.log(`   - POST /api/admin/edit-tweet`);
+console.log(`   - POST /api/admin/schedule-tweet`);
+console.log(`   - GET  /api/admin/tweets`);
+console.log(`   - DELETE /api/admin/tweets/:id`);
+console.log(`   - POST /api/admin/tweets/:id/publish`);
       console.log(`🚀 Serveur démarré sur http://localhost:${PORT}`);
       console.log(`📊 Interface web: http://localhost:${PORT}`);
       console.log(`🔄 API endpoints disponibles:`);
@@ -2181,6 +3245,17 @@ async function startServer() {
     process.exit(1);
   }
 }
+// Démarrer la vérification automatique des tweets programmés
+console.log('🕐 Démarrage du système de vérification des tweets programmés...');
+setInterval(checkAndPublishScheduledTweets, 30000); // Vérifier toutes les 30 secondes
+
+// Vérification immédiate au démarrage
+setTimeout(() => {
+  console.log('🚀 Vérification initiale des tweets programmés...');
+  checkAndPublishScheduledTweets();
+}, 5000); // Attendre 5 secondes après le démarrage
 
 // Appeler la fonction pour démarrer le serveur
 startServer();
+
+
