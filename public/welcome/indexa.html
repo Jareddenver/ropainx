@@ -1,11 +1,9 @@
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ropainx</title>
+    <title>Ropainx - Turn Your Twitter Activity Into Endless Content</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;600;700&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
     <style>
 body{
@@ -566,7 +564,7 @@ gap:10px;
             max-width: 800px;
             margin: 0 auto;
             padding: 80px 20px;
-
+            background: #f8f9fa;
         }
 
         .faq-title {
@@ -587,9 +585,16 @@ gap:10px;
         .faq-item {
             background: white;
             border: 1px solid #e2e8f0;
-            border-radius: 8px;
-            margin-bottom: 12px;
+            border-radius: 12px;
+            margin-bottom: 16px;
             overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+        }
+
+        .faq-item:hover {
+            box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+            transform: translateY(-2px);
         }
 
         .faq-question {
@@ -598,24 +603,31 @@ gap:10px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            font-weight: 500;
+            font-weight: 600;
+            font-size: 16px;
             color: #2d3748;
             border: none;
             background: none;
             width: 100%;
             text-align: left;
+            transition: color 0.3s ease;
         }
 
         .faq-question:hover {
             background-color: #f7fafc;
+            color: #1a202c;
         }
 
         .faq-arrow {
-            transition: transform 0.2s ease;
+            transition: transform 0.3s ease;
+            font-size: 18px;
+            font-weight: bold;
+            color: #718096;
         }
 
         .faq-arrow.open {
             transform: rotate(180deg);
+            color: black;
         }
 
         .faq-answer {
@@ -623,10 +635,17 @@ gap:10px;
             color: #4a5568;
             line-height: 1.6;
             display: none;
+            font-size: 15px;
         }
 
         .faq-answer.open {
             display: block;
+            animation: fadeInDown 0.3s ease-out;
+        }
+
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         /* Pricing Section */
@@ -636,7 +655,7 @@ gap:10px;
         }
 
         .pricing-container {
-            max-width: 1200px;
+            max-width: 600px;
             margin: 0 auto;
         }
 
@@ -653,179 +672,130 @@ gap:10px;
             color: #718096;
             text-align: center;
             margin-bottom: 60px;
-            max-width: 800px;
+            max-width: 600px;
             margin-left: auto;
             margin-right: auto;
         }
 
         .pricing-cards {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 24px;
-            max-width: 1000px;
-            margin: 0 auto;
+            display: flex;
+            justify-content: center;
         }
 
         .pricing-card {
             background: white;
-            border: 2px solid #e2e8f0;
-            border-radius: 16px;
-            padding: 32px;
+            border: 3px solid black;
+            border-radius: 20px;
+            padding: 40px;
             text-align: center;
             position: relative;
+            max-width: 400px;
+            box-shadow: 0 8px 32px rgba(49, 130, 206, 0.15);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
 
-        .pricing-card.popular {
-            border-color: #3182ce;
-            transform: scale(1.05);
+        .pricing-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 16px 48px rgba(49, 130, 206, 0.25);
         }
 
         .popular-badge {
-            background: #ff6b35;
+            background: linear-gradient(45deg, #ff6b35, #f7931e);
             color: white;
-            padding: 8px 16px;
-            border-radius: 20px;
+            padding: 8px 20px;
+            border-radius: 25px;
             font-size: 12px;
-            font-weight: 600;
+            font-weight: 700;
             text-transform: uppercase;
             position: absolute;
-            top: -12px;
+            top: -15px;
             left: 50%;
             transform: translateX(-50%);
+            letter-spacing: 1px;
         }
 
         .plan-name {
-            font-size: 24px;
+            font-size: 28px;
             font-weight: 700;
             color: #2d3748;
             margin-bottom: 8px;
+            margin-top: 10px;
         }
 
         .plan-description {
             color: #718096;
-            margin-bottom: 24px;
+            margin-bottom: 32px;
+            font-size: 16px;
         }
 
         .price {
-            font-size: 48px;
+            font-size: 64px;
             font-weight: 700;
-            color: #2d3748;
+            color: black;
             margin-bottom: 8px;
+            line-height: 1;
         }
 
         .price-unit {
-            font-size: 18px;
+            font-size: 20px;
             color: #718096;
+            font-weight: 500;
         }
 
-        .original-price {
-            color: #a0aec0;
-            text-decoration: line-through;
-            font-size: 16px;
-            margin-right: 8px;
-        }
-
-        .discount {
-            color: #38a169;
+        .price-note {
+            color: grey;
             font-size: 14px;
             font-weight: 600;
+            margin-bottom: 32px;
         }
 
         .adopt-btn {
-            background: #2d3748;
+            background: linear-gradient(45deg, black, #4299e1);
             color: white;
-            padding: 16px 32px;
+            padding: 18px 36px;
             border: none;
-            border-radius: 8px;
+            border-radius: 12px;
             font-weight: 600;
+            font-size: 16px;
             cursor: pointer;
             width: 100%;
             margin: 24px 0;
-            transition: background-color 0.2s ease;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
         .adopt-btn:hover {
-            background: #1a202c;
-        }
-
-        .adopt-btn.outline {
-            background: transparent;
-            color: #2d3748;
-            border: 2px solid #e2e8f0;
-        }
-
-        .adopt-btn.outline:hover {
-            background: #f7fafc;
+            background: linear-gradient(45deg, #2c5aa0, black);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(49, 130, 206, 0.3);
         }
 
         .plan-features {
-            font-size: 14px;
-            color: #718096;
-            margin-bottom: 16px;
-        }
-
-        .seat-info {
             color: #4a5568;
             font-size: 14px;
+            line-height: 1.8;
+            text-align: left;
         }
 
-        /* Products Section */
-        .products-section {
-            background: #1a202c;
-            padding: 80px 20px;
-            color: white;
+        .plan-features ul {
+            list-style: none;
+            padding: 0;
+            margin: 20px 0;
         }
 
-        .products-container {
-            max-width: 1200px;
-            margin: 0 auto;
+        .plan-features li {
+            padding: 8px 0;
+            position: relative;
+            padding-left: 24px;
         }
 
-        .products-title {
-            font-size: 32px;
-            font-weight: 700;
-            text-align: center;
-            margin-bottom: 8px;
-        }
-
-        .products-subtitle {
-            color: #a0aec0;
-            text-align: center;
-            margin-bottom: 60px;
-        }
-
-        .products-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 40px;
-        }
-
-        .product-item {
-            text-align: center;
-        }
-
-        .product-icon {
-            width: 64px;
-            height: 64px;
-            background: #2d3748;
-            border-radius: 12px;
-            margin: 0 auto 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 24px;
-        }
-
-        .product-name {
-            font-size: 20px;
-            font-weight: 600;
-            margin-bottom: 12px;
-        }
-
-        .product-description {
-            color: #a0aec0;
-            font-size: 14px;
-            line-height: 1.5;
+        .plan-features li::before {
+            content: "✓";
+            color: #38a169;
+            font-weight: bold;
+            position: absolute;
+            left: 0;
         }
 
         /* Footer */
@@ -860,7 +830,7 @@ gap:10px;
         }
 
         .footer-logo::before {
-            content: '🔍';
+            content: '🚀';
             margin-right: 8px;
         }
 
@@ -953,24 +923,24 @@ gap:10px;
                 grid-template-columns: 1fr;
             }
 
-            .pricing-card.popular {
-                transform: none;
+            h1 {
+                font-size: 4em;
+                line-height: 80px;
+            }
+
+            .black {
+                flex-direction: column;
+                height: auto;
+                gap: 50px;
+                padding: 40px 20px;
+            }
+
+            video {
+                width: 100%;
+                max-width: 500px;
+                height: auto;
             }
         }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
    .steps-container {
             display: grid;
@@ -993,108 +963,101 @@ gap:10px;
         }
 
         .step-1 .step-visual {
-            background: linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 100%);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             border-radius: 20px;
             padding: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .chrome-icon {
+            width: 80px;
+            height: 80px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 36px;
+            position: relative;
+        }
+
+        .chrome-icon::after {
+            content: "⚡";
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            background: #ff6b35;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
         }
 
         .step-2 .step-visual {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            border-radius: 20px;
+            padding: 40px;
             display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
+            align-items: center;
             justify-content: center;
-            align-items: center;
         }
 
-        .video-card {
-            width: 80px;
-            height: 120px;
-            border-radius: 12px;
-            background-size: cover;
-            background-position: center;
+        .website-mockup {
+            width: 120px;
+            height: 80px;
+            background: rgba(255,255,255,0.9);
+            border-radius: 8px;
             position: relative;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-        }
-
-        .video-card-1 {
-            background: linear-gradient(45deg, #4a5568, #718096);
-        }
-
-        .video-card-2 {
-            background: linear-gradient(45deg, #3182ce, #4299e1);
-        }
-
-        .video-card-3 {
-            background: linear-gradient(45deg, #553c9a, #805ad5);
-        }
-
-        .video-stats {
-            position: absolute;
-            bottom: 4px;
-            left: 4px;
-            right: 4px;
-            background: rgba(0,0,0,0.7);
-            color: white;
-            font-size: 10px;
-            padding: 2px 4px;
-            border-radius: 4px;
             display: flex;
             align-items: center;
-            gap: 2px;
+            justify-content: center;
+            color: #333;
+            font-weight: bold;
+            font-size: 12px;
+        }
+
+        .website-mockup::before {
+            content: "";
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            right: 8px;
+            height: 12px;
+            background: #f0f0f0;
+            border-radius: 4px;
         }
 
         .step-3 .step-visual {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            border-radius: 20px;
+            padding: 40px;
             display: flex;
-            justify-content: center;
             align-items: center;
+            justify-content: center;
         }
 
-        .mobile-mockup {
-            width: 120px;
-            height: 200px;
-            background: linear-gradient(135deg, #ff6b35, #f7931e);
-            border-radius: 25px;
+        .flow-icon {
+            width: 100px;
+            height: 60px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
             position: relative;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            color: white;
         }
 
-        .mobile-time {
+        .flow-icon::after {
+            content: "∞";
             position: absolute;
-            top: 10px;
-            right: 10px;
-            background: rgba(0,0,0,0.3);
-            padding: 2px 6px;
-            border-radius: 8px;
-            font-size: 10px;
-            font-weight: bold;
-        }
-
-        .mobile-content {
-            text-align: center;
-            padding: 20px;
-        }
-
-        .mobile-title {
-            font-size: 11px;
-            font-weight: bold;
-            margin-bottom: 8px;
-            line-height: 1.2;
-        }
-
-        .download-icon {
-            width: 20px;
-            height: 20px;
-            background: rgba(255,255,255,0.3);
-            border-radius: 50%;
-            margin: 10px auto;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            color: rgba(255,255,255,0.8);
+            font-size: 40px;
         }
 
         .step-number {
@@ -1113,14 +1076,22 @@ gap:10px;
         }
 
         .step-description {
-            font-size: 12px;
-            color: #666;
+            font-size: 14px;
+            color: #ccc;
             max-width: 300px;
             margin: 0 auto;
+            line-height: 1.5;
         }
 
+        .step-link {
+            color: #4facfe;
+            text-decoration: underline;
+            font-weight: 600;
+        }
 
-
+        .step-link:hover {
+            color: #00f2fe;
+        }
 
 </style>
 
@@ -1134,279 +1105,284 @@ gap:10px;
                 </svg>Ropainx</div>
             <nav id="navbar">
                 <ul>
-                    <li><a href="#home">Accueil</a></li>
+                    <li><a href="#home">Home</a></li>
                     <li><a href="#features">Features</a></li>
                     <li><a href="#pricing">Pricing</a></li>
-                    <li><a href="#help">Help</a></li>
+                    <li><a href="#faq">FAQ</a></li>
                     <li><a href="#contact">Contact</a></li>
                 </ul>
             </nav>
         </div>
     </header></div></div>
-<h1>Endless content with <br>
-<span>Ropainx</span></h1>
 
-<div class="poo"> <p>yfgergf rhjbreg yrgbherg ergbrgergier ryig  dhbfhj wjefvgewvf jgefvewguvf fgewvfuvewf ewgufvewtuvf ewfewufuewf ewvfew feuwfvyevfew fyuevfuye fwfewf fwfwegwg efugwrufygb yrgygyrigiywgw giywrbiywbywrygbrg rgyryigbrygb rbgyrbgyrb rbgirgb </p></div>
+<h1>Turn your Twitter activity<br>
+into <span>endless tweets</span></h1>
+
+<div class="poo"> <p>Transform every post you like and comment you make into personalized, engaging tweets. Ropainx turns your daily Twitter interactions into a content goldmine - effortlessly generating 9 unique tweet variations from your activity with just one click.</p></div>
 
  <div id="btn-gr">
-            <button id="ro">
+            <button id="ro" onclick="window.open('https://chromewebstore.google.com/detail/dgplemjjjinbjkhcjcibgbeicneheffd', '_blank')">
                 <svg width="1.1em" height="1.1em" viewBox="0 0 24 24">
                     <circle cx="12" cy="12" r="10" fill="none" stroke="#1E90FF" stroke-width="4"/>
                 </svg>
-                Get endlesss tweets
+                Get Chrome Extension
             </button>
-            <button id="twitter" onclick="window.open('https://x.com/Nightbrand08', '_blank')">
+            <button id="twitter" onclick="window.open('https://ropainx.onrender.com', '_blank')">
                 <svg width="1.1em" height="1.1em" viewBox="0 0 24 24" fill="#000">
-                    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                    <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
                 </svg>
-                Connect with me
+                Open Dashboard
             </button>
         </div>
-      <div class="video">   <video controls> <source src="0907.mp4" type="video/mp4"></video></div>
 
+      <div class="video">
+        <div style="width:780px; height:440px; background: linear-gradient(45deg, #667eea, #764ba2); border-radius:20px; display:flex; align-items:center; justify-content:center; color:white; font-size:24px; margin-top:5%;">
+            Demo Video Coming Soon
+        </div>
+      </div>
 
-<div class="poo"> <p>yfgergf rhjbreg yrgbherg ergbrgergier ryig dsfhdsbf dhfgdsgjfjds jvfgds fjdsfjf  dfggwefw gewfgwefewgfvftueff
-yfgergf rhjbreg yrgbherg ergbrgergier rrg  dsfhdsbf dhfgdsgjfjds jvfgds fjdsfjf  dfggwefw gewfgwefewgfvftueff
-yfgergf rhjbreg yrgbherg ergbrgergier rrg dsfhdsbf dhfgdsgjfjds jvfgds fjdsfjf  dfggwefw gewfgwefewgfvftueff </p></div>
+<div class="poo"> <p>Every like, every comment, every interaction becomes content. Ropainx seamlessly integrates with your Twitter workflow, requiring zero extra steps. Just browse Twitter naturally - like posts, leave comments, and watch as each action generates fresh, personalized tweets ready to post.</p></div>
+
  <section id="stats" class="reveal-section">
-        <h2 class="section-title">We're just getting started:</h2>
+        <h2 class="section-title">Real Impact, Real Numbers</h2>
         <div class="stats-grid">
             <div class="stat">
-                <h3 data-target="400" data-suffix="+">0+</h3>
-                <p class="stat-label">Tweets generated</p>
-                <p class="stat-desc">From witty one-liners to full engagement threads, Ro keeps your feed alive.</p>
+                <h3 data-target="5000" data-suffix="+">0+</h3>
+                <p class="stat-label">Tweets Generated</p>
+                <p class="stat-desc">From viral hooks to engaging threads, Ropainx transforms your daily interactions into endless content variations.</p>
             </div>
             <div class="stat">
-                <h3 data-target="75" data-suffix="M+">0M+</h3>
-                <p class="stat-label">Impressions</p>
-                <p class="stat-desc">Creators using Ro have already reached millions with effortless tweets.</p>
+                <h3 data-target="2" data-suffix="M+">0M+</h3>
+                <p class="stat-label">Total Impressions</p>
+                <p class="stat-desc">Creators using Ropainx have already reached millions with effortless, personalized tweets.</p>
             </div>
             <div class="stat">
-                <h3 data-target="3" data-suffix="">0</h3>
-                <p class="stat-label">Active creators</p>
-                <p class="stat-desc">Dozens of creators are already turning comments into growth with Ro.</p>
+                <h3 data-target="150" data-suffix="+">0+</h3>
+                <p class="stat-label">Active Creators</p>
+                <p class="stat-desc">Content creators, marketers, and Twitter enthusiasts are turning their activity into growth with Ropainx.</p>
             </div>
             <div class="stat">
-                <h3 data-target="4.2" data-suffix="">0</h3>
-                <p class="stat-label">Hours saved weekly</p>
-                <p class="stat-desc">Stop wasting time switching tabs or copy/pasting – Ro automates it all.</p>
+                <h3 data-target="6" data-suffix="">0</h3>
+                <p class="stat-label">Hours Saved Weekly</p>
+                <p class="stat-desc">Stop brainstorming content. Ropainx automatically generates tweets from your natural Twitter behavior.</p>
             </div>
         </div>
 
-
         <h3 class="nev"> NEVER RUN OUT OF CONTENT
-           AND BY <span>NEVER</span> WE MEANT <span>NEVER</span>
+           AND BY <span>NEVER</span> WE MEAN <span>NEVER</span>
         </h3>
     </section>
+
      <div class="black">
      <div class="half-circle"></div>
       <div class="steps-container">
             <div class="step step-1">
+                <div class="step-visual">
+                    <div class="chrome-icon">🌐</div>
+                </div>
                 <div class="step-number">1.</div>
-                <h3 class="step-title">Get the extension and connect</h3>
+                <h3 class="step-title">Install the Chrome Extension</h3>
                 <p class="step-description">
-                    Tell us who you are (coach, agency, e-com, creator) and what you want to achieve. Instantly calibrate the AI to your market.
+                    Get the <a href="https://chromewebstore.google.com/detail/dgplemjjjinbjkhcjcibgbeicneheffd" target="_blank" class="step-link">Ropainx Chrome extension</a> and add it to your browser. It seamlessly integrates with Twitter/X for effortless tweet generation.
                 </p>
             </div>
 
             <div class="step step-2">
-
+                <div class="step-visual">
+                    <div class="website-mockup">ROPAINX</div>
+                </div>
                 <div class="step-number">2.</div>
-                <h3 class="step-title">Go on ropainx.com and connect</h3>
+                <h3 class="step-title">Connect on ropainx.onrender.com</h3>
                 <p class="step-description">
-                    Every day, Submagic Viral Finder analyses thousands of viral short-form videos in your niche and detects what's actually exploding right now.
+                    Visit <a href="https://ropainx.onrender.com" target="_blank" class="step-link">ropainx.onrender.com</a> to authenticate with Twitter and sync your extension. Quick setup takes just one minute.
                 </p>
             </div>
 
             <div class="step step-3">
-
+                <div class="step-visual">
+                    <div class="flow-icon"></div>
+                </div>
                 <div class="step-number">3.</div>
-                <h3 class="step-title">Get back to your normal flow</h3>
+                <h3 class="step-title">Tweet Naturally, Generate Endlessly</h3>
                 <p class="step-description">
-                    Receive a personalised list of high-potential video concepts, ready to shoot — so you can post first, grow faster, and never run out of winning ideas.
+                    Continue your normal Twitter flow - like posts, leave comments, save ideas. Each interaction automatically generates 9 personalized tweet variations ready to post.
                 </p>
             </div>
         </div>
-
-
      </div>
 
-
- <section id="benefits" class="reveal-section">
-        <div class="benefit-cards">
-            <div class="card">
-                <h3>Zero Friction</h3>
-                <p>Tweeting becomes effortless. You already comment, you already click – Ro just turns this natural flow into content without any extra step.</p>
+    <section id="features">
+        <h2>How Ropainx Works</h2>
+        <section id="benefits" class="reveal-section">
+            <div class="benefit-cards">
+                <div class="card">
+                    <h3>Zero Friction Content</h3>
+                    <p>Turn every Twitter interaction into content. Like a post? Get 9 tweet variations. Leave a comment? Instantly transform it into engaging tweets. No extra steps required.</p>
+                </div>
+                <div class="card">
+                    <h3>9 Unique Variations</h3>
+                    <p>Each interaction generates 9 different tweet styles: viral, contrarian, thread-worthy, critique, and more. Never run out of fresh angles on any topic.</p>
+                </div>
+                <div class="card">
+                    <h3>Personalized Voice</h3>
+                    <p>All generated tweets match your unique voice and style. Ropainx learns from your Twitter activity to create content that sounds authentically you.</p>
+                </div>
+                <div class="card">
+                    <h3>Seamless Integration</h3>
+                    <p>Works directly within Twitter/X interface. No tab switching, no copy-paste. Generate tweets with subtle button clicks while browsing naturally.</p>
+                </div>
+                <div class="card">
+                    <h3>Local Storage & Privacy</h3>
+                    <p>Your generated tweets and ideas are stored locally on your device. Complete privacy with secure Twitter OAuth authentication.</p>
+                </div>
+                <div class="card">
+                    <h3>Idea Management</h3>
+                    <p>Save tweet ideas on-the-go with simple #i commands. Store inspiration while browsing and access it anytime for future content creation.</p>
+                </div>
             </div>
-            <div class="card">
-                <h3> Instant Variety</h3>
-                <p>One click = 9 different tweet variations. Each comes with a unique tone and style so you never run out of engaging content.</p>
-            </div>
-            <div class="card">
-                <h3> Amplified Comments</h3>
-                <p>Every comment you post can instantly transform into fresh tweets. Engagement turns into growth automatically.</p>
-            </div>
-            <div class="card">
-                <h3>Built for Creators</h3>
-                <p>No useless copy/paste. No switching tabs. Ropainx integrates directly with your daily habits for a smooth workflow.</p>
-            </div>
-        </div>
+        </section>
     </section>
-    <div class="poo"> <p>yfgergf rhjbreg yrgbherg ergbrgergier ryig dsfhdsbf dhfgdsgjfjds jvfgds fjdsfjf  dfggwefw gewfgwefewgfvftueff
-yfgergf rhjbreg yrgbherg ergbrgergier rrg  dsfhdsbf dhfgdsgjfjds jvfgds fjdsfjf  dfggwefw gewfgwefewgfvftueff
-yfgergf rhjbreg yrgbherg ergbrgergier rrg dsfhdsbf dhfgdsgjfjds jvfgds fjdsfjf  dfggwefw gewfgwefewgfvftueff </p></div>
 
-
+<div class="poo"> <p>Transform your Twitter routine into a content powerhouse. Every post you engage with becomes a source of fresh, personalized tweets. Ropainx turns your natural social media behavior into an endless content generation system, perfectly tailored to your voice and interests.</p></div>
 
     <!-- FAQ Section -->
-    <section class="faq-section">
-        <h2 class="faq-title">Questions? We have answers.</h2>
-        <p class="faq-subtitle">Still curious? Here are some of our frequently asked questions.</p>
+    <section class="faq-section" id="faq">
+        <h2 class="faq-title">Frequently Asked Questions</h2>
+        <p class="faq-subtitle">Everything you need to know about Ropainx</p>
 
         <div class="faq-item">
             <button class="faq-question" onclick="toggleFaq(this)">
-                Do I get support & help as a customer?
+                How does Ropainx generate tweets from my activity?
                 <span class="faq-arrow">▼</span>
             </button>
             <div class="faq-answer">
-                Absolutely! You can join our Discord community for real-time help, or open a support ticket directly from the platform for personalized assistance.
+                Ropainx adds subtle buttons to tweets in your feed. When you click them, it analyzes the content and generates 9 unique tweet variations in different styles - viral, contrarian, thread-worthy, and more. It also automatically creates tweets from your comments as you post them.
             </div>
         </div>
 
         <div class="faq-item">
             <button class="faq-question" onclick="toggleFaq(this)">
-                Can I cancel at anytime?
+                Is my data safe and private?
                 <span class="faq-arrow">▼</span>
             </button>
             <div class="faq-answer">
-                Yes, you can cancel your subscription at any time. There are no long-term contracts or cancellation fees.
+                Yes! Ropainx stores all generated tweets and ideas locally on your device using Chrome's secure storage. We only use secure Twitter OAuth for authentication, and your data never leaves your control.
             </div>
         </div>
 
         <div class="faq-item">
             <button class="faq-question" onclick="toggleFaq(this)">
-                Are there any usage limitations?
+                Do I need to change how I use Twitter?
                 <span class="faq-arrow">▼</span>
             </button>
             <div class="faq-answer">
-                Each plan comes with specific usage limits based on your needs. You can always upgrade to a higher plan if you need more capacity.
+                Not at all! Ropainx is designed to work with your existing Twitter habits. Like posts, leave comments, and browse naturally - the extension seamlessly turns these actions into content without disrupting your flow.
             </div>
         </div>
 
         <div class="faq-item">
             <button class="faq-question" onclick="toggleFaq(this)">
-                Do you offer annual discounts?
+                Can I cancel my subscription anytime?
                 <span class="faq-arrow">▼</span>
             </button>
             <div class="faq-answer">
-                Yes! We offer significant discounts for annual subscriptions. The discounts shown in our pricing are already applied to annual plans.
+                Absolutely! You can cancel your Ropainx subscription at any time with no cancellation fees or long-term commitments. Your access continues until the end of your billing period.
+            </div>
+        </div>
+
+        <div class="faq-item">
+            <button class="faq-question" onclick="toggleFaq(this)">
+                What makes Ropainx different from other content tools?
+                <span class="faq-arrow">▼</span>
+            </button>
+            <div class="faq-answer">
+                Ropainx is the only tool that generates content directly from your Twitter activity without changing your workflow. Instead of starting from scratch, it transforms your existing likes and comments into personalized tweets, making content creation truly effortless.
             </div>
         </div>
     </section>
 
     <!-- Pricing Section -->
-    <section class="pricing-section">
+    <section class="pricing-section" id="pricing">
         <div class="pricing-container">
-            <h2 class="pricing-title">Flexible, risk-free pricing</h2>
-            <p class="pricing-subtitle">Find all profitable brands and conduct product & keyword research across the entire market. Decode competitors' creative and funnel strategies, save everything into shareable swipe files.</p>
+            <h2 class="pricing-title">Simple, Affordable Pricing</h2>
+            <p class="pricing-subtitle">Turn your Twitter activity into endless content for less than $0.50 per day</p>
 
             <div class="pricing-cards">
                 <div class="pricing-card">
-                    <h3 class="plan-name">Starter</h3>
-                    <p class="plan-description">For early-stage brands & creatives</p>
-                    <div class="price">$63<span class="price-unit">/mo</span></div>
-                    <div><span class="original-price">$79</span><span class="discount">20% OFF</span></div>
-                    <button class="adopt-btn outline">Adopt workflow</button>
-                    <p class="plan-features">Offer applied in the pricing.</p>
-                    <p class="seat-info">1 seat included</p>
-                </div>
-
-                <div class="pricing-card popular">
-                    <div class="popular-badge">POPULAR</div>
-                    <h3 class="plan-name">Outscaler</h3>
-                    <p class="plan-description">For scaling brands & creative teams</p>
-                    <div class="price">$79<span class="price-unit">/mo</span></div>
-                    <div><span class="original-price">$99</span><span class="discount">20% OFF</span></div>
-                    <button class="adopt-btn">Adopt workflow</button>
-                    <p class="plan-features">Offer applied in the pricing.</p>
-                    <p class="seat-info">2 seats included</p>
-                </div>
-
-                <div class="pricing-card">
-                    <h3 class="plan-name">Agency</h3>
-                    <p class="plan-description">For teams & agencies</p>
-                    <div class="price">$149<span class="price-unit">/mo</span></div>
-                    <div><span class="original-price">$199</span><span class="discount">25% OFF</span></div>
-                    <button class="adopt-btn outline">Adopt workflow</button>
-                    <p class="plan-features">Offer applied in the pricing.</p>
-                    <p class="seat-info">5 seats included</p>
+                    <div class="popular-badge">BEST VALUE</div>
+                    <h3 class="plan-name">Ropainx Pro</h3>
+                    <p class="plan-description">Perfect for creators and marketers</p>
+                    <div class="price">$49<span class="price-unit">/year</span></div>
+                    <div class="price-note">Just $0.13 per day - less than a coffee!</div>
+                    <button class="adopt-btn" onclick="window.open('https://ropainx.onrender.com', '_blank')">Start Creating Content</button>
+                    <div class="plan-features">
+                        <ul>
+                            <li>Unlimited tweet generation from likes</li>
+                            <li>Unlimited tweet generation from comments</li>
+                            <li>9 unique variations per interaction</li>
+                            <li>Local idea storage and management</li>
+                            <li>Personalized voice matching</li>
+                            <li>Chrome extension included</li>
+                            <li>Secure Twitter OAuth</li>
+                            <li>Priority email support</li>
+                        </ul>
+                    </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Products Section -->
-    <section class="products-section">
-        <div class="products-container">
-            <h2 class="products-title">Our Products</h2>
-            <p class="products-subtitle">Complete toolkit for ecommerce success</p>
-
-
-        </div>
-    </section>
-
     <!-- Footer -->
-    <footer class="footer">
+    <footer class="footer" id="contact">
         <div class="footer-container">
             <div class="footer-content">
                 <div class="footer-brand">
-                    <div class="footer-logo">BrandSearch</div>
-                    <div class="footer-tagline">Make your ecommerce journey more profitable</div>
+                    <div class="footer-logo">Ropainx</div>
+                    <div class="footer-tagline">Turn your Twitter activity into endless content</div>
                     <div class="footer-description">
-                        BrandSearch is run by Made In Heaven - company based in Lausanne, Switzerland, focused on Market Research software for brand builders, dropshippers and marketers.
+                        Ropainx is the Chrome extension that transforms your daily Twitter interactions into personalized, engaging tweets. Never run out of content again with our seamless, privacy-first approach to social media content generation.
                     </div>
                 </div>
 
                 <div class="footer-column">
-                    <h4>Products</h4>
+                    <h4>Product</h4>
                     <ul class="footer-links">
-                        <li><a href="#">Brand Library</a></li>
-                        <li><a href="#">Discovery</a></li>
-                        <li><a href="#">Spectre</a></li>
-                        <li><a href="#">Swipe Files</a></li>
+                        <li><a href="https://chromewebstore.google.com/detail/dgplemjjjinbjkhcjcibgbeicneheffd" target="_blank">Chrome Extension</a></li>
+                        <li><a href="https://ropainx.onrender.com" target="_blank">Dashboard</a></li>
+                        <li><a href="#features">Features</a></li>
+                        <li><a href="#pricing">Pricing</a></li>
                     </ul>
                 </div>
 
                 <div class="footer-column">
-                    <h4>Platform</h4>
+                    <h4>Resources</h4>
                     <ul class="footer-links">
-                        <li><a href="#">Pricing</a></li>
-                        <li><a href="#">Chrome Extension</a></li>
-                        <li><a href="#">Alternatives</a></li>
-                        <li><a href="#">Affiliate Program</a></li>
+                        <li><a href="#faq">FAQ</a></li>
+                        <li><a href="https://jareddenver.github.io/privacy-policy-ropainx/confidential.html" target="_blank">Privacy Policy</a></li>
+                        <li><a href="#">Terms of Service</a></li>
+                        <li><a href="#contact">Contact</a></li>
                     </ul>
                 </div>
 
                 <div class="footer-column">
                     <h4>Support</h4>
                     <ul class="footer-links">
-                        <li><a href="#">Contact & Help</a></li>
-                        <li><a href="#">Discord Community</a></li>
-                        <li><a href="#">ROAS Calculator</a></li>
-                        <li><a href="#">Revenue Calculator</a></li>
-                        <li><a href="#">Terms & Privacy</a></li>
+                        <li><a href="mailto:toumoudagoujoseph@gmail.com">Email Support</a></li>
+                        <li><a href="#faq">Help Center</a></li>
+                        <li><a href="https://ropainx.onrender.com" target="_blank">Setup Guide</a></li>
+                        <li><a href="#">Tutorials</a></li>
                     </ul>
                 </div>
             </div>
 
             <div class="footer-bottom">
                 <div class="footer-copyright">
-                    © 2025 BrandSearch, Inc. All rights reserved. Not affiliated with Facebook, Meta, Instagram, or Shopify.
+                    © 2025 Ropainx. All rights reserved. Transform your Twitter activity into endless content.
                 </div>
                 <div class="footer-social">
-                    <a href="#" class="social-icon">💬</a>
-                    <a href="#" class="social-icon">📧</a>
-                    <a href="#" class="social-icon">🐦</a>
+                    <a href="https://twitter.com/ropainx" class="social-icon" target="_blank">🐦</a>
+                    <a href="mailto:toumoudagoujoseph@gmail.com" class="social-icon">📧</a>
+                    <a href="https://ropainx.onrender.com" class="social-icon" target="_blank">🚀</a>
                 </div>
             </div>
         </div>
@@ -1429,68 +1405,63 @@ yfgergf rhjbreg yrgbherg ergbrgergier rrg dsfhdsbf dhfgdsgjfjds jvfgds fjdsfjf  
             answer.classList.toggle('open');
             arrow.classList.toggle('open');
         }
-    </script>
 
-
-
-      <script>
-
-// === Animate stats numbers ===
-function animateStats() {
-    const stats = document.querySelectorAll('.stat h3');
-    stats.forEach(stat => {
-        const target = parseFloat(stat.getAttribute('data-target'));
-        const suffix = stat.getAttribute('data-suffix') || '+';
-        let count = 0;
-        const increment = target / 100;
-        const updateCount = () => {
-            count += increment;
-            if (count < target) {
-                stat.innerText = (Math.round(count * 10) / 10) + suffix;
-                requestAnimationFrame(updateCount);
-            } else {
-                stat.innerText = target + suffix;
-            }
-        };
-        updateCount();
-    });
-}
-
-// === Typing effect for last NEVER ===
-function typeEffect(words, element, speed = 150, pause = 1200) {
-    let i = 0, j = 0, deleting = false;
-
-    function loop() {
-        const word = words[i];
-        if (!deleting) {
-            element.textContent = word.substring(0, j+1);
-            j++;
-            if (j === word.length) {
-                deleting = true;
-                setTimeout(loop, pause);
-                return;
-            }
-        } else {
-            element.textContent = word.substring(0, j-1);
-            j--;
-            if (j === 0) {
-                deleting = false;
-                i = (i+1) % words.length;
-            }
+        // === Animate stats numbers ===
+        function animateStats() {
+            const stats = document.querySelectorAll('.stat h3');
+            stats.forEach(stat => {
+                const target = parseFloat(stat.getAttribute('data-target'));
+                const suffix = stat.getAttribute('data-suffix') || '+';
+                let count = 0;
+                const increment = target / 100;
+                const updateCount = () => {
+                    count += increment;
+                    if (count < target) {
+                        stat.innerText = (Math.round(count * 10) / 10) + suffix;
+                        requestAnimationFrame(updateCount);
+                    } else {
+                        stat.innerText = target + suffix;
+                    }
+                };
+                updateCount();
+            });
         }
-        setTimeout(loop, deleting ? speed/2 : speed);
-    }
-    loop();
-}
 
-window.addEventListener('load', () => {
-    animateStats();
-    const words = ["NEVER", "JAMAIS", "決して", "NUNCA", "MAI", "NIE"];
-    const element = document.querySelector('.nev span:last-of-type');
-    typeEffect(words, element);
-});
+        // === Typing effect for last NEVER ===
+        function typeEffect(words, element, speed = 150, pause = 1200) {
+            let i = 0, j = 0, deleting = false;
 
+            function loop() {
+                const word = words[i];
+                if (!deleting) {
+                    element.textContent = word.substring(0, j+1);
+                    j++;
+                    if (j === word.length) {
+                        deleting = true;
+                        setTimeout(loop, pause);
+                        return;
+                    }
+                } else {
+                    element.textContent = word.substring(0, j-1);
+                    j--;
+                    if (j === 0) {
+                        deleting = false;
+                        i = (i+1) % words.length;
+                    }
+                }
+                setTimeout(loop, deleting ? speed/2 : speed);
+            }
+            loop();
+        }
 
+        window.addEventListener('load', () => {
+            animateStats();
+            const words = ["NEVER", "JAMAIS", "決して", "NUNCA", "MAI", "NIE"];
+            const element = document.querySelector('.nev span:last-of-type');
+            if (element) {
+                typeEffect(words, element);
+            }
+        });
 
         // Reveal sections on scroll
         function revealSections() {

@@ -124,7 +124,7 @@
 </div>
                 <div class="filter-selector" id="filterSelector">
                     <div class="filter-tag" data-filter="tweet-viral">
-                        Constructive Critique
+                      Tweet viral
                     </div>
                     <div class="filter-tag" data-filter="thread-twitter">
                         Twitter Thread
@@ -138,8 +138,8 @@
                     <div class="filter-tag" data-filter="storytelling">
                         Storytelling
                     </div>
-                    <div class="filter-tag" data-filter="question-provocante">
-                        Provocative Question
+                    <div class="filter-tag" data-filter="rage-bait">
+                    Rage bait
                     </div>
                     <div class="filter-tag" data-filter="metaphore-creative">
                         Creative Metaphor
@@ -245,7 +245,7 @@
                 <div class="notification" id="notification">
                     <div id="notificationMessage"></div>
                 </div>
-<div id="onboarding-popup" class="popup">
+<!--<div id="onboarding-popup" class="popup">
     <h2>Welcome! Tell us about your profile</h2>
     <form id="onboarding-form">
         <div class="question-step active" data-step="1">
@@ -274,7 +274,7 @@
             <button type="submit" id="submit-onboarding" style="display: none;">Submit</button>
         </div>
     </form>
-</div>
+</div>-->
 <!--<div class="coming-soon-footer">Coming soon...</div>-->
     </div>
 </main>
@@ -359,7 +359,7 @@ document.getElementById('onboarding-form').addEventListener('submit', async (e) 
         }
     } else {
         console.log("❌ Aucun utilisateur connecté");
-        window.location.href = '/auth.html';
+        window.location.href = 'welcome/index.html';
     }
 });
 
@@ -396,7 +396,7 @@ document.getElementById('onboarding-form').addEventListener('submit', async (e) 
         const idToken = localStorage.getItem('idToken');
         const uid = localStorage.getItem('uid');
         if (!idToken || !uid || (window.__USER_UID__ && uid !== window.__USER_UID__)) {
-            window.location.href = '/auth.html';
+            window.location.href = '/welcome/index.html';
             return false;
         }
         return true;
@@ -717,12 +717,7 @@ document.getElementById('onboarding-form').addEventListener('submit', async (e) 
                             <button class="regen-btn" onclick="regenerateTweet('${tweetGroup.id}', ${index}, '${mode}')">
 <svg width="20px" height="20px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M12 3L13.4302 8.31181C13.6047 8.96 13.692 9.28409 13.8642 9.54905C14.0166 9.78349 14.2165 9.98336 14.451 10.1358C14.7159 10.308 15.04 10.3953 15.6882 10.5698L21 12L15.6882 13.4302C15.04 13.6047 14.7159 13.692 14.451 13.8642C14.2165 14.0166 14.0166 14.2165 13.8642 14.451C13.692 14.7159 13.6047 15.04 13.4302 15.6882L12 21L10.5698 15.6882C10.3953 15.04 10.308 14.7159 10.1358 14.451C9.98336 14.2165 9.78349 14.0166 9.54905 13.8642C9.28409 13.692 8.96 13.6047 8.31181 13.4302L3 12L8.31181 10.5698C8.96 10.3953 9.28409 10.308 9.54905 10.1358C9.78349 9.98336 9.98336 9.78349 10.1358 9.54905C10.308 9.28409 10.3953 8.96 10.5698 8.31181L12 3Z" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path> </g></svg>
                             </button>
-                            <button class="schedule-btn" onclick="openScheduleDialog('${tweetGroup.id}', ${index})">
-                                <svg width="20px" height="20px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M18 2V4M6 2V4" stroke="#000000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path> <path d="M11.5 18L12.5 18M11.5 18C11.5 18.5523 11.0523 19 10.5 19C9.94771 19 9.5 18.5523 9.5 18M11.5 18C11.5 17.4477 11.0523 17 10.5 17C9.94771 17 9.5 17.4477 9.5 18M11.5 18L9.5 18" stroke="#000000" stroke-width="1.5" stroke-linejoin="round"></path> <path d="M20.5 7.00001L3.49998 7.00001" stroke="#000000" stroke-width="1.5" stroke-linecap="round"></path> <path d="M8 6C8 5.06812 8 4.60218 8.15224 4.23463C8.35523 3.74458 8.74458 3.35523 9.23463 3.15224C9.60218 3 10.0681 3 11 3H13C13.9319 3 14.3978 3 14.7654 3.15224C15.2554 3.35523 15.6448 3.74458 15.8478 4.23463C16 4.60218 16 5.06812 16 6V7C16 7.93188 16 8.39782 15.8478 8.76537C15.6448 9.25542 15.2554 9.64477 14.7654 9.84776C14.3978 10 13.9319 10 13 10H11C10.0681 10 9.60218 10 9.23463 9.84776C8.74458 9.64477 8.35523 9.25542 8.15224 8.76537C8 8.39782 8 7.93188 8 7V6Z" stroke="#000000" stroke-width="1.5"></path> <path d="M21.5 11.5C21.5 10.6716 20.8284 10 20 10H4C3.17157 10 2.5 10.6716 2.5 11.5V17C2.5 19.7614 4.73858 22 7.5 22H16.5C19.2614 22 21.5 19.7614 21.5 17V11.5Z" stroke="#000000" stroke-width="1.5"></path> </g></svg>
-                            </button>
-                            <button class="media-btn" onclick="toggleMediaUpload('${tweetId}')">
-                                <svg width="20px" height="20px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M13.5 9C13.5 8.17157 12.8284 7.5 12 7.5C11.1716 7.5 10.5 8.17157 10.5 9C10.5 9.82843 11.1716 10.5 12 10.5C12.8284 10.5 13.5 9.82843 13.5 9Z" fill="#000000"></path> <path fill-rule="evenodd" clip-rule="evenodd" d="M7.25 3C4.35051 3 2 5.35051 2 8.25V15.75C2 18.6495 4.35051 21 7.25 21H16.75C19.6495 21 22 18.6495 22 15.75V8.25C22 5.35051 19.6495 3 16.75 3H7.25ZM3.5 8.25C3.5 6.17893 5.17893 4.5 7.25 4.5H16.75C18.8211 4.5 20.5 6.17893 20.5 8.25V15.75C20.5 17.8211 18.8211 19.5 16.75 19.5H7.25C5.17893 19.5 3.5 17.8211 3.5 15.75V8.25Z" fill="#000000"></path> </g></svg>
-                            </button>
+
                             <button class="delete-btn" onclick="deleteTweet('${tweetGroup.id}', ${index})">
                                 <svg width="20px" height="20px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M4 7H20" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path> <path d="M6 10L7.70141 19.3578C7.87432 20.3088 8.70258 21 9.66915 21H14.3308C15.2974 21 16.1257 20.3087 16.2986 19.3578L18 10" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path> <path d="M9 5C9 3.89543 9.89543 3 11 3H13C14.1046 3 15 3.89543 15 5V7H9V5Z" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path> </g></svg>
                             </button>

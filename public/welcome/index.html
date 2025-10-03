@@ -1,0 +1,1478 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ropainx</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;600;700&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+body{
+font-family:arial;
+overflow-x:hidden;
+
+
+}
+.reveal-section {
+    opacity: 0;
+    transform: translateY(50px);
+    transition: all 1s ease-out;
+}
+
+.reveal-section.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+h1{
+font-size:4em;
+text-align:center;
+
+margin-top:2%;
+margin-left:5%;
+line-height:80px;
+letter-spacing:-4px;
+font-weight:bolder;
+animation: slideIn 1s ease-out;}
+@keyframes slideIn {
+    from { opacity: 0; transform: translateX(60px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+p{
+text-align:center;
+font-size:0.8em;}
+
+.poo p{
+max-width:500px;
+text-align:center;
+}
+.poo{
+align-items:center;
+justify-content:center;
+display:flex;
+margin-top:2%;
+text-align:justify;
+color:grey;
+
+margin-left:5%;
+display:flex;
+gap:50px;}
+.po{
+color:#fff;
+margin-left:5%;
+margin-top:5%;
+display:flex;
+gap:50px;
+font-size:1.5em;
+padding-top:5%;}
+
+
+        .cta-button {
+            background: #ff5722;
+            color: white;
+            padding: 16px 32px;
+            border: none;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .cta-button:hover {
+            background: #e64a19;
+        }
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+.pulse {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: #00c853;
+    margin-right: 20px;
+    position: relative;
+}
+
+.pulse::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background-color: rgba(0, 200, 83, 0.5);
+    transform: translate(-50%, -50%);
+    animation: pulseAnim 1.5s infinite;
+}
+   #twitter{
+    background-color:#fff;
+    color:#000;
+    margin-left:10px;
+   }
+
+   #btn-gr{
+   margin-left:5%;
+    display:flex;
+    justify-content:center;
+    margin-top:2%;
+    animation: slideUp 0.5s ease-out;
+
+   }
+
+
+
+
+#benefits {
+    padding: 5% 8%;
+    text-align: center;
+    animation: fadeIn 2s ease-out;
+}
+
+#benefits h2 {
+    font-size: 2.5em;
+    margin-bottom: 40px;
+    color: #fff;
+    letter-spacing: -2px;
+    animation: slideUp 1s ease-out;
+}
+
+.benefit-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 25px;
+}
+
+.card {
+    background: #1a1a1a;
+    padding: 25px;
+    border-radius: 14px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.6);
+    transition: all 0.3s ease;
+    animation: slideUp 1.5s ease-out;
+}
+
+.card h3 {
+    font-size: 1.3em;
+    margin-bottom: 15px;
+    color: #fff;
+}
+
+.card p {
+    font-family: sans-serif;
+    font-size: 0.7em;
+    color: #bbb;
+    line-height: 1.6em;
+}
+
+.card:hover {
+    transform: translateY(-6px) scale(1.02);
+    box-shadow: 0 6px 16px rgba(77,166,255,0.3);
+    background: linear-gradient(45deg ,black,rgb(68, 68, 68));
+}
+.uu{
+height:40px;
+width:40px;
+border-radius:50%;
+border:6px solid  blue;}
+
+.video{
+align-items:center;
+justify-content:center;
+display:flex;
+}
+
+#ro{
+    animation: loadingPulsse 1.5s ease-in-out infinite;
+    border-color: yellow;
+}
+span{
+font-family: 'allright';
+ background: linear-gradient(45deg, red, orange, yellow);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;}
+
+    .black{
+    background-color:#000;
+    height:650px;
+    margin-top:5%;
+    margin-inline:0;
+    padding-inline:0;
+align-items:center;
+    position: relative;
+            display: flex;
+            flex-direction: row;
+            justify-content: space-evenly;
+            gap:150px;
+
+
+    }
+
+@keyframes loadingPulsse {
+    0% { box-shadow: 0 0 0 0 rgba(255, 154, 21, 0.7); transform: scale(1); }
+    50% { box-shadow: 0 0 0 8px rgba(223, 134, 18, 0.2); transform: scale(1.05); }
+    100% { box-shadow: 0 0 0 0 rgba(117, 61, 8, 0); transform: scale(1); }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    @font-face {
+    font-family: 'allright';
+    src: url('./allright.ttf');
+}
+
+*{
+
+font-weight: lighter;
+margin: 0;
+padding: 0;
+box-sizing: border-box;
+}
+span{
+    color:blue;
+}
+h4{
+    font-size: 4em;
+    letter-spacing: -6px;
+    text-align: center;
+    color:#000;
+    animation: slideUp 1.2s ease-out;
+}
+
+body{
+    animation: fadeIn 1s ease-out;
+}
+
+button{
+    margin-top:1%;
+    border-radius:8px;
+    background-color: #000;
+    border:0;
+    color: #fff;
+    padding-block: 7px;
+    padding-inline:10px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.7);
+    transition-duration: 0.2s;
+    animation: slideUp 1.2s ease-out;
+}
+
+/*#body{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-top :2%;
+}*/
+button:hover{
+    transform: scale(1.05);
+   }
+   #twitter{
+    background-color:#fff;
+    color:#000;
+    margin-left:10px;
+   }
+
+
+
+   button {
+ display:flex;  gap:6px; align-items: center;
+ cursor:pointer;
+   }
+
+
+#benefits {
+    padding: 5% 5%;
+    text-align: center;
+    animation: fadeIn 2s ease-out;
+}
+
+#benefits h2 {
+    font-size: 2.5em;
+    margin-bottom: 40px;
+    color: #fff;
+    letter-spacing: -2px;
+    animation: slideUp 1s ease-out;
+}
+
+.benefit-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 25px;
+}
+
+.card {
+    background: #1a1a1a;
+    padding: 25px;
+    border-radius: 14px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.6);
+    transition: all 0.3s ease;
+    animation: slideUp 1.5s ease-out;
+}
+
+
+
+.card p {
+    font-family: sans-serif;
+    font-size: 0.7em;
+    color: #bbb;
+    line-height: 1.6em;
+}
+
+.card:hover {
+    transform: translateY(-6px) scale(1.02);
+    box-shadow: 0 6px 16px rgba(77,166,255,0.3);
+    background: linear-gradient(45deg ,black,rgb(68, 68, 68));
+}
+#stats {
+    background: #fff;
+    padding: 60px 20px;
+    text-align: center;
+}
+
+#stats .section-title {
+    font-size: 2.2em;
+    margin-bottom: 50px;
+    color: #111;
+}
+.stat{
+
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 60px;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.stat h3 {
+font-family:"allright";
+    font-size: 5em;
+    color: #000;
+    margin-bottom: 10px;
+    border-bottom:1px solid grey;
+    padding-bottom:25px;
+    letter-spacing: -3px;
+}
+
+.stat-label {
+    font-weight: bold;
+    font-size: 1.3em;
+    margin-bottom: 8px;
+    color: #222;
+    text-align: left;
+}
+
+.stat-desc {
+    font-size: 0.9em;
+    color: #555;
+    text-align: justify;
+}
+
+.nev{
+    margin-top:12%;
+    font-size:4em;
+}
+
+#joined {
+    background: #fff;
+    padding: 20px;
+    text-align: left;
+}
+
+.avatars {
+    display: flex;
+    align-items: center;
+    gap: -10px;
+}
+
+.avatars img {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border: 2px solid #fff;
+    margin-left: -10px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+.avatars img:first-child {
+    margin-left: 0;
+}
+
+.avatars .more {
+    margin-left: 10px;
+    font-size: 0.8em;
+    color: #555;
+}
+
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+.pulse {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: #00c853;
+    margin-right: 20px;
+    position: relative;
+}
+
+.pulse::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background-color: rgba(0, 200, 83, 0.5);
+    transform: translate(-50%, -50%);
+    animation: pulseAnim 1.5s infinite;
+}
+ /* Additional CSS for new elements */
+ #header {
+    background: rgba(255,255,255,0.7);
+    border-bottom: 1px solid #eee;
+    padding: 5px 10px;
+    border-radius:10px;
+    position:fixed;
+    z-index:1000;
+    backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+    width:800px;
+}
+
+#header-div {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+
+
+/* === Navbar === */
+#navbar ul {
+    list-style: none;
+    display: flex;
+    gap: 25px;
+    margin: 0;
+    padding: 0;
+}
+
+#navbar ul li a {
+    text-decoration: none;
+    color: grey;
+    font-size: 1em;
+
+    transition: color 0.3s ease;
+}
+
+#navbar ul li a:hover {
+    color:#000;
+      font-weight:bold;
+
+}
+
+video{
+background-color:#000;
+padding-inline:1%;
+border-radius:20px 20px;
+width:780px;
+height:440px;
+margin-top:5%;
+justify-content:center;
+}
+
+
+ .half-circle {
+ margin-left:10%;
+
+            width: 320px;
+            height: 320px;
+            border: 15px solid #fff;
+            border-radius: 50%;
+            animation: loadingPulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes loadingPulse {
+            0% { box-shadow: 0 0 0 0 rgba(255, 154, 21, 0.7); transform: scale(1.5); }
+            50% { box-shadow: 0 0 0 12px rgba(223, 134, 18, 0.2); transform: scale(1.55); }
+            100% { box-shadow: 0 0 0 0 rgba(117, 61, 8, 0); transform: scale(1.5); }
+        }
+
+.blackk{
+display:flex;
+justify-content:center;
+justify-content:center;
+margin-top:2%;
+
+}
+
+.blackkk{
+border-radius:10px;
+height:30px;
+width:800px;
+background-color:#fff;
+ box-shadow: 0 4px 12px rgba(255,255,255,0.6);
+}
+
+
+#logo{
+font-family: 'allright';
+font-weight:bold;
+font-size:1.2em;
+display:flex;
+align-items:center;
+gap:10px;
+
+}
+
+  /* FAQ Section */
+        .faq-section {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 80px 20px;
+        }
+
+        .faq-title {
+             font-size: 2.2em;
+            font-weight: 700;
+            color: #111;
+            text-align: center;
+            margin-bottom: 16px;
+        }
+
+        .faq-subtitle {
+            font-size: 0.8em;
+            color: grey;
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .faq-item {
+        padding:10px 40px;
+            background: white;
+            /*border: 1px solid #e2e8f0;*/
+            border-radius: 8px;
+            margin-bottom: 12px;
+            margin-inline:12px;
+            overflow: hidden;
+
+
+        }
+        .faq-item{
+
+        }
+
+        .faq-question {
+            padding: 14px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 500;
+            color: #000;
+            border: none;
+            background: none;
+            width: 100%;
+            text-align: left;
+        }
+
+        .faq-question:hover {
+            background-color: #f7fafc;
+        }
+
+        .faq-arrow {
+            transition: transform 0.2s ease;
+        }
+
+        .faq-arrow.open {
+            transform: rotate(180deg);
+        }
+
+        .faq-answer {
+            padding: 0 24px 24px;
+            padding-top:2%;
+            color: #4a5568;
+            line-height: 1.6;
+            display: none;
+            font-size:0.8em;
+        }
+
+        .faq-answer.open {
+            display: block;
+        }
+
+       /* Pricing Section */
+        .pricing-section {
+            background-color: white;
+            padding: 80px 20px;
+        }
+
+        .pricing-container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .pricing-title {
+            font-size: 48px;
+            font-weight: 700;
+            color:black;
+            text-align: center;
+            margin-bottom: 16px;
+        }
+
+        .pricing-subtitle {
+            font-size: 18px;
+            color: #718096;
+            text-align: center;
+            margin-bottom: 60px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .pricing-cards {
+            display: flex;
+            justify-content: center;
+        }
+
+        .pricing-card {
+            background: white;
+            border: 3px solid black;
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            position: relative;
+            max-width: 450px;
+            box-shadow: 0 8px 32px rgba(49, 130, 206, 0.15);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .pricing-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 16px 48px rgba(49, 130, 206, 0.25);
+        }
+
+        .popular-badge {
+            background: linear-gradient(45deg, #ff6b35, #f7931e);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 25px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            letter-spacing: 1px;
+        }
+
+        .plan-name {
+            font-size: 28px;
+            font-weight: 700;
+            color:black;
+            margin-bottom: 8px;
+            margin-top: 10px;
+        }
+
+        .plan-description {
+            color: #718096;
+            margin-bottom: 32px;
+            font-size: 16px;
+        }
+
+        .price {
+            font-size: 54px;
+            font-weight: 700;
+            color: black;
+            margin-bottom: 8px;
+            line-height: 1;
+        }
+
+        .price-unit {
+            font-size: 20px;
+            color: #718096;
+            font-weight: 500;
+        }
+
+        .price-note {
+            color: grey;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 32px;
+        }
+
+        .adopt-btn {
+            background: linear-gradient(45deg, black, #4299e1);
+            color: white;
+            padding: 18px 36px;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            width: 100%;
+            margin: 24px 0;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .adopt-btn:hover {
+            background: linear-gradient(45deg, #2c5aa0, black);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(49, 130, 206, 0.3);
+        }
+
+        .plan-features {
+            color: #4a5568;
+            font-size: 0.8em;
+            text-align: left;
+        }
+
+        .plan-features ul {
+            list-style: none;
+            padding: 0;
+            margin: 20px 0;
+        }
+
+        .plan-features li {
+            padding: 8px 0;
+            position: relative;
+            padding-left: 24px;
+        }
+
+        .plan-features li::before {
+            content: "✓";
+            color: #38a169;
+            font-weight: bold;
+            position: absolute;
+            left: 0;
+        }
+
+
+
+        /* Footer */
+        .footer {
+            background: #000;
+            color: white;
+            padding: 60px 20px 40px;
+        }
+
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr;
+            gap: 60px;
+            margin-bottom: 60px;
+        }
+
+        .footer-brand {
+            grid-column: span 1;
+        }
+
+        .footer-logo {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+        }
+
+        .footer-logo::before {
+            content: '🔍';
+            margin-right: 8px;
+        }
+
+        .footer-tagline {
+            color: #a0aec0;
+            margin-bottom: 20px;
+        }
+
+        .footer-description {
+            color: grey;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .footer-column h4 {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 12px;
+        }
+
+        .footer-links a {
+            color: #a0aec0;
+            text-decoration: none;
+            font-size: 14px;
+            transition: color 0.2s ease;
+        }
+
+        .footer-links a:hover {
+            color: white;
+        }
+
+        .footer-bottom {
+            border-top: 1px solid #000;
+            padding-top: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .footer-copyright {
+            color: grey;
+            font-size: 14px;
+        }
+
+        .footer-social {
+            display: flex;
+            gap: 16px;
+        }
+
+        .social-icon {
+            width: 40px;
+            height: 40px;
+            background: #000;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #a0aec0;
+            text-decoration: none;
+            transition: background-color 0.2s ease;
+        }
+
+        .social-icon:hover {
+            background: #4a5568;
+            color: white;
+        }
+
+        @media (max-width: 768px) {
+            .footer-content {
+                grid-template-columns: 1fr;
+                gap: 40px;
+            }
+
+            .footer-bottom {
+                flex-direction: column;
+                gap: 20px;
+                text-align: center;
+            }
+
+            .pricing-cards {
+                grid-template-columns: 1fr;
+            }
+
+            .pricing-card.popular {
+                transform: none;
+            }
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   .steps-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 60px;
+        }
+
+        .step {
+            text-align: center;
+        }
+
+        .step-visual {
+            margin-bottom: 40px;
+            height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .step-1 .step-visual {
+            background: linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 100%);
+            border-radius: 20px;
+            padding: 40px;
+        }
+
+        .step-2 .step-visual {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .video-card {
+            width: 80px;
+            height: 120px;
+            border-radius: 12px;
+            background-size: cover;
+            background-position: center;
+            position: relative;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .video-card-1 {
+            background: linear-gradient(45deg, #4a5568, grey);
+        }
+
+        .video-card-2 {
+            background: linear-gradient(45deg, #3182ce, #4299e1);
+        }
+
+        .video-card-3 {
+            background: linear-gradient(45deg, #553c9a, #805ad5);
+        }
+
+        .video-stats {
+            position: absolute;
+            bottom: 4px;
+            left: 4px;
+            right: 4px;
+            background: rgba(0,0,0,0.7);
+            color: white;
+            font-size: 10px;
+            padding: 2px 4px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            gap: 2px;
+        }
+
+        .step-3 .step-visual {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .mobile-mockup {
+            width: 120px;
+            height: 200px;
+            background: linear-gradient(135deg, #ff6b35, #f7931e);
+            border-radius: 25px;
+            position: relative;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+
+        .mobile-time {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(0,0,0,0.3);
+            padding: 2px 6px;
+            border-radius: 8px;
+            font-size: 10px;
+            font-weight: bold;
+        }
+
+        .mobile-content {
+            text-align: center;
+            padding: 20px;
+        }
+
+        .mobile-title {
+            font-size: 11px;
+            font-weight: bold;
+            margin-bottom: 8px;
+            line-height: 1.2;
+        }
+
+        .download-icon {
+            width: 20px;
+            height: 20px;
+            background: rgba(255,255,255,0.3);
+            border-radius: 50%;
+            margin: 10px auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .step-number {
+            font-size: 24px;
+            font-weight: 700;
+            color: #ff5722;
+            margin-bottom: 16px;
+        }
+
+        .step-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 16px;
+            line-height: 1.3;
+        }
+
+        .step-description {
+            font-size: 12px;
+            color: #666;
+            max-width: 300px;
+            margin: 0 auto;
+        }
+
+
+
+
+</style>
+
+</head>
+
+<body>
+<div class="blackk"><div class="blackkk">
+<header id="header">
+        <div id="header-div">
+            <div id="logo"> <svg width="1.5em" height="1.5em" viewBox="0 0 24 24">
+                    <circle cx="12" cy="12" r="10" fill="none" stroke="#1E90FF" stroke-width="4"/>
+                </svg>Ropainx</div>
+            <nav id="navbar">
+                <ul>
+                    <li><a href="#home">Home</a></li>
+                    <li><a href="#features">Features</a></li>
+                    <li><a href="#pricing">Pricing</a></li>
+                    <li><a href="#faq">FAQ</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header></div></div>
+
+<h1>Turn your Twitter activity<br>
+into <span>endless tweets</span></h1>
+
+<div class="poo"> <p>Transform every post you like and comment you make into personalized, engaging tweets. Ropainx turns your daily Twitter interactions into a content goldmine - effortlessly generating 9 unique tweet variations from your activity with just one click.</p></div>
+
+ <div id="btn-gr">
+            <button id="ro" onclick="window.open('https://chromewebstore.google.com/detail/dgplemjjjinbjkhcjcibgbeicneheffd', '_blank')">
+                <svg width="1.1em" height="1.1em" viewBox="0 0 24 24">
+                    <circle cx="12" cy="12" r="10" fill="none" stroke="#1E90FF" stroke-width="4"/>
+                </svg>
+                Get Chrome Extension
+            </button>
+            <button id="twitter" onclick="window.open('https://ropainx.onrender.com', '_blank')">
+                <svg width="1.1em" height="1.1em" viewBox="0 0 24 24" fill="#000">
+                    <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+                </svg>
+                Open Dashboard
+            </button>
+        </div>
+
+      <div class="video">
+        <div style="width:780px; height:440px; background: linear-gradient(45deg, #667eea, #764ba2); border-radius:20px; display:flex; align-items:center; justify-content:center; color:white; font-size:24px; margin-top:5%;">
+            Demo Video Coming Soon
+        </div>
+      </div>
+
+<div class="poo"> <p>Every like, every comment, every interaction becomes content. Ropainx seamlessly integrates with your Twitter workflow, requiring zero extra steps. Just browse Twitter naturally - like posts, leave comments, and watch as each action generates fresh, personalized tweets ready to post.</p></div>
+
+ <section id="stats" class="reveal-section">
+        <h2 class="section-title">Real Impact, Real Numbers</h2>
+        <div class="stats-grid">
+            <div class="stat">
+                <h3 data-target="5000" data-suffix="+">0+</h3>
+                <p class="stat-label">Tweets Generated</p>
+                <p class="stat-desc">From viral hooks to engaging threads, Ropainx transforms your daily interactions into endless content variations.</p>
+            </div>
+            <div class="stat">
+                <h3 data-target="2" data-suffix="M+">0M+</h3>
+                <p class="stat-label">Total Impressions</p>
+                <p class="stat-desc">Creators using Ropainx have already reached millions with effortless, personalized tweets.</p>
+            </div>
+            <div class="stat">
+                <h3 data-target="150" data-suffix="+">0+</h3>
+                <p class="stat-label">Active Creators</p>
+                <p class="stat-desc">Content creators, marketers, and Twitter enthusiasts are turning their activity into growth with Ropainx.</p>
+            </div>
+            <div class="stat">
+                <h3 data-target="6" data-suffix="">0</h3>
+                <p class="stat-label">Hours Saved Weekly</p>
+                <p class="stat-desc">Stop brainstorming content. Ropainx automatically generates tweets from your natural Twitter behavior.</p>
+            </div>
+        </div>
+
+        <h3 class="nev"> NEVER RUN OUT OF CONTENT
+           AND BY <span>NEVER</span> WE MEAN <span>NEVER</span>
+        </h3>
+    </section>
+
+     <div class="black">
+     <div class="half-circle"></div>
+      <div class="steps-container">
+            <div class="step step-1">
+
+                <div class="step-number">1.</div>
+                <h3 class="step-title">Install the Chrome Extension</h3>
+                <p class="step-description">
+                    Get the <a href="https://chromewebstore.google.com/detail/dgplemjjjinbjkhcjcibgbeicneheffd" target="_blank" class="step-link">Ropainx Chrome extension</a> and add it to your browser. It seamlessly integrates with Twitter/X for effortless tweet generation.
+                </p>
+            </div>
+
+            <div class="step step-2">
+
+                <div class="step-number">2.</div>
+                <h3 class="step-title">Connect on ropainx.onrender.com</h3>
+                <p class="step-description">
+                    Visit <a href="https://ropainx.onrender.com" target="_blank" class="step-link">ropainx.onrender.com</a> to authenticate with Twitter and sync your extension. Quick setup takes just one minute.
+                </p>
+            </div>
+
+            <div class="step step-3">
+
+                <div class="step-number">3.</div>
+                <h3 class="step-title">Tweet Naturally, Generate Endlessly</h3>
+                <p class="step-description">
+                    Continue your normal Twitter flow - like posts, leave comments, save ideas. Each interaction automatically generates 9 personalized tweet variations ready to post.
+                </p>
+            </div>
+        </div>
+     </div>
+
+    <section id="features">
+        <h2 class="faq-title">How Ropainx Works</h2>
+        <section id="benefits" class="reveal-section">
+            <div class="benefit-cards">
+                <div class="card">
+                    <h3>Zero Friction Content</h3>
+                    <p>Turn every Twitter interaction into content. Like a post? Get 9 tweet variations. Leave a comment? Instantly transform it into engaging tweets. No extra steps required.</p>
+                </div>
+                <div class="card">
+                    <h3>9 Unique Variations</h3>
+                    <p>Each interaction generates 9 different tweet styles: viral, contrarian, thread-worthy, critique, and more. Never run out of fresh angles on any topic.</p>
+                </div>
+                <div class="card">
+                    <h3>Personalized Voice</h3>
+                    <p>All generated tweets match your unique voice and style. Ropainx learns from your Twitter activity to create content that sounds authentically you.</p>
+                </div>
+                <div class="card">
+                    <h3>Seamless Integration</h3>
+                    <p>Works directly within Twitter/X interface. No tab switching, no copy-paste. Generate tweets with subtle button clicks while browsing naturally.</p>
+                </div>
+                <div class="card">
+                    <h3>Local Storage & Privacy</h3>
+                    <p>Your generated tweets and ideas are stored locally on your device. Complete privacy with secure Twitter OAuth authentication.</p>
+                </div>
+                <div class="card">
+                    <h3>Idea Management</h3>
+                    <p>Save tweet ideas on-the-go with simple #i commands. Store inspiration while browsing and access it anytime for future content creation.</p>
+                </div>
+            </div>
+        </section>
+    </section>
+
+<div class="poo"> <p>Transform your Twitter routine into a content powerhouse. Every post you engage with becomes a source of fresh, personalized tweets. Ropainx turns your natural social media behavior into an endless content generation system, perfectly tailored to your voice and interests.</p></div>
+
+    <!-- FAQ Section -->
+    <section class="faq-section" id="faq">
+        <h2 class="faq-title">Frequently Asked Questions</h2>
+        <p class="faq-subtitle">Everything you need to know about Ropainx</p>
+
+        <div class="faq-item">
+            <button class="faq-question" onclick="toggleFaq(this)">
+                How does Ropainx generate tweets from my activity?
+                <span class="faq-arrow">▼</span>
+            </button>
+            <div class="faq-answer">
+                Ropainx adds subtle buttons to tweets in your feed. When you click them, it analyzes the content and generates 9 unique tweet variations in different styles - viral, contrarian, thread-worthy, and more. It also automatically creates tweets from your comments as you post them.
+            </div>
+        </div>
+
+        <div class="faq-item">
+            <button class="faq-question" onclick="toggleFaq(this)">
+                Is my data safe and private?
+                <span class="faq-arrow">▼</span>
+            </button>
+            <div class="faq-answer">
+                Yes! Ropainx stores all generated tweets and ideas locally on your device using Chrome's secure storage. We only use secure Twitter OAuth for authentication, and your data never leaves your control.
+            </div>
+        </div>
+
+        <div class="faq-item">
+            <button class="faq-question" onclick="toggleFaq(this)">
+                Do I need to change how I use Twitter?
+                <span class="faq-arrow">▼</span>
+            </button>
+            <div class="faq-answer">
+                Not at all! Ropainx is designed to work with your existing Twitter habits. Like posts, leave comments, and browse naturally - the extension seamlessly turns these actions into content without disrupting your flow.
+            </div>
+        </div>
+
+        <div class="faq-item">
+            <button class="faq-question" onclick="toggleFaq(this)">
+                Can I cancel my subscription anytime?
+                <span class="faq-arrow">▼</span>
+            </button>
+            <div class="faq-answer">
+                Absolutely! You can cancel your Ropainx subscription at any time with no cancellation fees or long-term commitments. Your access continues until the end of your billing period.
+            </div>
+        </div>
+
+        <div class="faq-item">
+            <button class="faq-question" onclick="toggleFaq(this)">
+                What makes Ropainx different from other content tools?
+                <span class="faq-arrow">▼</span>
+            </button>
+            <div class="faq-answer">
+                Ropainx is the only tool that generates content directly from your Twitter activity without changing your workflow. Instead of starting from scratch, it transforms your existing likes and comments into personalized tweets, making content creation truly effortless.
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section class="pricing-section" id="pricing">
+        <div class="pricing-container">
+            <h2 class="pricing-title">Simple, Affordable Pricing</h2>
+            <p class="pricing-subtitle">Turn your Twitter activity into endless content for less than $0.50 per day</p>
+
+            <div class="pricing-cards">
+                <div class="pricing-card">
+                    <div class="popular-badge">BEST VALUE</div>
+                    <h3 class="plan-name">Ropainx Pro</h3>
+                    <p class="plan-description">Perfect for creators and marketers</p>
+                    <div class="price">$49<span class="price-unit">/year</span></div>
+                    <div class="price-note">Just $0.13 per day - less than a coffee!</div>
+                    <button class="adopt-btn" onclick="window.open('https://ropainx.onrender.com', '_blank')">Start Creating Content</button>
+                    <div class="plan-features">
+                        <ul>
+                            <li>Unlimited tweet generation from likes</li>
+                            <li>Unlimited tweet generation from comments</li>
+                            <li>9 unique variations per interaction</li>
+                            <li>Local idea storage and management</li>
+                            <li>Personalized voice matching</li>
+                            <li>Chrome extension included</li>
+                            <li>Secure Twitter OAuth</li>
+                            <li>Priority email support</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer" id="contact">
+        <div class="footer-container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <div class="footer-logo">Ropainx</div>
+                    <div class="footer-tagline">Turn your Twitter activity into endless content</div>
+                    <div class="footer-description">
+                        Ropainx is the Chrome extension that transforms your daily Twitter interactions into personalized, engaging tweets. Never run out of content again with our seamless, privacy-first approach to social media content generation.
+                    </div>
+                </div>
+
+                <div class="footer-column">
+                    <h4>Product</h4>
+                    <ul class="footer-links">
+                        <li><a href="https://chromewebstore.google.com/detail/dgplemjjjinbjkhcjcibgbeicneheffd" target="_blank">Chrome Extension</a></li>
+                        <li><a href="https://ropainx.onrender.com" target="_blank">Dashboard</a></li>
+                        <li><a href="#features">Features</a></li>
+                        <li><a href="#pricing">Pricing</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-column">
+                    <h4>Resources</h4>
+                    <ul class="footer-links">
+                        <li><a href="#faq">FAQ</a></li>
+                        <li><a href="https://jareddenver.github.io/privacy-policy-ropainx/confidential.html" target="_blank">Privacy Policy</a></li>
+                        <li><a href="#">Terms of Service</a></li>
+                        <li><a href="#contact">Contact</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-column">
+                    <h4>Support</h4>
+                    <ul class="footer-links">
+                        <li><a href="mailto:toumoudagoujoseph@gmail.com">Email Support</a></li>
+                        <li><a href="#faq">Help Center</a></li>
+                        <li><a href="https://ropainx.onrender.com" target="_blank">Setup Guide</a></li>
+                        <li><a href="#">Tutorials</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <div class="footer-copyright">
+                    © 2025 Ropainx. All rights reserved. Transform your Twitter activity into endless content.
+                </div>
+                <div class="footer-social">
+                    <a href="https://twitter.com/ropainx" class="social-icon" target="_blank">🐦</a>
+                    <a href="mailto:toumoudagoujoseph@gmail.com" class="social-icon">📧</a>
+                    <a href="https://ropainx.onrender.com" class="social-icon" target="_blank">🚀</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        function toggleFaq(button) {
+            const answer = button.nextElementSibling;
+            const arrow = button.querySelector('.faq-arrow');
+
+            // Close all other FAQ items
+            document.querySelectorAll('.faq-answer').forEach(item => {
+                if (item !== answer) {
+                    item.classList.remove('open');
+                    item.previousElementSibling.querySelector('.faq-arrow').classList.remove('open');
+                }
+            });
+
+            // Toggle current FAQ item
+            answer.classList.toggle('open');
+            arrow.classList.toggle('open');
+        }
+
+        // === Animate stats numbers ===
+        function animateStats() {
+            const stats = document.querySelectorAll('.stat h3');
+            stats.forEach(stat => {
+                const target = parseFloat(stat.getAttribute('data-target'));
+                const suffix = stat.getAttribute('data-suffix') || '+';
+                let count = 0;
+                const increment = target / 100;
+                const updateCount = () => {
+                    count += increment;
+                    if (count < target) {
+                        stat.innerText = (Math.round(count * 10) / 10) + suffix;
+                        requestAnimationFrame(updateCount);
+                    } else {
+                        stat.innerText = target + suffix;
+                    }
+                };
+                updateCount();
+            });
+        }
+
+        // === Typing effect for last NEVER ===
+        function typeEffect(words, element, speed = 150, pause = 1200) {
+            let i = 0, j = 0, deleting = false;
+
+            function loop() {
+                const word = words[i];
+                if (!deleting) {
+                    element.textContent = word.substring(0, j+1);
+                    j++;
+                    if (j === word.length) {
+                        deleting = true;
+                        setTimeout(loop, pause);
+                        return;
+                    }
+                } else {
+                    element.textContent = word.substring(0, j-1);
+                    j--;
+                    if (j === 0) {
+                        deleting = false;
+                        i = (i+1) % words.length;
+                    }
+                }
+                setTimeout(loop, deleting ? speed/2 : speed);
+            }
+            loop();
+        }
+
+        window.addEventListener('load', () => {
+            animateStats();
+            const words = ["NEVER", "JAMAIS", "決して", "NUNCA", "MAI", "NIE"];
+            const element = document.querySelector('.nev span:last-of-type');
+            if (element) {
+                typeEffect(words, element);
+            }
+        });
+
+        // Reveal sections on scroll
+        function revealSections() {
+            const sections = document.querySelectorAll('.reveal-section');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                    }
+                });
+            }, { threshold: 0.1 });
+
+            sections.forEach(section => {
+                observer.observe(section);
+            });
+        }
+
+        // Initialize animations
+        window.addEventListener('load', () => {
+            animateStats();
+            revealSections();
+        });
+    </script>
+
+</body>
+</html>

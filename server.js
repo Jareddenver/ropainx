@@ -281,7 +281,7 @@ const templateModeMapping = {
   'reformulation-simple': ['basic', 'oneliner'],
   'angle-contrarian': ['equation', 'oneliner'],
   'storytelling': ['basic', 'oneliner'],
-  'question-provocante': ['oneliner', 'basic'],
+  'rage-bait': ['oneliner', 'basic'],
   'metaphore-creative': ['equation', 'basic'],
   'style-personnel': ['basic', 'oneliner', 'bullet_points']
 };
@@ -318,6 +318,102 @@ app.use(express.json());
 app.use('/Uploads', express.static(path.join(__dirname, 'Uploads')));
 app.use(express.static(path.join(__dirname, 'public')));
 
+// Serve static files from 'welcome' directory for assets
+app.use('/welcome', express.static(path.join(__dirname, 'welcome')));
+
+// Add cookie-parser requirement at the top, after other requires
+const cookieParser = require('cookie-parser');
+
+// Add cookie-parser middleware after app.use(express.json());
+app.use(cookieParser());
+
+// Modify the root route handler to use cookie for authentication
+app.get('/', async (req, res) => {
+  let uid = 'anonymous';
+
+  // Check if user is authenticated via cookie
+  if (req.cookies.idToken) {
+    try {
+      const decodedToken = await admin.auth().verifyIdToken(req.cookies.idToken, true);
+      uid = decodedToken.uid;
+      await initializeUserData(uid);
+
+      // Serve dashboard (index.html at root) for authenticated users
+      const html = await fs.readFile(path.join(__dirname, 'index.html'), 'utf8');
+      const modifiedHtml = html.replace('<!-- UID_PLACEHOLDER -->', `<script>window.__USER_UID__ = "${uid}";</script>`);
+      return res.send(modifiedHtml);
+    } catch (error) {
+      console.error('❌ Erreur vérification token cookie pour /:', error.message, error.stack);
+      // Clear invalid cookie
+      res.clearCookie('idToken');
+      // Fall through to serve welcome page
+    }
+  }
+
+  // Serve welcome/index.html for unauthenticated users
+  const html = await fs.readFile(path.join(__dirname, 'welcome', 'index.html'), 'utf8');
+  res.send(html);
+});
+
+// In /api/login route, add cookie setting after successful login
+app.post('/api/login', async (req, res) => {
+  try {
+    const authHeader = req.headers.authorization;
+    const idToken = authHeader.split('Bearer ')[1]; // Extract token to set in cookie
+    const uid = req.user.uid;
+    console.log(`🔍 Connexion pour UID: ${uid} - Début initialisation données`);
+    await initializeUserData(uid);
+    console.log(`✅ Initialisation données réussie pour ${uid}`);
+
+    // Set cookie with idToken
+    res.cookie('idToken', idToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      maxAge: 3600000 // 1 hour
+    });
+
+    res.json({ success: true, message: 'Connexion réussie', uid });
+  } catch (error) {
+    console.error(`❌ Erreur traitement connexion pour ${req.user?.uid || 'inconnu'}:`, error.message, error.stack);
+    res.status(500).json({ success: false, error: 'Échec traitement connexion', details: error.message });
+  }
+});
+
+// In /api/logout route, add cookie clearing
+app.post('/api/logout', async (req, res) => {
+  try {
+    const uid = req.user.uid;
+    console.log(`🔍 Déconnexion pour UID: ${uid}`);
+    await admin.auth().revokeRefreshTokens(uid);
+    userData.delete(uid);
+    tweetIdCounters.delete(uid);
+
+    // Clear cookie
+    res.clearCookie('idToken');
+
+    console.log(`✅ Déconnexion réussie pour UID: ${uid}`);
+    res.json({ success: true, message: 'Déconnexion réussie' });
+  } catch (error) {
+    console.error(`❌ Erreur déconnexion pour ${req.user.uid}:`, error.message, error.stack);
+    res.status(500).json({ success: false, error: 'Échec déconnexion', details: error.message });
+  }
+});
+
+// Optional: Remove or keep the /welcome route as needed. If you don't want a separate /welcome URL, comment it out:
+// // app.get('/welcome', async (req, res) => {
+// //   const html = await fs.readFile(path.join(__dirname, 'welcome', 'index.html'), 'utf8');
+// //   res.send(html);
+// // });
+
+// Also, if you have app.use(express.static(path.join(__dirname, 'public'))); and no 'public' folder exists, remove it to avoid unnecessary middleware:
+// // app.use(express.static(path.join(__dirname, 'public'))); // Comment or remove if no public folder
+
+// Clean URL for /welcome (serves welcome/index.html without .html)
+app.get('/welcome', async (req, res) => {
+  const html = await fs.readFile(path.join(__dirname, 'welcome', 'index.html'), 'utf8');
+  res.send(html);
+});
 // Initialisation Firebase Admin
 
 
@@ -730,34 +826,34 @@ app.use('/api/*', verifyToken);
 // Protected routes below
 
 // Route pour gérer la connexion via Firebase
-app.post('/api/login', async (req, res) => {
-  try {
-    const uid = req.user.uid;
-    console.log(`🔍 Connexion pour UID: ${uid} - Début initialisation données`);
-    await initializeUserData(uid);
-    console.log(`✅ Initialisation données réussie pour ${uid}`);
-    res.json({ success: true, message: 'Connexion réussie', uid });
-  } catch (error) {
-    console.error(`❌ Erreur traitement connexion pour ${req.user?.uid || 'inconnu'}:`, error.message, error.stack);
-    res.status(500).json({ success: false, error: 'Échec traitement connexion', details: error.message });
-  }
-});
-
-// Route pour la déconnexion Firebase
-app.post('/api/logout', async (req, res) => {
-  try {
-    const uid = req.user.uid;
-    console.log(`🔍 Déconnexion pour UID: ${uid}`);
-    await admin.auth().revokeRefreshTokens(uid);
-    userData.delete(uid);
-    tweetIdCounters.delete(uid);
-    console.log(`✅ Déconnexion réussie pour UID: ${uid}`);
-    res.json({ success: true, message: 'Déconnexion réussie' });
-  } catch (error) {
-    console.error(`❌ Erreur déconnexion pour ${req.user.uid}:`, error.message, error.stack);
-    res.status(500).json({ success: false, error: 'Échec déconnexion', details: error.message });
-  }
-});
+// app.post('/api/login', async (req, res) => {
+//   try {
+//     const uid = req.user.uid;
+//     console.log(`🔍 Connexion pour UID: ${uid} - Début initialisation données`);
+//     await initializeUserData(uid);
+//     console.log(`✅ Initialisation données réussie pour ${uid}`);
+//     res.json({ success: true, message: 'Connexion réussie', uid });
+//   } catch (error) {
+//     console.error(`❌ Erreur traitement connexion pour ${req.user?.uid || 'inconnu'}:`, error.message, error.stack);
+//     res.status(500).json({ success: false, error: 'Échec traitement connexion', details: error.message });
+//   }
+// });
+//
+// // Route pour la déconnexion Firebase
+// app.post('/api/logout', async (req, res) => {
+//   try {
+//     const uid = req.user.uid;
+//     console.log(`🔍 Déconnexion pour UID: ${uid}`);
+//     await admin.auth().revokeRefreshTokens(uid);
+//     userData.delete(uid);
+//     tweetIdCounters.delete(uid);
+//     console.log(`✅ Déconnexion réussie pour UID: ${uid}`);
+//     res.json({ success: true, message: 'Déconnexion réussie' });
+//   } catch (error) {
+//     console.error(`❌ Erreur déconnexion pour ${req.user.uid}:`, error.message, error.stack);
+//     res.status(500).json({ success: false, error: 'Échec déconnexion', details: error.message });
+//   }
+// });
 
 // Statut d'authentification Firebase
 app.get('/api/auth-status', async (req, res) => {
@@ -1069,7 +1165,7 @@ app.post('/api/generate-tweets', async (req, res) => {
       'reformulation-simple',
       'angle-contrarian',
       'storytelling',
-      'question-provocante',
+      'rage-bait',
       'metaphore-creative',
       'style-personnel',
     ];
@@ -1148,7 +1244,7 @@ Rules:
 - Language must be simple, no jargon
 Max 280 chars, no hashtags, no emojis, NO QUOTES .${styleContext}`,
 
-      'question-provocante': (template) => `Write a provocative question tweet using this EXACT structure and RESPOND WITH THE TWEET ONLY without any note or remark , ONLY THE TWEEET , NO HASTAGS OR QUOTES OR ANYTHING,  RAW TEXT: "${tweetTemplates[template].structure}"
+      'rage-bait': (template) => `Write a rage-bait tweet using this EXACT structure and RESPOND WITH THE TWEET ONLY without any note or remark , ONLY THE TWEEET , NO HASTAGS OR QUOTES OR ANYTHING,  RAW TEXT: "${tweetTemplates[template].structure}"
 Topic: "${userComment}"
 Context: "${originalTweet || ''}"
 Example: "${tweetTemplates[template].example}"
@@ -1560,7 +1656,7 @@ Rules:
 - Must feel human and relatable
 Max 280 chars, no hashtags, no emojis, NO QUOTES .${styleContext}`,
 
-      'question-provocante': (template) => `Generate a provocative question tweet using this EXACT structure and RESPOND WITH THE TWEET ONLY without any note or remark , ONLY THE TWEEET , NO HASTAGS OR QUOTES OR ANYTHING,  RAW TEXT: "${tweetTemplates[template].structure}"
+      'rage-bait': (template) => `Generate a rage-bait tweet using this EXACT structure and RESPOND WITH THE TWEET ONLY without any note or remark , ONLY THE TWEEET , NO HASTAGS OR QUOTES OR ANYTHING,  RAW TEXT: "${tweetTemplates[template].structure}"
 Content based on: "${tweetGroup.userComment}"
 Context: "${tweetGroup.originalTweet || ''}"
 Example: "${tweetTemplates[template].example}"
@@ -2451,25 +2547,25 @@ function startScheduleChecker() {
   process.scheduleChecker = checkInterval;
 }
 
-// Route pour l'interface web
-app.get('/', async (req, res) => {
-  const authHeader = req.headers.authorization;
-  let uid = 'anonymous';
-  if (authHeader && authHeader.startsWith('Bearer ')) {
-    try {
-      const idToken = authHeader.split('Bearer ')[1];
-      const decodedToken = await admin.auth().verifyIdToken(idToken, true);
-      uid = decodedToken.uid;
-      await initializeUserData(uid);
-    } catch (error) {
-      console.error('❌ Erreur vérification token pour /:', error.message, error.stack);
-    }
-  }
-
-  const html = await fs.readFile(path.join(__dirname, 'public', 'index.html'), 'utf8');
-  const modifiedHtml = html.replace('<!-- UID_PLACEHOLDER -->', `<script>window.__USER_UID__ = "${uid}";</script>`);
-  res.send(modifiedHtml);
-});
+// // Route pour l'interface web
+// app.get('/', async (req, res) => {
+//   const authHeader = req.headers.authorization;
+//   let uid = 'anonymous';
+//   if (authHeader && authHeader.startsWith('Bearer ')) {
+//     try {
+//       const idToken = authHeader.split('Bearer ')[1];
+//       const decodedToken = await admin.auth().verifyIdToken(idToken, true);
+//       uid = decodedToken.uid;
+//       await initializeUserData(uid);
+//     } catch (error) {
+//       console.error('❌ Erreur vérification token pour /:', error.message, error.stack);
+//     }
+//   }
+//
+//   const html = await fs.readFile(path.join(__dirname, 'public', 'index.html'), 'utf8');
+//   const modifiedHtml = html.replace('<!-- UID_PLACEHOLDER -->', `<script>window.__USER_UID__ = "${uid}";</script>`);
+//   res.send(modifiedHtml);
+// });
 
 // Route pour vérifier l'état du serveur
 app.get('/health', async (req, res) => {
@@ -2609,7 +2705,7 @@ app.post('/api/admin/generate-tweets', async (req, res) => {
     const styleContext = adminData.userStyle.writings.length > 0 ?
       `\n\nUser style (tone: ${adminData.userStyle.tone}, words: ${Array.from(adminData.userStyle.vocabulary).slice(-5).join(', ')}):\n${adminData.userStyle.writings.slice(-3).map(w => `- "${w.text}"`).join('\n')}` : '';
 
-    const modes = ['tweet-viral', 'critique-constructive', 'thread-twitter', 'reformulation-simple', 'angle-contrarian', 'storytelling', 'question-provocante', 'metaphore-creative', 'style-personnel'];
+    const modes = ['tweet-viral', 'critique-constructive', 'thread-twitter', 'reformulation-simple', 'angle-contrarian', 'storytelling', 'rage-bait', 'metaphore-creative', 'style-personnel'];
     const filteredModes = modeFilter ? [modeFilter] : modes;
 
     // Prompts (copie du premier)
@@ -2620,7 +2716,7 @@ app.post('/api/admin/generate-tweets', async (req, res) => {
       'reformulation-simple': `Generate a simple reformulation tweet based on: "${userComment}". Context: "${originalTweet || ''}". Max 280 chars, no hashtags/emojis.${styleContext}`,
       'angle-contrarian': `Generate a contrarian angle tweet based on: "${userComment}". Context: "${originalTweet || ''}". Max 280 chars, no hashtags/emojis.${styleContext}`,
       'storytelling': `Generate a storytelling tweet based on: "${userComment}". Context: "${originalTweet || ''}". Max 280 chars, no hashtags/emojis.${styleContext}`,
-      'question-provocante': `Generate a provocative question tweet based on: "${userComment}". Context: "${originalTweet || ''}". Max 280 chars, no hashtags/emojis.${styleContext}`,
+      'rage-bait': `Generate a rage-bait tweet based on: "${userComment}". Context: "${originalTweet || ''}". Max 280 chars, no hashtags/emojis.${styleContext}`,
       'metaphore-creative': `Generate a creative metaphor tweet for: "${userComment}". Context: "${originalTweet || ''}". Max 280 chars, no hashtags/emojis.${styleContext}`,
       'style-personnel': `Generate a personal style tweet based on: "${userComment}". Style (tone: ${adminData.userStyle.tone}, words: ${Array.from(adminData.userStyle.vocabulary).slice(-5).join(', ')}). Context: "${originalTweet || ''}". Max 280 chars, no hashtags/emojis.${styleContext}`
     };
@@ -2752,7 +2848,7 @@ Rules:
 - Must feel human and relatable
 Max 280 chars, no hashtags, no emojis, NO QUOTES .${styleContext}`,
 
-      'question-provocante': (template) => `Generate a provocative question tweet using this EXACT structure and RESPOND WITH THE TWEET ONLY without any note or remark , ONLY THE TWEEET , NO HASTAGS OR QUOTES OR ANYTHING,  RAW TEXT: "${tweetTemplates[template].structure}"
+      'rage-bait': (template) => `Generate a rage-bait tweet using this EXACT structure and RESPOND WITH THE TWEET ONLY without any note or remark , ONLY THE TWEEET , NO HASTAGS OR QUOTES OR ANYTHING,  RAW TEXT: "${tweetTemplates[template].structure}"
 Content based on: "${tweetGroup.userComment}"
 Context: "${tweetGroup.originalTweet || ''}"
 Example: "${tweetTemplates[template].example}"
@@ -3257,5 +3353,4 @@ setTimeout(() => {
 
 // Appeler la fonction pour démarrer le serveur
 startServer();
-
 

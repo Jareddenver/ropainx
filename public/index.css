@@ -269,15 +269,16 @@ body {
 .main-content {
     margin-left: 260px;
     padding: 20px;
-    border-radius: 4px;
+    border-radius: 12px;
     margin-top: 10px;
     margin-bottom: 10px;
+
     flex: 1;
     overflow-y: auto;
     background: linear-gradient(145deg, #ffffff, #f8f9fa);
-    margin-right: 10px;
+    margin-right: 20px;
     box-shadow: 0 4px 12px rgba(33, 37, 41, 0.1);
-    min-height: 100vh;
+    min-height: 96vh;
 }
 
 .sticker {
