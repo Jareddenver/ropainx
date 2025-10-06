@@ -319,7 +319,6 @@ app.use('/Uploads', express.static(path.join(__dirname, 'Uploads')));
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Serve static files from 'welcome' directory for assets
-app.use('/welcome', express.static(path.join(__dirname, 'welcome')));
 
 // Add cookie-parser requirement at the top, after other requires
 const cookieParser = require('cookie-parser');
@@ -356,7 +355,7 @@ app.get('/', async (req, res) => {
 });
 
 // In /api/login route, add cookie setting after successful login
-app.post('/api/login', async (req, res) => {
+app.post('/api/login',verifyToken, async (req, res) => {
   try {
     const authHeader = req.headers.authorization;
     const idToken = authHeader.split('Bearer ')[1]; // Extract token to set in cookie
@@ -410,9 +409,14 @@ app.post('/api/logout', async (req, res) => {
 // // app.use(express.static(path.join(__dirname, 'public'))); // Comment or remove if no public folder
 
 // Clean URL for /welcome (serves welcome/index.html without .html)
-app.get('/welcome', async (req, res) => {
-  const html = await fs.readFile(path.join(__dirname, 'welcome', 'index.html'), 'utf8');
-  res.send(html);
+
+app.get('/auth', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'auth.html'));
+});
+
+// Route personnalisée pour "/welcome" → public/welcome/index.html
+app.get('/welcome', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'welcome', 'index.html'));
 });
 // Initialisation Firebase Admin
 
